@@ -260,7 +260,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                         </button>
 
                         {isOpen && openDropdowns[item.module] && (
-                          <ul className=" pl-12 py-1.5 space-y-1">
+                          <ul className=" pl-8 py-1.5 space-y-1">
                             {item.submodules.map((sub) => {
                               const isActiveSubMenu =
                                 location.pathname.startsWith(sub.path);
@@ -274,13 +274,19 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                                         window.innerWidth < 768 &&
                                         setIsOpen(false)
                                       }
-                                      className={`sidebar-link flex items-center gap-1 px-2 py-1.5 font-bold rounded-md transition ${
-                                        isActiveSubMenu ? "active" : ""
+                                      className={`group sidebar-sublink flex items-center gap-5 px-2 py-1.5 font-bold rounded-md transition ${
+                                        isActiveSubMenu
+                                          ? "active text-dark dark:text-white"
+                                          : "text-gray-600 dark:text-gray-300 hover:text-dark dark:hover:text-white"
                                       }`}
                                     >
-                                      <span className="w-6 h-6 flex justify-center items-center bg-dark text-light rounded-full">
-                                        {sub.icon}
-                                      </span>
+                                      <span
+                                        className={`w-2 h-2 rounded-full transition-colors duration-200 ${
+                                          isActiveSubMenu
+                                            ? "bg-dark dark:bg-white"
+                                            : "bg-gray-500 group-hover:bg-dark dark:group-hover:bg-white"
+                                        }`}
+                                      ></span>
                                       {sub.label}
                                     </Link>
                                   </li>
