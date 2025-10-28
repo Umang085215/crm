@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <!-- Gradient for the main logo -->
+    <linearGradient id="mainGradient" x1="0" y1="0" x2="100%" y2="100%">
+      <stop offset="10%" style="stop-color:#fb6506;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#000;stop-opacity:1"/>
+	  
+      <stop offset="100%" style="stop-color:#2b4acb;stop-opacity:1"/>
+    </linearGradient>
+    
+    <!-- Gradient for accent -->
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#06B6D4;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:1"/>
+    </linearGradient>
+    
+    <!-- Shadow -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle (optional) -->
+  <circle cx="100" cy="100" r="95" fill="#fff" opacity="0.1"/>
+  
+  <!-- Main logo shape - Stylized "E" with upward arrow concept -->
+  <g filter="url(#shadow)">
+    <!-- Base E shape -->
+    <path d="M 60 60 L 140 60 L 140 75 L 75 75 L 75 92.5 L 130 92.5 L 130 107.5 L 75 107.5 L 75 125 L 140 125 L 140 140 L 60 140 Z" fill="url(#mainGradient)"/>
+    
+    <!-- Upward arrow integrated into design -->
+    <path d="M 145 100 L 165 80 L 185 100 L 175 100 L 175 140 L 155 140 L 155 100 Z" fill="url(#mainGradient)"/>
+     <text xmlns="http://www.w3.org/2000/svg" x="48%" y="77%" text-anchor="middle" fill="#fb6506" font-size="10" font-weight="bold" font-family="poppins">Your Customers.</text>
+	 <text xmlns="http://www.w3.org/2000/svg" x="48%" y="51.5%" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold" font-family="poppins">ELeVvA...</text>
+	 <text xmlns="http://www.w3.org/2000/svg" x="82%" y="77%" text-anchor="middle" fill="#007672" font-size="10" font-weight="bold" font-family="poppins">Your Growth.</text>
+	 <text xmlns="http://www.w3.org/2000/svg" x="112%" y="77%" text-anchor="middle" fill="#2b4acb" font-size="10" font-weight="bold" font-family="poppins">Our Priority.</text>
+    <!-- Small connecting element -->
+    <circle cx="145" cy="100" r="4" fill="#fb6506"/>
+  </g>
+  
+  <!-- Decorative dots representing growth/elevation -->
+  <circle cx="50" cy="145" r="3" fill="#fb6506" opacity="1"/>
+  <circle cx="45" cy="155" r="2.5" fill="#007672" opacity="1"/>
+  <circle cx="40" cy="165" r="2" fill="#2b4acb" opacity="1"/>
+</svg>
