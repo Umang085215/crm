@@ -271,7 +271,7 @@ const ProfileSubmission = () => {
           <Input
             id="technology"
             name="technology"
-            labelName="Primary Technology / Skills"
+            labelName="Skills"
             value={formData.technology}
             handleChange={handleChange}
             errors={errors}
