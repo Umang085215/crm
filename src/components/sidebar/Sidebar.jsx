@@ -196,7 +196,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           {navSections.map((section) => (
             <div key={section.section}>
               {isOpen && section.section && (
-                <h4 className="px-4 pb-2 text-[12px] font-extrabold text-gray-500 dark:text-gray-300 uppercase tracking-wide sticky top-0 bg-white dark:bg-darkBg z-10">
+                <h4 className="px-4 pb-2 text-[12px] font-extrabold  dark:text-gray-300 uppercase tracking-wide sticky top-0 bg-white dark:bg-darkBg z-10">
                   {section.section}
                 </h4>
               )}
