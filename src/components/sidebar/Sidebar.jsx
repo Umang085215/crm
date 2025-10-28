@@ -125,10 +125,15 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   };
 
   const isParentActive = (item) => {
-    if (!item.submodules) return location.pathname === item.path;
+    if (!item.submodules) {
+      // Active if the current route starts with item.path
+      return location.pathname.startsWith(item.path);
+    }
+
+    // Active if the route matches parent or any of its submodules
     return (
-      location.pathname === item.path ||
-      item.submodules.some((sub) => location.pathname === sub.path)
+      location.pathname.startsWith(item.path) ||
+      item.submodules.some((sub) => location.pathname.startsWith(sub.path))
     );
   };
 
@@ -191,7 +196,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           {navSections.map((section) => (
             <div key={section.section}>
               {isOpen && section.section && (
-                <h4 className="px-4 pb-2 text-[12px] font-extrabold text-gray-500 uppercase tracking-wide sticky top-0 bg-white dark:bg-darkBg z-10">
+                <h4 className="px-4 pb-2 text-[12px] font-extrabold text-gray-500 dark:text-gray-300 uppercase tracking-wide sticky top-0 bg-white dark:bg-darkBg z-10">
                   {section.section}
                 </h4>
               )}
@@ -208,11 +213,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                         onClick={() =>
                           window.innerWidth < 768 && setIsOpen(false)
                         }
-                        className={`sidebar-link flex items-center px-4 py-1 ${
+                        className={`sidebar-link flex items-center px-4 py-1.5 mt-1 ${
                           isOpen ? "justify-between" : "justify-center"
                         } ${isActive ? "active" : ""}`}
                       >
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 space-y-1">
                           <span className="w-7 h-7 flex justify-center items-center bg-dark text-light rounded-full">
                             {item.icon}
                           </span>
@@ -230,7 +235,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                             toggleDropdown(item.module);
                             setIsOpen(true);
                           }}
-                          className={`flex items-center w-full px-4 py-1 rounded-tr-[10px] rounded-br-[10px] transition sidebar-link ${
+                          className={`flex items-center w-full px-4 py-1.5 rounded-tr-[10px] rounded-br-[10px] transition sidebar-link ${
                             isOpen ? "justify-between" : "justify-center"
                           } ${isActive ? "active" : ""}`}
                         >
@@ -255,10 +260,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                         </button>
 
                         {isOpen && openDropdowns[item.module] && (
-                          <ul className=" pl-12 py-1 space-y-1">
+                          <ul className=" pl-12 py-1.5 space-y-1">
                             {item.submodules.map((sub) => {
                               const isActiveSubMenu =
-                                location.pathname === sub.path;
+                                location.pathname.startsWith(sub.path);
+
                               return (
                                 hasSubmoduleAccess(item.module, sub.module) && (
                                   <li key={sub.module}>
@@ -268,7 +274,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                                         window.innerWidth < 768 &&
                                         setIsOpen(false)
                                       }
-                                      className={`sidebar-link flex items-center gap-1 px-2 py-1 font-bold rounded-md transition ${
+                                      className={`sidebar-link flex items-center gap-1 px-2 py-1.5 font-bold rounded-md transition ${
                                         isActiveSubMenu ? "active" : ""
                                       }`}
                                     >
