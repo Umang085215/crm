@@ -21,8 +21,8 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [errors, setErrors] = useState({});
-  const [acceptTC, setAcceptTC] = useState(false);
-  const [termsConditionError, setTermsConditionError] = useState("");
+  // const [acceptTC, setAcceptTC] = useState(false);
+  // const [termsConditionError, setTermsConditionError] = useState("");
 
   const navigate = useNavigate();
   const { setToken, setRole, setModules, setUser } = useAuth();
@@ -32,41 +32,52 @@ export default function Login() {
     setFormdata({ ...formdata, [name]: value });
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
     setErrorMsg("");
     setSuccessMsg("");
+
     try {
       await schema.validate(formdata, { abortEarly: false });
-      if (!acceptTC) {
-        setTermsConditionError("You must accept terms & conditions.");
-        return;
-      }
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formdata),
-      });
-      const data = await res.json();
-      console.log(data.modules);
-      if (!res.ok) {
-        setErrorMsg(data.message || "Login failed");
-        return;
-      }
-      setSuccessMsg(data.message || "Login successful");
-      setToken(data.token);
-      setRole(data.role);
-      setModules(data.modules || []);
-      setUser(data.user || null);
-      if (data.role === "superadmin") {
-        navigate("/admin/super-dashboard");
-      } else if (
-        data.modules?.some((m) => m.name.toLowerCase() === "dashboard")
+      const hardcodedUser = {
+        email: "superadmin@gmail.com",
+        password: "SuperAdmin123",
+        role: "superadmin",
+        modules: [
+          { name: "Dashboard" },
+          { name: "Users" },
+          { name: "Reports" },
+        ],
+        token: "dummy_token_123",
+        user: { name: "Admin User", email: "superadmin@gmail.com" },
+      };
+
+      if (
+        formdata.email === hardcodedUser.email &&
+        formdata.password === hardcodedUser.password
       ) {
-        navigate("/dashboard");
+        setSuccessMsg("Login successful");
+        setToken(hardcodedUser.token);
+        setRole(hardcodedUser.role);
+        setModules(hardcodedUser.modules);
+        setUser(hardcodedUser.user);
+
+        if (hardcodedUser.role === "superadmin") {
+          navigate("/admin/super-dashboard");
+        } else if (
+          hardcodedUser.modules?.some(
+            (m) => m.name.toLowerCase() === "dashboard"
+          )
+        ) {
+          navigate("/dashboard");
+        } else {
+          navigate("/unauthorized");
+        }
       } else {
-        navigate("/unauthorized");
+        setErrorMsg("Invalid email or password");
+        return;
       }
     } catch (err) {
       if (err.name === "ValidationError") {
@@ -85,9 +96,6 @@ export default function Login() {
         setErrorMsg("");
       }, 5000);
     }
-  };
-  const togglePassword = () => {
-    setShowPassword(!showPassword);
   };
 
   return (
@@ -120,7 +128,7 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
                 Email
               </label>
@@ -139,6 +147,17 @@ export default function Login() {
               {errors.email && (
                 <p className="text-red-500 text-sm mt-1">{errors.email}</p>
               )}
+            </div> */}
+            <div className="relative">
+              <Input
+                id="login_email"
+                type="text"
+                name="email"
+                value={formdata.email}
+                handleChange={handleChange}
+                errors={errors}
+                labelName="Email"
+              />
             </div>
 
             {/* Password */}
@@ -153,18 +172,18 @@ export default function Login() {
                 errors={errors}
                 labelName="Password"
               />
-              <span
+              {/* <span
                 className={`absolute right-1 top-1/2 ${
                   errors.password ? "-translate-y-[100%]" : "-translate-y-1/2"
                 }  cursor-pointer text-darkGray  `}
                 onClick={togglePassword}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </span>
+              </span> */}
             </div>
 
             {/* T&C */}
-            <div>
+            {/* <div>
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -180,7 +199,7 @@ export default function Login() {
               {termsConditionError && (
                 <p className="text-red-500 text-sm ">{termsConditionError}</p>
               )}
-            </div>
+            </div> */}
 
             <button
               type="submit"

@@ -1,9 +1,33 @@
 import React, { useState } from "react";
 import { Save } from "lucide-react";
 import Button from "../components/buttons/Button";
+import Input from "../components/formInput/Input";
+import SelectField from "../components/formInput/SelectField";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker?worker";
+import * as yup from "yup";
 pdfjsLib.GlobalWorkerOptions.workerPort = new pdfWorker();
+
+// ✅ Yup schema
+const schema = yup.object().shape({
+  name: yup.string().required("Full name is required"),
+  email: yup
+    .string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  phone: yup
+    .string()
+    .matches(/^[6-9]\d{9}$/, "Enter a valid 10-digit phone number")
+    .required("Phone is required"),
+  location: yup.string().required("Preferred location is required"),
+  company: yup.string().required("Current company is required"),
+  currentLocation: yup.string().required("Current location is required"),
+  currentCTC: yup.string().required("Current CTC is required"),
+  expectedCTC: yup.string().required("Expected CTC is required"),
+  technology: yup.string().required("Technology / Skills are required"),
+  workMode: yup.string().required("Work mode is required"),
+  noticePeriod: yup.string().required("Notice period is required"),
+});
 
 const ProfileSubmission = () => {
   const [formData, setFormData] = useState({
@@ -21,13 +45,29 @@ const ProfileSubmission = () => {
   });
 
   const [resumeFile, setResumeFile] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [successMsg, setSuccessMsg] = useState("");
 
-  // Handle input field change
+  // Handle input change
+  // const handleChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  // Handle input change with CTC formatting
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === "currentCTC" || name === "expectedCTC") {
+      const numericValue = value.replace(/\D/g, "");
+      const formattedValue = numericValue
+        ? new Intl.NumberFormat("en-IN").format(Number(numericValue))
+        : "";
+      setFormData({ ...formData, [name]: formattedValue });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
-  // Extract text from PDF resume
+  // Extract data from resume
   const handleResumeUpload = async (e) => {
     const file = e.target.files[0];
     if (!file || file.type !== "application/pdf") {
@@ -36,7 +76,6 @@ const ProfileSubmission = () => {
     }
 
     setResumeFile(file);
-
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
     let text = "";
@@ -48,7 +87,7 @@ const ProfileSubmission = () => {
       text += strings.join(" ") + "\n";
     }
 
-    // Regex-based extraction (basic)
+    // Basic regex extraction
     const nameMatch = text.match(/Name[:\-]?\s*([A-Za-z ]{3,})/i);
     const emailMatch = text.match(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i);
     const phoneMatch = text.match(/(\+91[-\s]?)?[0]?(91)?[6-9]\d{9}/);
@@ -67,7 +106,6 @@ const ProfileSubmission = () => {
     );
     const locationMatch = text.match(/(?:Location|City)[:\-]?\s*([A-Za-z ]+)/i);
 
-    // Update form data with extracted values
     setFormData((prev) => ({
       ...prev,
       name: nameMatch ? nameMatch[1].trim() : prev.name,
@@ -84,16 +122,47 @@ const ProfileSubmission = () => {
     }));
   };
 
-  // Handle submit
-  const handleSubmit = (e) => {
+  // ✅ Handle form submit with Yup validation
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Profile Submitted:", formData);
-    alert("Profile submitted successfully!");
+    setErrors({});
+    setSuccessMsg("");
+
+    try {
+      await schema.validate(formData, { abortEarly: false });
+      console.log("Profile Submitted:", formData);
+      setSuccessMsg("Profile submitted successfully!");
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        location: "",
+        company: "",
+        currentCTC: "",
+        expectedCTC: "",
+        technology: "",
+        currentLocation: "",
+        workMode: "",
+        noticePeriod: "",
+      });
+      setResumeFile(null);
+    } catch (err) {
+      if (err.name === "ValidationError") {
+        const validationErrors = {};
+        err.inner.forEach((e) => {
+          validationErrors[e.path] = e.message;
+        });
+        setErrors(validationErrors);
+      } else {
+        console.error(err);
+      }
+    }
   };
 
   return (
     <div className="">
       <h2 className="text-2xl font-semibold mb-4">Profile Submission</h2>
+
       <form
         onSubmit={handleSubmit}
         className="space-y-4 rounded-xl p-6 border border-lightGray dark:border-darkGray bg-white dark:bg-darkBg"
@@ -111,107 +180,115 @@ const ProfileSubmission = () => {
 
         {/* Personal Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            type="text"
+          <Input
+            id="name"
             name="name"
-            placeholder="Full Name"
+            labelName="Full Name"
             value={formData.name}
-            onChange={handleChange}
-            className="border rounded-md p-2 w-full"
+            handleChange={handleChange}
+            errors={errors}
           />
-          <input
-            type="email"
+          <Input
+            id="email"
+            type="text"
             name="email"
-            placeholder="Email"
+            labelName="Email"
             value={formData.email}
-            onChange={handleChange}
-            className="border rounded-md p-2 w-full"
+            handleChange={handleChange}
+            errors={errors}
           />
-          <input
-            type="text"
+          <Input
+            id="phone"
             name="phone"
-            placeholder="Phone"
+            labelName="Phone"
             value={formData.phone}
-            onChange={handleChange}
-            className="border rounded-md p-2 w-full"
+            handleChange={handleChange}
+            errors={errors}
           />
-          <input
-            type="text"
+          <Input
+            id="location"
             name="location"
-            placeholder="Preferred Location"
+            labelName="Preferred Location"
             value={formData.location}
-            onChange={handleChange}
-            className="border rounded-md p-2 w-full"
+            handleChange={handleChange}
+            errors={errors}
           />
         </div>
 
         {/* Professional Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            type="text"
+          <Input
+            id="company"
             name="company"
-            placeholder="Current Company"
+            labelName="Current Company"
             value={formData.company}
-            onChange={handleChange}
-            className="border rounded-md p-2 w-full"
+            handleChange={handleChange}
+            errors={errors}
           />
-          <input
-            type="text"
+          <Input
+            id="currentLocation"
             name="currentLocation"
-            placeholder="Current Location"
+            labelName="Current Location"
             value={formData.currentLocation}
-            onChange={handleChange}
-            className="border rounded-md p-2 w-full"
+            handleChange={handleChange}
+            errors={errors}
           />
-          <input
-            type="text"
+          <Input
+            id="currentCTC"
             name="currentCTC"
-            placeholder="Current CTC (e.g., 8 LPA)"
+            labelName="Current CTC (e.g., 8 LPA)"
             value={formData.currentCTC}
-            onChange={handleChange}
-            className="border rounded-md p-2 w-full"
+            handleChange={handleChange}
+            errors={errors}
           />
-          <input
-            type="text"
+          <Input
+            id="expectedCTC"
             name="expectedCTC"
-            placeholder="Expected CTC (e.g., 12 LPA)"
+            labelName="Expected CTC (e.g., 12 LPA)"
             value={formData.expectedCTC}
-            onChange={handleChange}
-            className="border rounded-md p-2 w-full"
+            handleChange={handleChange}
+            errors={errors}
           />
-          <input
-            type="text"
-            name="technology"
-            placeholder="Primary Technology / Skills"
-            value={formData.technology}
-            onChange={handleChange}
-            className="border rounded-md p-2 w-full col-span-2"
-          />
-          <select
+
+          <SelectField
+            id="work_mode"
             name="workMode"
+            label="Work Mode"
             value={formData.workMode}
-            onChange={handleChange}
-            className="border rounded-md p-2 w-full"
-          >
-            <option value="">Select Work Mode</option>
-            <option value="Office">Office</option>
-            <option value="Hybrid">Hybrid</option>
-            <option value="Remote">Remote</option>
-          </select>
-          <input
-            type="text"
+            options={["Office", "Hybrid", "Remote"]}
+            handleChange={handleChange}
+            error={errors.workMode}
+          />
+
+          <Input
+            id="noticePeriod"
             name="noticePeriod"
-            placeholder="Notice Period (e.g., 30 Days)"
+            labelName="Notice Period (e.g., 30 Days)"
             value={formData.noticePeriod}
-            onChange={handleChange}
-            className="border rounded-md p-2 w-full"
+            handleChange={handleChange}
+            errors={errors}
+          />
+          <Input
+            id="technology"
+            name="technology"
+            labelName="Primary Technology / Skills"
+            value={formData.technology}
+            handleChange={handleChange}
+            errors={errors}
+            className="col-span-2"
           />
         </div>
 
         {/* Submit */}
-        <div className="flex justify-end">
-          <Button type="submit" text="Add" icon={<Save size={18} />} />
+        <div className="flex justify-end pt-4">
+          <Button type="submit" text="Submit" icon={<Save size={18} />} />
         </div>
+
+        {successMsg && (
+          <p className="text-green-600 text-sm mt-3 font-medium">
+            {successMsg}
+          </p>
+        )}
       </form>
     </div>
   );
