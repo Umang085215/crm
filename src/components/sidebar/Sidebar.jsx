@@ -21,6 +21,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       label: "Dashboard",
       icon: <LayoutDashboard size={18} />,
     },
+
     {
       module: "users",
       path: "/admin/users",
