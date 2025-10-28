@@ -9,6 +9,7 @@ export default {
         spartan: ['"League Spartan"', "sans-serif"],
         fredoka: ['"Fredoka One"', "sans-serif"],
         nunito: ["Nunito", "sans-serif"],
+        golos: ["Golos Text", "sans-serif"],
       },
       colors: {
         darkBg: "var(--darkBg)",

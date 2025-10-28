@@ -281,7 +281,7 @@ const ProfileSubmission = () => {
 
         {/* Submit */}
         <div className="flex justify-end pt-4">
-          <Button type="submit" text="Submit" icon={<Save size={18} />} />
+          <Button type="submit" text="Save" icon={<Save size={18} />} />
         </div>
 
         {successMsg && (

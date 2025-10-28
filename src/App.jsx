@@ -79,15 +79,6 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        {/* Profile submission */}
-        {/* <Route
-          path="/admin/profille-add"
-          element={
-            <ProtectedRoute allowedModules={["profile"]}>
-              <ProfileSubmission />
-            </ProtectedRoute>
-          }
-        /> */}
 
         <Route
           path="/admin/settings"
@@ -108,7 +99,7 @@ const App = () => {
 
         {/* Roles */}
         <Route
-          path="/admin/roles"
+          path="/admin/usermanagement/roles"
           element={
             <ProtectedRoute allowedModules={["roles"]}>
               <RoleManagement />
@@ -118,7 +109,7 @@ const App = () => {
 
         {/* Users */}
         <Route
-          path="/admin/users"
+          path="/admin/usermanagement/users"
           element={
             <ProtectedRoute allowedModules={["users"]}>
               <UserManagement />
@@ -126,7 +117,7 @@ const App = () => {
           }
         />
         <Route
-          path="/admin/users/create"
+          path="/admin/usermanagement/create-user"
           element={
             <ProtectedRoute allowedModules={["users"]}>
               <CreateUser />

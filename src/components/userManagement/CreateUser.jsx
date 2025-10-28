@@ -218,7 +218,7 @@ export default function UserManagement() {
         <h2 className="text-2xl font-semibold mb-4 ">Create User</h2>
         <div>
           <Link
-            to="/admin/users"
+            to="/admin/usermanagement/users"
             className="px-2 py-1.5  flex gap-1 items-center bg-dark text-white rounded-md"
           >
             <ArrowLeft size={18} />

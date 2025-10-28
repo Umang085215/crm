@@ -106,7 +106,7 @@ const UserList = () => {
         </div>
         <div>
           <Link
-            to="/admin/users/create"
+            to="/admin/usermanagement/create-user"
             className="px-2 py-1.5  flex gap-1 items-center bg-dark text-white rounded-md"
           >
             <Plus size={18} />
