@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Moon, Sun, Check } from "lucide-react";
+import { Check } from "lucide-react";
 
 const colorThemes = [
   { name: "Light", value: "light", dark: "#fb6506", light: "#fff4e6" },
@@ -17,9 +17,7 @@ const colorThemes = [
 
 const Themes = () => {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-
   useEffect(() => {
     const html = document.documentElement;
     html.classList.remove(
@@ -31,43 +29,20 @@ const Themes = () => {
       "purple"
     );
     html.classList.add(theme);
-
     const selected = colorThemes.find((t) => t.value === theme);
     if (selected) {
       html.style.setProperty("--light", selected.light);
       html.style.setProperty("--dark", selected.dark);
     }
-
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   const handleTheme = (themeValue) => {
     setTheme(themeValue);
-    setDropdownOpen(false);
   };
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Toggle Button */}
-      {/* <button
-        onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="w-10 h-10 flex justify-center items-center rounded-full border border-darkGray bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 transition"
-      >
-        {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
-      </button> */}
-
-      {/* Popup */}
-      {/* {dropdownOpen && ( */}
       <div className=" right-0 mt-3   border border-lightGray dark:border-darkGray rounded-xl  z-50 overflow-hidden">
         <div className="px-4 py-3 border-b border-lightGray dark:border-darkGray">
           <h3 className="text-sm font-semibold ">Select Theme</h3>
@@ -107,7 +82,6 @@ const Themes = () => {
           ))}
         </div>
       </div>
-      {/* )} */}
     </div>
   );
 };
