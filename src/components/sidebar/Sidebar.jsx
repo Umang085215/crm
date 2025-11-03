@@ -126,11 +126,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
   const isParentActive = (item) => {
     if (!item.submodules) {
-      // Active if the current route starts with item.path
       return location.pathname.startsWith(item.path);
     }
 
-    // Active if the route matches parent or any of its submodules
     return (
       location.pathname.startsWith(item.path) ||
       item.submodules.some((sub) => location.pathname.startsWith(sub.path))
@@ -170,7 +168,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         <div className="px-4 py-4 flex items-center justify-between border-b border-lightGray dark:border-darkGray flex-shrink-0">
           {isOpen ? (
             <div className="w-full flex items-center justify-between p-0 sm:p-0.5">
-              <div className="text-lg font-bold flex items-center gap-1 truncate text-dark dark:text-white">
+              <div className="text-lg  flex items-center gap-1 truncate text-dark dark:text-white">
                 <img src={logo} alt="" className="w-7" />
                 <span className="font-extrabold">Elevva CRM</span>
               </div>
@@ -183,7 +181,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               </button>
             </div>
           ) : (
-            <div className="flex justify-center items-center w-full p-0 sm:p-0.5">
+            <div className="flex justify-center items-center w-full p-0 sm:p-[3px]">
               <span className="text-lg font-bold text-dark dark:text-white">
                 <img src={logo} alt="logo" className="w-7" />
               </span>
@@ -196,7 +194,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           {navSections.map((section) => (
             <div key={section.section}>
               {isOpen && section.section && (
-                <h4 className="px-4 pb-2 text-[12px] font-extrabold  dark:text-gray-300 uppercase tracking-wide sticky top-0 bg-white dark:bg-darkBg z-10">
+                <h4 className="px-4 pb-2 text-[13px] font-medium  dark:text-gray-300 uppercase tracking-wide sticky top-0 bg-white dark:bg-darkBg z-10">
                   {section.section}
                 </h4>
               )}
@@ -218,13 +216,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                         } ${isActive ? "active" : ""}`}
                       >
                         <div className="flex items-center gap-4 space-y-1">
-                          <span className="w-7 h-7 flex justify-center items-center bg-dark text-light rounded-full">
+                          <div className="w-6 h-6 flex justify-center items-center bg-dark text-light rounded">
                             {item.icon}
-                          </span>
+                          </div>
                           {isOpen && (
-                            <span className="font-bold text-[13px]">
+                            <p className="font-medium text-[14px]">
                               {item.label}
-                            </span>
+                            </p>
                           )}
                         </div>
                       </Link>
@@ -244,7 +242,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                               {item.icon}
                             </span>
                             {isOpen && (
-                              <span className="font-bold text-[13px]">
+                              <span className="font-medium text-[14px]">
                                 {item.label}
                               </span>
                             )}
@@ -274,7 +272,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                                         window.innerWidth < 768 &&
                                         setIsOpen(false)
                                       }
-                                      className={`group sidebar-sublink flex items-center gap-5 px-2 py-1.5 font-bold rounded-md transition ${
+                                      className={`group sidebar-sublink flex items-center gap-5 px-2 py-1.5 font-medium rounded-md transition ${
                                         isActiveSubMenu
                                           ? "active text-dark dark:text-white"
                                           : "text-gray-600 dark:text-gray-300 hover:text-dark dark:hover:text-white"

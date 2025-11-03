@@ -16,6 +16,7 @@ import {
   YAxis,
   ResponsiveContainer,
 } from "recharts";
+import DashboardStats from "../components/cards/DashboardStats";
 
 const products = [
   {
@@ -68,37 +69,71 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#fb06ab"];
 
 const SuperDashboard = () => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Stats Cards */}
+      <h2 className="text-2xl font-semibold font-golos mb-1">Dashboard</h2>
+      <div className="flex justify-between items-center bg-black p-6 rounded-md text-white font-golos">
+        <div>
+          <h2 className="text-2xl font-semibold mb-1">Welcome Back , Admin</h2>
+          <p>14 New Companies Subscribed Today !!!</p>
+        </div>
+        <div className="flex gap-2">
+          <button className="bg-white text-black p-1 rounded-md">
+            Companies
+          </button>
+          <button className="bg-white text-black p-1 rounded-md">
+            All Packages
+          </button>
+        </div>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <DashboardCard
+        {/* <DashboardCard
           title="Total Orders"
           value="2.5K"
           ratio="10% Increase"
           img={img1}
           color="green"
+        /> */}
+        <DashboardCard
+          title="Total Companies"
+          value="5468"
+          ratio="5.62%"
+          ratioText="from last month"
+          img={img1}
+          color="red"
+          isPositive={true}
         />
+
         <DashboardCard
           title="Total Sales"
-          value="5.2k"
-          ratio="5% Increase"
+          value="5468"
+          ratio="5.62%"
+          ratioText="from last month"
           img={img2}
           color="green"
+          isPositive={false}
         />
         <DashboardCard
           title="Customers"
-          value="25k"
-          ratio="2% Decrease"
+          value="5468"
+          ratio="5.62%"
+          ratioText="from last month"
           img={img3}
-          color="red"
+          color="purple"
+          isPositive={true}
         />
         <DashboardCard
           title="People Online"
-          value="8"
+          value="5468"
+          ratio="5.62%"
+          ratioText="from last month"
           img={img4}
-          color="green"
+          color="blue"
+          isPositive={false}
         />
       </div>
+
+      <DashboardStats />
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

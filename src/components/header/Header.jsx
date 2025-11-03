@@ -60,7 +60,7 @@ const Header = ({ toggleSidebar }) => {
   return (
     <header className="sticky top-0 z-40 flex items-center bg-white dark:bg-darkBg justify-between px-6 py-3 border-b border-lightGray dark:border-darkGray">
       {/* Left */}
-      <div className="flex gap-5 items-center font-bold">
+      <div className="flex gap-5 items-center text-md font-medium">
         <button
           onClick={toggleSidebar}
           className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"

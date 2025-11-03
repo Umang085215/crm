@@ -1,18 +1,107 @@
-const DashboardCard = ({ title, value, ratio, img, color }) => {
+// const DashboardCard = ({ title, value, ratio, img, color }) => {
+//   return (
+//     <div className="flex items-center justify-between gap-2 p-5 rounded-xl  shadow-md border border-lightGray dark:border-darkGray  hover:shadow-lg transition duration-500">
+//       <div className="flex flex-col justify-between h-40 ">
+//         <div>
+//           <h2 className="text-md font-bold ">{title}</h2>
+//           <p className="text-2xl font-bold ">{value}</p>
+//         </div>
+//         {ratio && <p className={`text-sm  text-${color}-600`}>{ratio}</p>}
+//       </div>
+//       {img && (
+//         <div
+//           className={`flex items-center justify-center h-100 w-100 rounded-full text-white`}
+//         >
+//           <img src={img} alt="img" />
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default DashboardCard;
+
+import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+
+const DashboardCard = ({
+  title,
+  value,
+  ratio,
+  ratioText,
+  img,
+  color = "red",
+  isPositive = true,
+}) => {
+  const colorClasses = {
+    red: {
+      border: "border-red-500",
+      bg: "bg-red-50",
+      accent: "bg-red-600",
+      text: "text-red-600",
+    },
+    green: {
+      border: "border-green-500",
+      bg: "bg-green-50",
+      accent: "bg-green-600",
+      text: "text-green-600",
+    },
+    blue: {
+      border: "border-blue-500",
+      bg: "bg-blue-50",
+      accent: "bg-blue-600",
+      text: "text-blue-600",
+    },
+    purple: {
+      border: "border-purple-500",
+      bg: "bg-purple-50",
+      accent: "bg-purple-600",
+      text: "text-purple-600",
+    },
+  };
+
+  const c = colorClasses[color] || colorClasses.red;
+
   return (
-    <div className="flex items-center justify-between gap-2 p-5 rounded-xl  shadow-md border border-lightGray dark:border-darkGray  hover:shadow-lg transition duration-500">
-      <div className="flex flex-col justify-between h-40 ">
+    <div className="relative bg-white dark:bg-darkBg font-golos rounded-lg shadow-sm border border-lightGray dark:border-darkGray p-5 flex justify-between items-center transition hover:shadow-md duration-300">
+      <div
+        className={`absolute top-0 left-0 w-4 h-4 ${c.accent} rounded-br-[12px]`}
+      ></div>
+      <div className="flex flex-col justify-between h-full">
         <div>
-          <h2 className="text-md font-bold ">{title}</h2>
-          <p className="text-2xl font-bold ">{value}</p>
+          <h2 className="text-sm font-medium text-gray-700 dark:text-gray-500">
+            {title}
+          </h2>
+          <h2 className="text-lg font-extrabold  mt-1 text-black dark:text-white">
+            {value}
+          </h2>
         </div>
-        {ratio && <p className={`text-sm  text-${color}-600`}>{ratio}</p>}
+
+        {ratio && (
+          <div
+            className={`flex items-center gap-1 mt-1 text-sm font-medium ${
+              isPositive ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {isPositive ? (
+              <ArrowUpRight size={16} />
+            ) : (
+              <ArrowDownRight size={16} />
+            )}
+            <span>{ratio}</span>
+            {ratioText && (
+              <span className="text-gray-700 dark:text-gray-500 font-normal">
+                {ratioText}
+              </span>
+            )}
+          </div>
+        )}
       </div>
+
       {img && (
         <div
-          className={`flex items-center justify-center h-100 w-100 rounded-full text-white`}
+          className={`flex items-center justify-center w-10 h-10 rounded-full border ${c.border} text-${color}-600`}
         >
-          <img src={img} alt="img" />
+          <img src={img} alt="icon" className="w-9 h-9 object-contain" />
         </div>
       )}
     </div>
