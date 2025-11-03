@@ -138,18 +138,8 @@ export default function UserManagement() {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
-  //Handle Image change
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setProfilePreview(reader.result);
-      reader.readAsDataURL(file);
-      setFormData((prev) => ({ ...prev, profileImage: file }));
-      setErrors((prev) => ({ ...prev, profileImage: "" }));
-    }
-  };
-  // Updated
+
+  //handle image change
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -372,6 +362,7 @@ export default function UserManagement() {
               name="email"
               value={formData.email}
               handleChange={handleChange}
+              autoComplete="new-email"
               className="col-span-2 md:col-span-1"
               errors={errors}
               labelName="Email"
@@ -383,6 +374,7 @@ export default function UserManagement() {
                 name="password"
                 value={formData.password}
                 handleChange={handleChange}
+                autoComplete="new-password"
                 className="col-span-2 md:col-span-1"
                 errors={errors}
                 labelName="Password"
