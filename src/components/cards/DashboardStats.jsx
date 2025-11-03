@@ -69,8 +69,9 @@ const DashboardStats = () => {
           </BarChart>
         </ResponsiveContainer>
 
-        <p className="text-sm text-center mt-2 text-green-600 font-medium">
-          ↑ 12.5% from last month
+        <p className="text-sm text-center mt-2 font-medium">
+          <span className="text-green-600">↑ 12.5% </span>
+          from last month
         </p>
       </div>
 
@@ -83,12 +84,16 @@ const DashboardStats = () => {
             2025 <ChevronDown className="w-4 h-4 ml-1" />
           </button>
         </div>
-
-        <p className="text-xl font-bold mb-1">$89,878.58</p>
-        <p className="text-sm   mb-3">
-          <span className="text-green-600">↑ </span>
-          40% increased from last year
-        </p>
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <p className="text-[1rem] font-bold mb-1">$89,878.58</p>
+            <p className="text-sm ">
+              <span className="text-green-600">↑ </span>
+              40% increased from last year
+            </p>
+          </div>
+          <p>Revenue</p>
+        </div>
 
         <ResponsiveContainer width="100%" height={200}>
           <BarChart data={revenueData}>

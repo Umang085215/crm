@@ -71,7 +71,7 @@ const SuperDashboard = () => {
   return (
     <div className="space-y-4">
       {/* Stats Cards */}
-      <h2 className="text-2xl font-semibold font-golos mb-1">Dashboard</h2>
+      <h2 className="text-2xl font-semibold  mb-1">Dashboard</h2>
       <div className="flex justify-between items-center bg-black p-6 rounded-md text-white font-golos">
         <div>
           <h2 className="text-2xl font-semibold mb-1">Welcome Back , Admin</h2>

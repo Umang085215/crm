@@ -55,7 +55,8 @@ export default function UserManagement() {
     role: "",
     about: "",
     profileImage: "",
-    status: "InActive",
+    status: "Active",
+    sendEmail: "true",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
@@ -211,6 +212,15 @@ export default function UserManagement() {
   const togglePassword = () => {
     setShowPassword(!showPassword);
   };
+  const generatePassword = () => {
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+    const randomPass = Array.from({ length: 10 }, () =>
+      chars.charAt(Math.floor(Math.random() * chars.length))
+    ).join("");
+    setFormData({ ...formData, password: randomPass });
+    setShowPassword(true);
+  };
 
   return (
     <div className="">
@@ -331,14 +341,22 @@ export default function UserManagement() {
                 errors={errors}
                 labelName="Password"
               />
-              <span
-                className={`absolute  right-3 top-1/2 ${
+              <div
+                className={`flex gap-2 absolute  right-3 top-1/2 ${
                   errors.password ? "-translate-y-[100%]" : "-translate-y-1/2"
-                }  cursor-pointer text-darkGray  `}
-                onClick={togglePassword}
+                }  cursor-pointer text-darkGray`}
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </span>
+                <button
+                  type="button"
+                  onClick={generatePassword}
+                  className="bg-light text-xs font-medium text-dark p-1 rounded whitespace-nowrap"
+                >
+                  Generate
+                </button>
+                <span onClick={togglePassword}>
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </span>
+              </div>
             </div>
             <Input
               id="user_phone"
@@ -401,7 +419,7 @@ export default function UserManagement() {
                 </select>
                 <label
                   htmlFor="country"
-                  className={`absolute pointer-events-none font-bold text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
+                  className={`absolute pointer-events-none font-medium text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
             peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2
             peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
             ${
@@ -449,7 +467,7 @@ export default function UserManagement() {
                 </select>
                 <label
                   htmlFor="state"
-                  className={`absolute pointer-events-none font-bold text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
+                  className={`absolute pointer-events-none font-medium text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
             peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2
             peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
             ${
@@ -509,7 +527,7 @@ export default function UserManagement() {
                 />
                 <label
                   htmlFor="about"
-                  className={`absolute pointer-events-none font-bold text-sm text-gray-500  duration-300 transform  z-10 origin-[0] bg-white dark:bg-darkBg px-2
+                  className={`absolute pointer-events-none font-medium text-sm text-gray-500  duration-300 transform  z-10 origin-[0] bg-white dark:bg-darkBg px-2
             peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2
             peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:text-darkBg dark:peer-focus:text-white
             rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1`}
@@ -520,6 +538,25 @@ export default function UserManagement() {
                   <p className="text-red-500 text-sm mt-1">{errors.about}</p>
                 )}
               </div>
+            </div>
+            {/* Checkbox */}
+            <div className="col-span-2 flex items-start space-x-2 mt-2">
+              <input
+                id="terms"
+                type="checkbox"
+                name="terms"
+                checked={formData.sendEmail}
+                onChange={(e) =>
+                  setFormData({ ...formData, sendEmail: e.target.checked })
+                }
+                className="mt-1 w-4 h-4 border rounded focus:ring-none  cursor-pointer"
+              />
+              <label
+                htmlFor="terms"
+                className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none"
+              >
+                Send Welcome Email
+              </label>
             </div>
 
             <div className="col-span-2 flex justify-end">

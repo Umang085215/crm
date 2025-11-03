@@ -164,7 +164,7 @@ const RoleManagement = () => {
 
   return (
     <div className="w-full">
-      <h2 className="text-2xl font-bold mb-6 ">Role Management</h2>
+      <h2 className="text-2xl font-semibold mb-6 ">Role Management</h2>
       <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,70%)_minmax(0,30%)] gap-5 items-stretch">
         <div>
           {/* Create Role */}
