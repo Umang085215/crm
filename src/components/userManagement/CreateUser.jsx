@@ -265,6 +265,7 @@ export default function UserManagement() {
 
       <form
         onSubmit={handleSubmit}
+        autoComplete="off"
         className="grid grid-cols-1 sm:grid-cols-[minmax(0,30%)_minmax(0,70%)] gap-5 items-stretch"
       >
         {/* User Profile */}
@@ -362,7 +363,6 @@ export default function UserManagement() {
               name="email"
               value={formData.email}
               handleChange={handleChange}
-              autoComplete="new-email"
               className="col-span-2 md:col-span-1"
               errors={errors}
               labelName="Email"
@@ -374,7 +374,6 @@ export default function UserManagement() {
                 name="password"
                 value={formData.password}
                 handleChange={handleChange}
-                autoComplete="new-password"
                 className="col-span-2 md:col-span-1"
                 errors={errors}
                 labelName="Password"
