@@ -238,13 +238,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                           } ${isActive ? "active" : ""}`}
                         >
                           <div className="flex items-center gap-5">
-                            <span className="w-7 h-7 flex justify-center items-center bg-dark text-light rounded-full">
+                            <div className="w-6 h-6 flex justify-center items-center bg-dark text-light rounded">
                               {item.icon}
-                            </span>
+                            </div>
                             {isOpen && (
-                              <span className="font-medium text-[14px]">
+                              <p className="font-medium text-[14px]">
                                 {item.label}
-                              </span>
+                              </p>
                             )}
                           </div>
                           {isOpen && (
