@@ -4,6 +4,7 @@ import { Menu, Settings, LogOut, Bell, CircleHelp, User } from "lucide-react";
 import { FaRegUser } from "react-icons/fa";
 import LightDarkMode from "../themes/LightDarkMode";
 import Tippy from "@tippyjs/react";
+import { useAuth } from "../../auth/AuthContext";
 
 const IconButton = ({ title, icon: Icon, badge }) => (
   <Tippy
@@ -29,6 +30,7 @@ const Header = ({ toggleSidebar }) => {
   const navigate = useNavigate();
   const popupRef = useRef(null);
   const [popupOpen, setPopupOpen] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -67,7 +69,9 @@ const Header = ({ toggleSidebar }) => {
         >
           <Menu size={20} />
         </button>
-        <span className="hidden sm:block">Welcome to Elevva Anuj</span>
+        <span className="hidden sm:block">
+          Welcome to Elevva {user?.fullName}
+        </span>
       </div>
 
       {/* Right */}
@@ -86,8 +90,10 @@ const Header = ({ toggleSidebar }) => {
             <User size={20} />
           </div>
           <div className="hidden md:block">
-            <h4 className="text-dark font-bold mb-0.5">Anuj Yadav</h4>
-            <p className="text-xs text-darkGray dark:text-white">Developer</p>
+            <h4 className="text-dark font-bold mb-0.5">{user?.fullName}</h4>
+            <p className="text-xs text-darkGray dark:text-white">
+              {user?.role?.name}
+            </p>
           </div>
         </div>
 
@@ -96,13 +102,13 @@ const Header = ({ toggleSidebar }) => {
           <div className="absolute right-0 top-full mt-3 w-72 px-6 py-6 font-semibold bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
             <div className="flex flex-col items-center space-y-2">
               <p className="w-10 h-10 flex justify-center items-center text-white text-lg font-bold bg-dark border border-lightGray dark:border-darkGray rounded-full">
-                A
+                {user?.fullName?.charAt(0).toUpperCase()}
               </p>
               <p className="text-xl font-extrabold text-darkGray dark:text-lightGray">
-                Anuj Yadav
+                {user?.fullName}
               </p>
               <p className="text-xs text-darkGray dark:text-lightGray">
-                anuj@gmail.com
+                {user?.email}
               </p>
               <button className="px-4 py-1 bg-lightGray dark:bg-darkGray border border-darkGray dark:border-lightGray rounded-lg">
                 Manage your account

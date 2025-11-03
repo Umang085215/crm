@@ -1,21 +1,10 @@
 import React from "react";
+import { useAuth } from "../auth/AuthContext";
 import DashboardCard from "../components/cards/DashboardCard";
 import img1 from "../assets/adminImages/d1.png";
 import img2 from "../assets/adminImages/d2.png";
 import img3 from "../assets/adminImages/d3.png";
 import img4 from "../assets/adminImages/d4.png";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-} from "recharts";
 import DashboardStats from "../components/cards/DashboardStats";
 
 const products = [
@@ -49,32 +38,18 @@ const products = [
   },
 ];
 
-const pieData = [
-  { name: "Javascript", value: 400 },
-  { name: "React", value: 300 },
-  { name: "Java", value: 250 },
-  { name: "MERN", value: 500 },
-  { name: "Others", value: 200 },
-];
-
-const barData = [
-  { name: "Jan", sales: 4000 },
-  { name: "Feb", sales: 3000 },
-  { name: "Mar", sales: 5000 },
-  { name: "Apr", sales: 4000 },
-  { name: "May", sales: 6000 },
-];
-
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#fb06ab"];
-
 const SuperDashboard = () => {
+  const { user } = useAuth();
+
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
       <h2 className="text-2xl font-semibold  mb-1">Dashboard</h2>
       <div className="flex justify-between items-center bg-black p-6 rounded-md text-white font-golos">
         <div>
-          <h2 className="text-2xl font-semibold mb-1">Welcome Back , Admin</h2>
+          <h2 className="text-2xl font-semibold mb-1">
+            Welcome Back , {user?.fullName}
+          </h2>
           <p>14 New Companies Subscribed Today !!!</p>
         </div>
         <div className="flex gap-2 font-semibold">
@@ -96,7 +71,6 @@ const SuperDashboard = () => {
           color="red"
           isPositive={true}
         />
-
         <DashboardCard
           title="Total Sales"
           value="5468"
@@ -125,9 +99,7 @@ const SuperDashboard = () => {
           isPositive={false}
         />
       </div>
-
       <DashboardStats />
-
       {/* Product Details Table */}
       <div className="border border-lightGray dark:border-darkGray rounded-xl p-4  overflow-x-auto">
         <h2 className="text-xl font-bold mb-4 ">Product Details</h2>

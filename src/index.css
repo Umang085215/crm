@@ -68,6 +68,9 @@ body {
   background-color: var(--lightGray);
   color: #14213d;
 }
+.no-margin {
+  margin: 0 !important;
+}
 
 /* MUI Style */
 

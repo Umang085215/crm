@@ -90,9 +90,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Check } from "lucide-react";
-
 const colorThemes = [
-  { name: "Light", value: "light", dark: "#2b4acb", light: "#e3edff" },
+  { name: "Light", value: "light", dark: "#3538CD", light: "#e3edff" },
   { name: "Dark", value: "dark", dark: "#2b4acb", light: "#fff4e6" },
   {
     name: "Bottle Green",
