@@ -51,11 +51,11 @@ const DashboardStats = () => {
     { name: "Enterprise", value: 20, color: red },
   ];
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-golos">
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
-        <div className="flex justify-between items-center mb-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-golos">
+      <div className="bg-white dark:bg-darkBg border border-lightGray dark:border-darkGray rounded-xl shadow-sm p-4">
+        <div className="flex justify-between items-center mb-6 pb-4 border-b border-lightGray dark:border-darkGray">
           <h2 className="font-semibold text-lg">Companies</h2>
-          <button className="flex items-center text-sm border rounded-md px-2 py-1 text-gray-600">
+          <button className="flex items-center text-sm border rounded-md px-2 py-1 text-gray-600 dark:text-white">
             <Calendar className="w-4 h-4 mr-1" />
             This Week <ChevronDown className="w-4 h-4 ml-1" />
           </button>
@@ -76,20 +76,20 @@ const DashboardStats = () => {
       </div>
 
       {/* Revenue Card */}
-      <div className="cols-span-2 bg-white border border-gray-200 rounded-xl shadow-sm p-4">
-        <div className="flex justify-between items-center mb-4">
+      <div className="cols-span-2 bg-white dark:bg-darkBg border border-lightGray dark:border-darkGray rounded-xl shadow-sm p-4">
+        <div className="flex justify-between items-center mb-6 pb-4 border-b border-lightGray dark:border-darkGray">
           <h2 className="font-semibold text-lg">Revenue</h2>
-          <button className="flex items-center text-sm border rounded-md px-2 py-1 text-gray-600">
+          <button className="flex items-center text-sm border rounded-md px-2 py-1 text-gray-600 dark:text-white">
             <Calendar className="w-4 h-4 mr-1" />
             2025 <ChevronDown className="w-4 h-4 ml-1" />
           </button>
         </div>
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-[1rem] font-bold mb-1">$89,878.58</p>
-            <p className="text-sm ">
-              <span className="text-green-600">↑ </span>
-              40% increased from last year
+            <p className="text-sm font-medium">
+              <span className="text-green-600">↑ 40% </span>
+              increased from last year
             </p>
           </div>
           <p>Revenue</p>
@@ -98,7 +98,16 @@ const DashboardStats = () => {
         <ResponsiveContainer width="100%" height={200}>
           <BarChart data={revenueData}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
-            <XAxis dataKey="month" axisLine={false} tickLine={false} />
+            <XAxis
+              dataKey="month"
+              axisLine={false}
+              tickLine={false}
+              interval={0}
+              tick={{
+                fontSize: 12,
+                fill: "#6B7280",
+              }}
+            />
             <YAxis hide />
             <Tooltip />
             <Bar dataKey="revenue" radius={[10, 10, 0, 0]} fill={red} />
@@ -107,10 +116,10 @@ const DashboardStats = () => {
       </div>
 
       {/* Top Plans Card */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
-        <div className="flex justify-between items-center mb-4">
+      <div className="bg-white dark:bg-darkBg border border-lightGray dark:border-darkGray rounded-xl shadow-sm p-4">
+        <div className="flex justify-between items-center mb-6 pb-4 border-b border-lightGray dark:border-darkGray">
           <h2 className="font-semibold text-lg">Top Plans</h2>
-          <button className="flex items-center text-sm border rounded-md px-2 py-1 text-gray-600">
+          <button className="flex items-center text-sm border rounded-md px-2 py-1 text-gray-600 dark:text-white">
             <Calendar className="w-4 h-4 mr-1" />
             Last 30 Days <ChevronDown className="w-4 h-4 ml-1" />
           </button>
@@ -123,8 +132,8 @@ const DashboardStats = () => {
                 data={plansData}
                 dataKey="value"
                 nameKey="name"
-                innerRadius={60}
-                outerRadius={80}
+                innerRadius={50}
+                outerRadius={90}
                 paddingAngle={2}
               >
                 {plansData.map((entry, index) => (
@@ -142,9 +151,11 @@ const DashboardStats = () => {
                     className="w-3 h-3 rounded-full mr-2"
                     style={{ backgroundColor: plan.color }}
                   ></span>
-                  <span className="text-gray-700 text-sm">{plan.name}</span>
+                  <span className="text-gray-700 dark:text-white text-sm">
+                    {plan.name}
+                  </span>
                 </div>
-                <span className="text-gray-700 text-sm font-medium">
+                <span className="text-gray-700 dark:text-white text-sm font-medium">
                   {plan.value}%
                 </span>
               </div>
@@ -157,3 +168,48 @@ const DashboardStats = () => {
 };
 
 export default DashboardStats;
+
+//  {/* Charts Section */}
+//       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//         {/* Pie Chart */}
+//         <div className="border border-lightGray dark:border-darkGray rounded-xl p-4">
+//           <h2 className="text-xl font-bold mb-4 ">Sales by Category</h2>
+//           <ResponsiveContainer width="100%" height={300}>
+//             <PieChart>
+//               <Pie
+//                 data={pieData}
+//                 dataKey="value"
+//                 nameKey="name"
+//                 cx="50%"
+//                 cy="50%"
+//                 outerRadius={80}
+//                 fill="#8884d8"
+//                 label
+//               >
+//                 {pieData.map((entry, index) => (
+//                   <Cell
+//                     key={`cell-${index}`}
+//                     fill={COLORS[index % COLORS.length]}
+//                   />
+//                 ))}
+//               </Pie>
+//               <Tooltip />
+//               <Legend />
+//             </PieChart>
+//           </ResponsiveContainer>
+//         </div>
+
+//         {/* Bar Chart */}
+//         <div className="border border-lightGray dark:border-darkGray rounded-xl p-4 ">
+//           <h2 className="text-xl font-bold mb-4">Monthly Sales</h2>
+//           <ResponsiveContainer width="100%" height={300}>
+//             <BarChart data={barData}>
+//               <XAxis dataKey="name" />
+//               <YAxis />
+//               <Tooltip />
+//               <Legend />
+//               <Bar dataKey="sales" fill="#fb6506" />
+//             </BarChart>
+//           </ResponsiveContainer>
+//         </div>
+//       </div>

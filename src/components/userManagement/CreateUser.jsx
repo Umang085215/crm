@@ -4,7 +4,7 @@ import { useAuth } from "../../auth/AuthContext";
 import Button from "../buttons/Button";
 import Input from "../formInput/Input";
 import * as yup from "yup";
-import { ArrowLeft, Plus, Save, Eye, EyeOff, User } from "lucide-react";
+import { ArrowLeft, Upload, Save, Eye, EyeOff, User } from "lucide-react";
 
 // Validation schema
 const schema = yup.object().shape({
@@ -54,7 +54,7 @@ export default function UserManagement() {
     zipCode: "",
     role: "",
     about: "",
-    profileImage: "",
+    profileImage: null,
     status: "Active",
     sendEmail: "true",
   });
@@ -66,9 +66,7 @@ export default function UserManagement() {
   const [states, setStates] = useState([]);
   const [fullCountryData, setFullCountryData] = useState([]);
   const [loadingCountries, setLoadingCountries] = useState(false);
-  const [profilePreview, setProfilePreview] = useState(
-    "https://demo.bizcompass.app/static/media/staff-home-1.64454c1ed01404b6d0df.png"
-  );
+  const [profilePreview, setProfilePreview] = useState(null);
 
   useEffect(() => {
     getAllCountries();
@@ -149,6 +147,33 @@ export default function UserManagement() {
       reader.readAsDataURL(file);
       setFormData((prev) => ({ ...prev, profileImage: file }));
       setErrors((prev) => ({ ...prev, profileImage: "" }));
+    }
+  };
+  // Updated
+  const handleProfileImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!["image/jpeg", "image/jpg", "image/png"].includes(file.type)) {
+        setErrors((prev) => ({
+          ...prev,
+          profileImage: "Allowed formats: jpeg, jpg, png",
+        }));
+        return;
+      } else if (file.size > 2 * 1024 * 1024) {
+        setErrors((prev) => ({
+          ...prev,
+          profileImage: "Max file size is 2 MB",
+        }));
+        return;
+      } else {
+        setErrors((prev) => ({ ...prev, profileImage: "" }));
+      }
+
+      setFormData((prev) => ({ ...prev, profileImage: file }));
+
+      const reader = new FileReader();
+      reader.onloadend = () => setProfilePreview(reader.result);
+      reader.readAsDataURL(file);
     }
   };
   // Handle Status toggle
@@ -254,27 +279,49 @@ export default function UserManagement() {
       >
         {/* User Profile */}
         <div className="p-6 flex flex-col items-center gap-4 border border-lightGray dark:border-darkGray rounded-xl">
-          <div className="relative w-36 h-36">
-            <img
-              src={profilePreview}
-              alt="Profile"
-              className="w-full h-full rounded-full object-contain border border-gray-300"
-            />
+          {/* Profile Image Upload */}
+          <div className="flex flex-col items-center  rounded-md space-y-2 col-span-2">
+            <div
+              className={`border rounded-full p-1 ${
+                errors.profileImage
+                  ? "border-red-500"
+                  : "border-lightGray dark:border-darkGray"
+              }`}
+            >
+              <div
+                className={`w-28 h-28 bg-gray-100 rounded-full overflow-hidden border border-lightGray dark:border-darkGray flex items-center justify-center text-gray-400`}
+              >
+                {profilePreview ? (
+                  <img
+                    src={profilePreview}
+                    alt="User Profile Preview"
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <User size={40} />
+                )}
+              </div>
+            </div>
 
-            <label className="absolute w-8 h-8 flex justify-center items-center bottom-0 right-5 bg-dark text-white px-2 py-1 rounded-md cursor-pointer hover:bg-light hover:text-dark">
-              <Plus size={24} />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
+            <label
+              htmlFor="profileImage"
+              className="flex gap-2 items-center cursor-pointer bg-dark text-white px-2 py-2 rounded text-sm"
+            >
+              <Upload size={18} />
+              Upload Image
             </label>
+            <input
+              id="profileImage"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleProfileImageChange}
+            />
           </div>
           <p
             className={`text-center  ${
               errors.profileImage ? "text-red-600" : "text-[#605e5e]"
-            } my-2`}
+            } mb-2`}
           >
             Allowed *.jpeg, *.jpg, *.png, <br /> max size of 1 Mb{" "}
           </p>
@@ -308,7 +355,6 @@ export default function UserManagement() {
         </div>
         {/* User Form */}
         <div className=" rounded-xl p-6 border border-lightGray dark:border-darkGray">
-          {/* <h3 className="text-lg font-semibold mb-4">Create New User</h3> */}
           <div className="grid grid-cols-2 gap-4">
             <Input
               id="user_name"

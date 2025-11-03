@@ -81,9 +81,9 @@ const UserList = () => {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`relative px-4 py-2 font-semibold transition-colors duration-300 ${
+              className={`relative px-4 py-2  transition-colors duration-300 ${
                 activeTab === tab
-                  ? "text-dark border-b-2 border-dark"
+                  ? "text-dark border-b-2 border-dark font-semibold"
                   : "text-gray-500 hover:text-dark"
               }`}
             >

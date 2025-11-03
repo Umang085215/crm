@@ -69,7 +69,7 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#fb06ab"];
 
 const SuperDashboard = () => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Stats Cards */}
       <h2 className="text-2xl font-semibold  mb-1">Dashboard</h2>
       <div className="flex justify-between items-center bg-black p-6 rounded-md text-white font-golos">
@@ -77,23 +77,16 @@ const SuperDashboard = () => {
           <h2 className="text-2xl font-semibold mb-1">Welcome Back , Admin</h2>
           <p>14 New Companies Subscribed Today !!!</p>
         </div>
-        <div className="flex gap-2">
-          <button className="bg-white text-black p-1 rounded-md">
+        <div className="flex gap-2 font-semibold">
+          <button className="bg-dark text-white px-2 py-1 rounded-md">
             Companies
           </button>
-          <button className="bg-white text-black p-1 rounded-md">
+          <button className="bg-white text-black px-2 py-1 rounded-md">
             All Packages
           </button>
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {/* <DashboardCard
-          title="Total Orders"
-          value="2.5K"
-          ratio="10% Increase"
-          img={img1}
-          color="green"
-        /> */}
         <DashboardCard
           title="Total Companies"
           value="5468"
@@ -134,51 +127,6 @@ const SuperDashboard = () => {
       </div>
 
       <DashboardStats />
-
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Pie Chart */}
-        <div className="border border-lightGray dark:border-darkGray rounded-xl p-4">
-          <h2 className="text-xl font-bold mb-4 ">Sales by Category</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#8884d8"
-                label
-              >
-                {pieData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Bar Chart */}
-        <div className="border border-lightGray dark:border-darkGray rounded-xl p-4 ">
-          <h2 className="text-xl font-bold mb-4">Monthly Sales</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={barData}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="sales" fill="#fb6506" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
 
       {/* Product Details Table */}
       <div className="border border-lightGray dark:border-darkGray rounded-xl p-4  overflow-x-auto">

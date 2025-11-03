@@ -64,7 +64,7 @@ const DashboardCard = ({
   return (
     <div className="relative bg-white dark:bg-darkBg font-golos rounded-lg shadow-sm border border-lightGray dark:border-darkGray p-5 flex justify-between items-center transition hover:shadow-md duration-300">
       <div
-        className={`absolute top-0 left-0 w-4 h-4 ${c.accent} rounded-br-[12px]`}
+        className={`absolute top-0 left-0 w-5 h-5 ${c.accent} rounded-br-[12px] rounded-tl-lg`}
       ></div>
       <div className="flex flex-col justify-between h-full">
         <div>

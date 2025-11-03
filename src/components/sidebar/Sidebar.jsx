@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { ChevronDown, Settings, LayoutDashboard, X } from "lucide-react";
+import {
+  ChevronDown,
+  Settings,
+  LayoutDashboard,
+  X,
+  Users,
+  UserSearch,
+} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { AiOutlineDashboard } from "react-icons/ai";
@@ -14,7 +21,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   const dashboardPath =
     role === "superadmin" ? "/admin/super-dashboard" : "/dashboard";
 
-  // 👇 Updated navigation layout
   const navSections = [
     {
       section: "MAIN MENU",
@@ -34,7 +40,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           module: "Users",
           path: "/admin/usermanagement/users",
           label: "Manage Users",
-          icon: <AiOutlineDashboard size={16} />,
+          icon: <Users size={16} />,
         },
         {
           module: "Roles",
