@@ -205,10 +205,7 @@ export default function UserManagement() {
           body: JSON.stringify(payload),
         }
       );
-
       const data = await res.json();
-      console.log("Response:", data);
-
       if (!res.ok) {
         throw new Error(data.message || "Failed to register user");
       }
