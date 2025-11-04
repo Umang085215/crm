@@ -4,7 +4,7 @@ import * as yup from "yup";
 import { FaGoogle, FaFacebookF, FaTwitter } from "react-icons/fa";
 import { Mail, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
-import Input from "../components/formInput/Input";
+import Input from "../components/ui/Input";
 import loginbg from "../assets/adminImages/logo/loginBg.jpg";
 import logo from "../assets/adminImages/logo/logo.png";
 import googleLogo from "../assets/adminImages/logo/google-logo.svg";
@@ -87,7 +87,7 @@ export default function Login() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen bg-gray-50 dark:bg-gray-900 p-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen bg-white dark:bg-gray-900 p-3">
       {/* Left Column - Login Form */}
       <div className="flex flex-col justify-center items-center px-6">
         <div className="flex items-center gap-2 mb-6">
@@ -114,7 +114,7 @@ export default function Login() {
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2 sm:mb-0">
                 Login
               </h2>
-              <p className="text-gray-500 mt-2">
+              <p className="text-gray-500 text-md mt-2">
                 Login to access the Elevva CRM
               </p>
             </div>

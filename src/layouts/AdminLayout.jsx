@@ -134,13 +134,12 @@
 
 // export default AdminLayout;
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import Header from "../components/header/Header";
-import Sidebar from "../components/sidebar/Sidebar";
-import Themes from "../components/themes/Themes";
-import "../styles/style.css";
-import Footer from "../components/footer/Footer";
+import Header from "../components/layouts/Header";
+import Sidebar from "../components/layouts/Sidebar";
+import "../assets/styles/style.css";
+import Footer from "../components/layouts/Footer";
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);

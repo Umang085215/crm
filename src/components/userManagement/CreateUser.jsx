@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
-import Button from "../buttons/Button";
-import Input from "../formInput/Input";
+import Button from "../ui/Button";
+import Input from "../ui/Input";
 import * as yup from "yup";
 import { ArrowLeft, Upload, Save, Eye, EyeOff, User } from "lucide-react";
 
 // Validation schema
 const schema = yup.object().shape({
-  name: yup.string().required("Name is required"),
+  fullName: yup.string().required("Name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
   password: yup
     .string()
@@ -19,7 +19,7 @@ const schema = yup.object().shape({
     .string()
     .matches(/^\d+$/, "Phone must contain only numbers")
     .required("Phone is required"),
-  zipCode: yup
+  zipcode: yup
     .string()
     .matches(/^\d+$/, "Zip Code must contain only numbers")
     .required("Zip Code is required"),
@@ -43,7 +43,7 @@ const schema = yup.object().shape({
 export default function UserManagement() {
   const { token } = useAuth();
   const [formData, setFormData] = useState({
-    name: "",
+    fullName: "",
     email: "",
     password: "",
     phone: "",
@@ -51,12 +51,12 @@ export default function UserManagement() {
     address: "",
     country: "",
     state: "",
-    zipCode: "",
+    zipcode: "",
     role: "",
     about: "",
     profileImage: null,
     status: "Active",
-    sendEmail: "true",
+    sendWelcomeEmail: "true",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
@@ -122,7 +122,7 @@ export default function UserManagement() {
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "phone" || name === "zipCode") {
+    if (name === "phone" || name === "zipcode") {
       const digits = value.replace(/\D/g, "");
       if (value !== digits) {
         setErrors((prev) => ({
@@ -170,6 +170,7 @@ export default function UserManagement() {
   const handleStatusToggle = (status) => {
     setFormData((prev) => ({ ...prev, status }));
   };
+
   // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -178,23 +179,43 @@ export default function UserManagement() {
     setSuccessMsg("");
     try {
       await schema.validate(formData, { abortEarly: false });
-      const fd = new FormData();
-      Object.keys(formData).forEach((key) => fd.append(key, formData[key]));
-      console.log("===== Form Data Submitted =====");
-      for (let [key, value] of fd.entries()) console.log(`${key}:`, value);
-      setSuccessMsg("Form submitted successfully! (No API call made)");
-      // const res = await fetch("http://localhost:5000/api/users", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      //   body: JSON.stringify(formData),
-      // });
-      // const data = await res.json();
-      // if (!res.ok) throw new Error(data.message || "Failed to create user");
+      const payload = {
+        fullName: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+        role: formData.role,
+        dob: formData.dob,
+        country: formData.country,
+        state: formData.state,
+        address: formData.address,
+        zipcode: formData.zipcode,
+        status: formData.status,
+        about: formData.about,
+        sendWelcomeEmail: formData.sendWelcomeEmail,
+      };
+      const res = await fetch(
+        "http://crm-backend-qbz0.onrender.com/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const data = await res.json();
+      console.log("Response:", data);
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to register user");
+      }
+
+      setSuccessMsg("User registered successfully!");
       setFormData({
-        name: "",
+        fullName: "",
         email: "",
         password: "",
         phone: "",
@@ -202,17 +223,15 @@ export default function UserManagement() {
         address: "",
         country: "",
         state: "",
-        zipCode: "",
+        zipcode: "",
         role: "",
         about: "",
-        profileImage: "",
-        status: "InActive",
+        profileImage: null,
+        status: "Active",
+        sendWelcomeEmail: true,
       });
-      setProfilePreview(
-        "https://demo.bizcompass.app/static/media/staff-home-1.64454c1ed01404b6d0df.png"
-      );
+      setProfilePreview(null);
       setStates([]);
-      setSuccessMsg("User created successfully!");
     } catch (err) {
       if (err.inner) {
         const validationErrors = {};
@@ -223,6 +242,7 @@ export default function UserManagement() {
       }
     }
   };
+
   // hide/show password
   const togglePassword = () => {
     setShowPassword(!showPassword);
@@ -317,15 +337,15 @@ export default function UserManagement() {
             Allowed *.jpeg, *.jpg, *.png, <br /> max size of 1 Mb{" "}
           </p>
           {/* Status Toggle */}
-          <div className="col-span-2 flex justify-center">
-            <div className="w-64 flex border rounded-full p-1 bg-gray-200">
+          <div className="flex justify-center">
+            <div className="flex items-center bg-gray-100 border border-gray-300 rounded-full p-1">
               <button
                 type="button"
                 onClick={() => handleStatusToggle("Active")}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full transition-all duration-200 ${
+                className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-300 ${
                   formData.status === "Active"
-                    ? "bg-green-700 text-white"
-                    : "text-green-700"
+                    ? "bg-green-600 text-white shadow-sm"
+                    : "text-gray-600 hover:bg-green-50"
                 }`}
               >
                 Active
@@ -333,10 +353,10 @@ export default function UserManagement() {
               <button
                 type="button"
                 onClick={() => handleStatusToggle("InActive")}
-                className={` flex-1 flex items-center justify-center gap-2 py-2 rounded-full transition-all duration-200 ${
+                className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-300 ${
                   formData.status === "InActive"
-                    ? "bg-red-700 text-white"
-                    : "text-red-700"
+                    ? "bg-red-600 text-white shadow-sm"
+                    : "text-gray-600 hover:bg-red-50"
                 }`}
               >
                 Inactive
@@ -350,8 +370,8 @@ export default function UserManagement() {
             <Input
               id="user_name"
               type="text"
-              name="name"
-              value={formData.name}
+              name="fullName"
+              value={formData.fullName}
               handleChange={handleChange}
               className="col-span-2 md:col-span-1"
               errors={errors}
@@ -539,8 +559,8 @@ export default function UserManagement() {
             <Input
               id="user_zipcode"
               type="text"
-              name="zipCode"
-              value={formData.zipCode}
+              name="zipcode"
+              value={formData.zipcode}
               handleChange={handleChange}
               className="col-span-2 md:col-span-1"
               errors={errors}
@@ -584,9 +604,12 @@ export default function UserManagement() {
                 id="terms"
                 type="checkbox"
                 name="terms"
-                checked={formData.sendEmail}
+                checked={formData.sendWelcomeEmail}
                 onChange={(e) =>
-                  setFormData({ ...formData, sendEmail: e.target.checked })
+                  setFormData({
+                    ...formData,
+                    sendWelcomeEmail: e.target.checked,
+                  })
                 }
                 className="mt-1 w-4 h-4 border rounded focus:ring-none  cursor-pointer"
               />

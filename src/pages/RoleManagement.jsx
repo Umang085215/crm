@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import * as yup from "yup";
 import { useAuth } from "../auth/AuthContext";
-import Button from "../components/buttons/Button";
-import Input from "../components/formInput/Input";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 import { Save } from "lucide-react";
 const ALL_MODULES = [
   {

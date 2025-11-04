@@ -45,7 +45,7 @@ const SuperDashboard = () => {
     <div className="space-y-6">
       {/* Stats Cards */}
       <h2 className="text-2xl font-semibold  mb-1">Dashboard</h2>
-      <div className="flex justify-between items-center bg-black p-6 rounded-md text-white font-golos">
+      <div className="flex justify-between items-center bg-[#31415f] p-6 rounded-md text-white font-golos">
         <div>
           <h2 className="text-2xl font-semibold mb-1">
             Welcome Back , {user?.fullName}

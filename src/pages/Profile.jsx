@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Save } from "lucide-react";
-import Button from "../components/buttons/Button";
-import Input from "../components/formInput/Input";
-import SelectField from "../components/formInput/SelectField";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
+import SelectField from "../components/ui/SelectField";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker?worker";
 import * as yup from "yup";
@@ -48,12 +48,6 @@ const ProfileSubmission = () => {
   const [errors, setErrors] = useState({});
   const [successMsg, setSuccessMsg] = useState("");
 
-  // Handle input change
-  // const handleChange = (e) => {
-  //   setFormData({ ...formData, [e.target.name]: e.target.value });
-  // };
-
-  // Handle input change with CTC formatting
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "currentCTC" || name === "expectedCTC") {

@@ -14,8 +14,7 @@ import {
 import { ChevronDown, Calendar } from "lucide-react";
 
 const red = "#E21E0F";
-const lightGray = "#F5F5F5";
-const blue = "#1E64F0";
+const blue = "#2d7dfa";
 const yellow = "#F6A400";
 
 const DashboardStats = () => {
@@ -65,7 +64,7 @@ const DashboardStats = () => {
           <BarChart data={companiesData}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis dataKey="day" axisLine={false} tickLine={false} />
-            <Bar dataKey="value" radius={[10, 10, 0, 0]} fill={red} />
+            <Bar dataKey="value" radius={[10, 10, 0, 0]} fill={blue} />
           </BarChart>
         </ResponsiveContainer>
 
@@ -110,7 +109,7 @@ const DashboardStats = () => {
             />
             <YAxis hide />
             <Tooltip />
-            <Bar dataKey="revenue" radius={[10, 10, 0, 0]} fill={red} />
+            <Bar dataKey="revenue" radius={[10, 10, 0, 0]} fill={blue} />
           </BarChart>
         </ResponsiveContainer>
       </div>

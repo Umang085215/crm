@@ -69,9 +69,10 @@ const Header = ({ toggleSidebar }) => {
         >
           <Menu size={20} />
         </button>
-        <span className="hidden sm:block">
-          Welcome to Elevva {user?.fullName}
-        </span>
+        <div className="hidden sm:block ">
+          Welcome to Elevva{" "}
+          <span className="text-dark font-semibold"> {user?.fullName}</span>
+        </div>
       </div>
 
       {/* Right */}
@@ -91,7 +92,7 @@ const Header = ({ toggleSidebar }) => {
           </div>
           <div className="hidden md:block">
             <h4 className="text-dark font-bold mb-0.5">{user?.fullName}</h4>
-            <p className="text-xs text-darkGray dark:text-white">
+            <p className="text-xs text-center text-darkGray dark:text-white">
               {user?.role?.name}
             </p>
           </div>

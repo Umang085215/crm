@@ -283,7 +283,6 @@ const App = () => {
 
       {/* Private routes with layout */}
       <Route element={<AdminLayout />}>
-        {/* Super Admin Dashboard */}
         <Route
           path="/admin/super-dashboard"
           element={
@@ -293,19 +292,15 @@ const App = () => {
           }
         />
 
-        {/* General Dashboard */}
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute
-            // allowedRoles={["admin", "manager", "sales", "user"]}
-            >
+            <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
           }
         />
 
-        {/* Reports */}
         <Route
           path="/admin/reports"
           element={
@@ -348,19 +343,15 @@ const App = () => {
           }
         />
 
-        {/* Settings */}
         <Route
           path="/admin/settings"
           element={
-            <ProtectedRoute
-            // allowedModules={["settings"]}
-            >
+            <ProtectedRoute>
               <Settings />
             </ProtectedRoute>
           }
         />
 
-        {/* Profile */}
         <Route
           path="/admin/profile-add"
           element={
@@ -370,7 +361,6 @@ const App = () => {
           }
         />
 
-        {/* Role Management */}
         <Route
           path="/admin/usermanagement/roles"
           element={
@@ -380,7 +370,6 @@ const App = () => {
           }
         />
 
-        {/* User Management */}
         <Route
           path="/admin/usermanagement/users"
           element={
