@@ -55,7 +55,7 @@ export default function UserManagement() {
     role: "",
     about: "",
     profileImage: null,
-    status: "Active",
+    status: "active",
     sendWelcomeEmail: "true",
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -195,7 +195,7 @@ export default function UserManagement() {
         sendWelcomeEmail: formData.sendWelcomeEmail,
       };
       const res = await fetch(
-        "http://crm-backend-qbz0.onrender.com/api/auth/register",
+        "https://crm-backend-qbz0.onrender.com/api/auth/register",
         {
           method: "POST",
           headers: {
@@ -227,7 +227,7 @@ export default function UserManagement() {
         role: "",
         about: "",
         profileImage: null,
-        status: "Active",
+        status: "active",
         sendWelcomeEmail: true,
       });
       setProfilePreview(null);
@@ -341,9 +341,9 @@ export default function UserManagement() {
             <div className="flex items-center bg-gray-100 border border-gray-300 rounded-full p-1">
               <button
                 type="button"
-                onClick={() => handleStatusToggle("Active")}
+                onClick={() => handleStatusToggle("active")}
                 className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-300 ${
-                  formData.status === "Active"
+                  formData.status === "active"
                     ? "bg-green-600 text-white shadow-sm"
                     : "text-gray-600 hover:bg-green-50"
                 }`}
@@ -352,9 +352,9 @@ export default function UserManagement() {
               </button>
               <button
                 type="button"
-                onClick={() => handleStatusToggle("InActive")}
+                onClick={() => handleStatusToggle("inactive")}
                 className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-300 ${
-                  formData.status === "InActive"
+                  formData.status === "inactive"
                     ? "bg-red-600 text-white shadow-sm"
                     : "text-gray-600 hover:bg-red-50"
                 }`}
