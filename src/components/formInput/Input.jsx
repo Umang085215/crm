@@ -51,7 +51,6 @@
 // export default Input;
 
 import React from "react";
-
 const Input = ({
   type = "text",
   id,
@@ -61,7 +60,7 @@ const Input = ({
   errors = {},
   labelName,
   className = "",
-  icon = null, // 👈 new prop for right-side icon
+  icon = null,
 }) => {
   const hasError = errors[name];
 

@@ -113,7 +113,7 @@ const LightDarkMode = ({ onToggle }) => {
     html.classList.add(theme);
 
     const themeSettings = {
-      light: { light: "#e3edff", dark: "#2b4acb" },
+      light: { light: "#e3edff", dark: "#2d7dfa" },
       dark: { light: "#fff4e6", dark: "#2b4acb" },
       bottelGreen: { light: "#b2f1e89c", dark: "#007672" },
       blue: { light: "#d2e0fa", dark: "#2b4acb" },

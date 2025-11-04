@@ -367,34 +367,36 @@ export default function UserManagement() {
               errors={errors}
               labelName="Email"
             />
-            <div className="relative">
-              <Input
-                id="user_password"
-                type={`${showPassword ? "text" : "password"}`}
-                name="password"
-                value={formData.password}
-                handleChange={handleChange}
-                className="col-span-2 md:col-span-1"
-                errors={errors}
-                labelName="Password"
-              />
-              <div
-                className={`flex gap-2 absolute  right-3 top-1/2 ${
-                  errors.password ? "-translate-y-[100%]" : "-translate-y-1/2"
-                }  cursor-pointer text-darkGray`}
-              >
+            <div className="col-span-2 md:col-span-1 flex items-center gap-2">
+              <div className="relative w-full">
+                <Input
+                  id="user_password"
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  handleChange={handleChange}
+                  errors={errors}
+                  labelName="Password"
+                  icon={
+                    <span
+                      onClick={togglePassword}
+                      className="cursor-pointer   z-20 relative"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </span>
+                  }
+                />
+
                 <button
                   type="button"
                   onClick={generatePassword}
-                  className="bg-light text-xs font-medium text-dark p-1 rounded whitespace-nowrap"
+                  className="absolute right-10 top-4 bg-light text-xs font-medium text-dark py-[2px] px-[6px] rounded whitespace-nowrap z-10"
                 >
                   Generate
                 </button>
-                <span onClick={togglePassword}>
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </span>
               </div>
             </div>
+
             <Input
               id="user_phone"
               type="tel"

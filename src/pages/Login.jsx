@@ -96,7 +96,7 @@ export default function Login() {
         </div>
 
         {/* Login  */}
-        <div className="w-full rounded-xl p-10 border border-gary-300 ">
+        <div className="w-full rounded-xl p-12 border border-gary-300 ">
           {successMsg && (
             <p className="mb-3 p-3 rounded-md bg-green-100 text-green-700 border border-green-300 text-sm text-center">
               {successMsg}
