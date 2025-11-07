@@ -262,6 +262,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import PublicRoute from "./components/auth/PublicRoute";
 import Dashboard from "./pages/Dashboard";
 import RoleManagement from "./pages/RoleManagement";
 import UserManagement from "./pages/UserManagement";
@@ -272,13 +273,23 @@ import Home from "./pages/Home";
 import CreateUser from "./components/userManagement/CreateUser";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
+import CreateRole from "./components/roleManagement/CreateRole";
+import EditRole from "./components/roleManagement/EditRole";
+import EditUser from "./components/userManagement/EditUser";
 
 const App = () => {
   return (
     <Routes>
       {/* Public routes */}
       <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
       <Route path="/unauthorized" element={<div>Access Denied</div>} />
 
       {/* Private routes with layout */}
@@ -362,10 +373,26 @@ const App = () => {
         />
 
         <Route
-          path="/admin/usermanagement/roles"
+          path="/admin/rolemanagement/roles"
           element={
             <ProtectedRoute allowedModules={["roles"]}>
               <RoleManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/rolemanagement/create-roles"
+          element={
+            <ProtectedRoute allowedModules={["roles"]}>
+              <CreateRole />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/rolemanagement/edit-roles/:id"
+          element={
+            <ProtectedRoute allowedModules={["roles"]}>
+              <EditRole />
             </ProtectedRoute>
           }
         />
@@ -383,6 +410,14 @@ const App = () => {
           element={
             <ProtectedRoute allowedModules={["users"]}>
               <CreateUser />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/usermanagement/edit-user/:id"
+          element={
+            <ProtectedRoute allowedModules={["users"]}>
+              <EditUser />
             </ProtectedRoute>
           }
         />

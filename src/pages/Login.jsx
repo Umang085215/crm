@@ -40,7 +40,6 @@ export default function Login() {
     setErrorMsg("");
     setSuccessMsg("");
     setLoading(true);
-
     try {
       await schema.validate(formdata, { abortEarly: false });
 

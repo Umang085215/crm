@@ -1,0 +1,367 @@
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Save } from "lucide-react";
+import img1 from "../../assets/adminImages/logo/loginBg.jpg";
+import * as yup from "yup";
+
+const schema = yup.object().shape({
+  name: yup.string().trim().required("Role name is required"),
+  description: yup
+    .string()
+    .trim()
+    .min(5, "Description should have at least 5 characters")
+    .required("Description is required"),
+});
+
+const EditRole = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  const [role, setRole] = useState({ name: "", description: "" });
+  const [errors, setErrors] = useState({});
+  const [permissions, setPermissions] = useState([]);
+  const [selected, setSelected] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  // ✅ Fetch role details
+  useEffect(() => {
+    const fetchRole = async () => {
+      try {
+        const res = await fetch(
+          `https://crm-backend-qbz0.onrender.com/api/roles/${id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const data = await res.json();
+
+        if (data?.role) {
+          setRole(data.role);
+
+          const selectedMap = {};
+          data.role.permissions?.forEach((perm) => {
+            if (!selectedMap[perm.resource]) {
+              selectedMap[perm.resource] = {
+                create: false,
+                read: false,
+                update: false,
+                delete: false,
+                manage: false,
+              };
+            }
+
+            // ✅ Handle "manage" correctly — covers all
+            if (perm.action === "manage") {
+              selectedMap[perm.resource] = {
+                create: true,
+                read: true,
+                update: true,
+                delete: true,
+                manage: true,
+              };
+            } else {
+              selectedMap[perm.resource][perm.action] = true;
+            }
+          });
+
+          setSelected(selectedMap);
+        }
+      } catch (err) {
+        console.error("Error fetching role:", err);
+      }
+    };
+    fetchRole();
+  }, [id, token]);
+
+  // ✅ Fetch all available permissions
+  useEffect(() => {
+    const fetchPermissions = async () => {
+      try {
+        const res = await fetch(
+          "https://crm-backend-qbz0.onrender.com/api/roles/permissions/all",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const data = await res.json();
+        if (data?.permissions) setPermissions(data.permissions);
+      } catch (err) {
+        console.error("Error fetching permissions:", err);
+      }
+    };
+    fetchPermissions();
+  }, [token]);
+
+  // ✅ Group by module/resource
+  const groupedModules = [...new Set(permissions.map((p) => p.resource))];
+
+  // ✅ Handle toggle per action
+  const handleToggle = (module, action) => {
+    setSelected((prev) => {
+      const prevModule = prev[module] || {
+        create: false,
+        read: false,
+        update: false,
+        delete: false,
+        manage: false,
+      };
+
+      const updated = {
+        ...prevModule,
+        [action]: !prevModule[action],
+      };
+
+      // ✅ If all CRUD are true, mark manage true
+      updated.manage =
+        updated.create && updated.read && updated.update && updated.delete;
+
+      return { ...prev, [module]: updated };
+    });
+  };
+
+  // ✅ Handle "Allow All"
+  const handleAllowAll = (module) => {
+    setSelected((prev) => {
+      const prevModule = prev[module] || {
+        create: false,
+        read: false,
+        update: false,
+        delete: false,
+        manage: false,
+      };
+      const allSelected =
+        prevModule.create &&
+        prevModule.read &&
+        prevModule.update &&
+        prevModule.delete &&
+        prevModule.manage;
+
+      const newVal = !allSelected;
+
+      return {
+        ...prev,
+        [module]: {
+          create: newVal,
+          read: newVal,
+          update: newVal,
+          delete: newVal,
+          manage: newVal,
+        },
+      };
+    });
+  };
+
+  // ✅ Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setRole((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  // ✅ Save role
+  const handleSave = async () => {
+    setLoading(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    try {
+      await schema.validate(role, { abortEarly: false });
+
+      // ✅ Collect selected permissions
+      const selectedPermissions = [];
+      permissions.forEach((perm) => {
+        const mod = selected[perm.resource];
+        if (!mod) return;
+
+        if (mod.manage && perm.action === "manage") {
+          selectedPermissions.push(perm._id);
+        } else if (!mod.manage && mod[perm.action]) {
+          selectedPermissions.push(perm._id);
+        }
+      });
+
+      const payload = {
+        name: role.name,
+        description: role.description,
+        permissions: selectedPermissions,
+        isActive: true,
+      };
+
+      const res = await fetch(
+        `https://crm-backend-qbz0.onrender.com/api/roles/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok) {
+        setErrorMsg(data?.message || "Failed to update role.");
+        return;
+      }
+
+      setSuccessMsg("Role updated successfully!");
+      // setTimeout(() => navigate("/admin/rolemanagement/roles"), 1500);
+    } catch (error) {
+      if (error.inner) {
+        const validationErrors = {};
+        error.inner.forEach(
+          (err) => (validationErrors[err.path] = err.message)
+        );
+        setErrors(validationErrors);
+      } else {
+        console.error("Error updating role:", error);
+      }
+    } finally {
+      setLoading(false);
+      setTimeout(() => {
+        setSuccessMsg("");
+        setErrorMsg("");
+      }, 6000);
+    }
+  };
+
+  if (!role) return <p>Loading...</p>;
+
+  return (
+    <div className="space-y-6">
+      {errorMsg && (
+        <div className="mb-4 p-2 bg-red-100 text-center text-red-700 rounded">
+          {errorMsg}
+        </div>
+      )}
+      {successMsg && (
+        <div className="mb-4 p-2 bg-green-100 text-center text-green-700 rounded">
+          {successMsg}
+        </div>
+      )}
+
+      {/* Role Details */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="col-span-2 p-6 bg-white dark:bg-darkBg border border-lightGray dark:border-darkGray rounded-lg">
+          <h2 className="text-2xl font-semibold mb-4">Edit Role</h2>
+
+          <div className="grid grid-cols-1 gap-4">
+            {/* Role Name */}
+            <div>
+              <label className="block font-medium mb-1">Role Name</label>
+              <input
+                type="text"
+                name="name"
+                value={role.name || ""}
+                onChange={handleChange}
+                className={`w-full p-2 border ${
+                  errors.name ? "border-red-500" : "border-lightGray"
+                } rounded-md focus:outline-none focus:border-gray-500 dark:bg-darkGray dark:text-white`}
+              />
+              {errors.name && (
+                <p className="text-red-600 text-sm mt-1 font-medium">
+                  {errors.name}
+                </p>
+              )}
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block font-medium mb-1">Description</label>
+              <textarea
+                name="description"
+                value={role.description || ""}
+                onChange={handleChange}
+                className={`w-full p-2 border ${
+                  errors.description ? "border-red-500" : "border-lightGray"
+                } rounded-md focus:outline-none focus:border-gray-500 dark:bg-darkGray dark:text-white`}
+                rows="1"
+              />
+              {errors.description && (
+                <p className="text-red-600 text-sm mt-1 font-medium">
+                  {errors.description}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="p-2 bg-white dark:bg-darkBg border border-lightGray dark:border-darkGray rounded-lg">
+          <img src={img1} alt="image" className="object-contain rounded-lg" />
+        </div>
+      </div>
+
+      {/* Permissions Table */}
+      <div className="bg-white dark:bg-darkBg rounded-lg shadow-md border">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-sm">
+            <thead className="bg-gray-100 dark:bg-gray-800">
+              <tr>
+                <th className="border p-3 text-left">Modules</th>
+                <th className="border p-3 text-center">
+                  Create <br />
+                  <small>able to add new data</small>
+                </th>
+                <th className="border p-3 text-center">
+                  Read <br />
+                  <small>able to view data only</small>
+                </th>
+                <th className="border p-3 text-center">
+                  Update
+                  <br /> <small>able to modify existing data</small>
+                </th>
+                <th className="border p-3 text-center">
+                  Delete <br /> <small>able to delete data</small>
+                </th>
+                <th className="border p-3 text-center">
+                  Allow All <br /> <small>able to access all Crud</small>
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {groupedModules.map((module) => (
+                <tr key={module} className="border-b hover:bg-gray-50">
+                  <td className="border p-3 font-medium capitalize">
+                    {module}
+                  </td>
+                  {["create", "read", "update", "delete"].map((action) => (
+                    <td key={action} className="border text-center">
+                      <input
+                        type="checkbox"
+                        checked={selected[module]?.[action] || false}
+                        onChange={() => handleToggle(module, action)}
+                      />
+                    </td>
+                  ))}
+                  <td className="border text-center">
+                    <input
+                      type="checkbox"
+                      onChange={() => handleAllowAll(module)}
+                      checked={selected[module]?.manage || false}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="flex justify-end border-t px-6 py-4 bg-gray-50">
+          <button
+            onClick={handleSave}
+            disabled={loading}
+            className={`flex items-center gap-2 bg-dark text-white font-medium px-4 py-2 rounded-md transition ${
+              loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"
+            }`}
+          >
+            <Save size={18} />
+            <span>{loading ? "Saving..." : "Save"}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default EditRole;

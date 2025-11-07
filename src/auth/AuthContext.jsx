@@ -199,10 +199,7 @@
 // export const useAuth = () => useContext(AuthContext);
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-
 const AuthContext = createContext();
-
-// 🔹 Temporary permission ID → module mapping
 const PERMISSION_MAP = {
   "6902f14821ac553ab13fa9a5": "dashboard",
   "6902f14821ac553ab13fa9a6": "users",
@@ -227,8 +224,6 @@ export const AuthProvider = ({ children }) => {
   const [modules, setModules] = useState(
     JSON.parse(localStorage.getItem("modules") || "[]")
   );
-
-  // 🔸 Persist changes to localStorage
   useEffect(() => {
     token
       ? localStorage.setItem("token", token)
@@ -245,13 +240,11 @@ export const AuthProvider = ({ children }) => {
       : localStorage.removeItem("modules");
   }, [token, user, role, modules]);
 
-  // 🔹 Login handler
   const login = (data) => {
     const { token, user } = data;
     setToken(token);
     setUser(user);
     setRole(user?.role?.name || user?.role || "");
-
     // Map permission IDs → module names
     if (user?.role?.permissions?.length) {
       const formattedModules = user.role.permissions.map((permId) => {
@@ -264,13 +257,31 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 🔹 Logout handler
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-    setRole("");
-    setModules([]);
-    localStorage.clear();
+  const logout = async () => {
+    try {
+      const res = await fetch(
+        "https://crm-backend-qbz0.onrender.com/api/auth/logout",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await res.json();
+      if (res.ok) {
+        setToken(null);
+        setUser(null);
+        setRole("");
+        setModules([]);
+        localStorage.clear();
+        console.log(data.message || "Logged out successfully");
+      } else {
+        console.error("Logout failed:", data.message || "Unknown error");
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   return (

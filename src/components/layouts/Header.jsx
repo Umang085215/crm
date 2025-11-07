@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import { Menu, Settings, LogOut, Bell, CircleHelp, User } from "lucide-react";
 import { FaRegUser } from "react-icons/fa";
 import LightDarkMode from "../themes/LightDarkMode";
@@ -30,7 +31,7 @@ const Header = ({ toggleSidebar }) => {
   const navigate = useNavigate();
   const popupRef = useRef(null);
   const [popupOpen, setPopupOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -43,8 +44,48 @@ const Header = ({ toggleSidebar }) => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    Swal.fire({
+      title: "Log out of your account?",
+      text: "You’ll be signed out and need to log in again to continue.",
+      icon: "question",
+      iconColor: "#dc2626",
+      showCancelButton: true,
+      confirmButtonText: "Yes, log me out",
+      cancelButtonText: "Stay logged in",
+      background: "#f9fafb",
+      color: "#dc2626",
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+      customClass: {
+        popup: "rounded-2xl shadow-xl p-6",
+        title: "text-lg font-semibold text-[#dc2626]",
+        htmlContainer: "text-sm text-gray-600",
+        confirmButton:
+          "px-5 py-2 rounded-lg font-medium bg-[#dc2626] hover:opacity-90 transition-all",
+        cancelButton:
+          "px-5 py-2 rounded-lg font-medium bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all",
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logout();
+        Swal.fire({
+          title: "See you soon! 👋",
+          text: "You’ve been logged out successfully.",
+          icon: "success",
+          background: "#f9fafb",
+          color: "#1f2937",
+          showConfirmButton: false,
+          timer: 5000,
+          customClass: {
+            popup: "rounded-2xl shadow-xl p-6",
+            title: "text-lg font-semibold text-gray-800",
+            htmlContainer: "text-sm text-gray-600",
+          },
+        }).then(() => {
+          navigate("/");
+        });
+      }
+    });
   };
 
   const menuItems = [

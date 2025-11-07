@@ -5,8 +5,8 @@ import Button from "../ui/Button";
 import Input from "../ui/Input";
 import * as yup from "yup";
 import { ArrowLeft, Upload, Save, Eye, EyeOff, User } from "lucide-react";
+import Spinner from "../loaders/Spinner";
 
-// Validation schema
 const schema = yup.object().shape({
   fullName: yup.string().required("Name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
@@ -58,6 +58,8 @@ export default function UserManagement() {
     status: "active",
     sendWelcomeEmail: "true",
   });
+  const [roles, setRoles] = useState([]);
+  const [allRoles, setAllRoles] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [successMsg, setSuccessMsg] = useState("");
@@ -66,14 +68,93 @@ export default function UserManagement() {
   const [states, setStates] = useState([]);
   const [fullCountryData, setFullCountryData] = useState([]);
   const [loadingCountries, setLoadingCountries] = useState(false);
+  const [loadingRole, setLoadingRole] = useState(false);
   const [profilePreview, setProfilePreview] = useState(null);
+
+  useEffect(() => {
+    getAllRoles();
+  }, []);
 
   useEffect(() => {
     getAllCountries();
   }, []);
+
   useEffect(() => {
     getAllStates();
   }, [formData.country, fullCountryData]);
+
+  // Get user by Id
+
+  const getUserById = async (userId) => {
+    try {
+      setLoadingUser(true);
+      const res = await fetch(
+        `https://crm-backend-qbz0.onrender.com/api/users/${userId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await res.json();
+
+      if (res.ok && data.user) {
+        const user = data.user;
+        setFormData({
+          fullName: user.fullName || "",
+          email: user.email || "",
+          phone: user.phone || "",
+          dob: user.dob || "",
+          address: user.address || "",
+          country: user.country || "",
+          state: user.state || "",
+          zipcode: user.zipcode || "",
+          role: user.role?.name || "",
+          about: user.about || "",
+          profileImage: null,
+          status: user.status || "active",
+          sendWelcomeEmail: true,
+          password: "",
+        });
+        if (user.profileImage) setProfilePreview(user.profileImage);
+      } else {
+        setErrorMsg("User not found or unauthorized.");
+      }
+    } catch (err) {
+      console.error("Error fetching user:", err);
+      setErrorMsg("Failed to fetch user details.");
+    }
+  };
+
+  // Fetch all roles
+  const getAllRoles = async () => {
+    try {
+      setLoadingRole(true);
+      const res = await fetch(
+        "https://crm-backend-qbz0.onrender.com/api/roles",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await res.json();
+      if (Array.isArray(data.roles)) {
+        setAllRoles(data.roles);
+        setRoles(data.roles.map((role) => role._id));
+      } else {
+        console.error("Unexpected roles response:", data);
+      }
+    } catch (err) {
+      console.error("Error fetching Roles:", err);
+    } finally {
+      setLoadingRole(false);
+    }
+  };
   // Fetch all countries
   const getAllCountries = async () => {
     try {
@@ -138,7 +219,6 @@ export default function UserManagement() {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
-
   //handle image change
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
@@ -170,7 +250,6 @@ export default function UserManagement() {
   const handleStatusToggle = (status) => {
     setFormData((prev) => ({ ...prev, status }));
   };
-
   // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -209,7 +288,6 @@ export default function UserManagement() {
       if (!res.ok) {
         throw new Error(data.message || "Failed to register user");
       }
-
       setSuccessMsg("User registered successfully!");
       setFormData({
         fullName: "",
@@ -239,8 +317,6 @@ export default function UserManagement() {
       }
     }
   };
-
-  // hide/show password
   const togglePassword = () => {
     setShowPassword(!showPassword);
   };
@@ -258,15 +334,13 @@ export default function UserManagement() {
     <div className="">
       <div className="mb-4 flex justify-between items-center">
         <h2 className="text-2xl font-semibold mb-4 ">Create User</h2>
-        <div>
-          <Link
-            to="/admin/usermanagement/users"
-            className="px-2 py-1.5  flex gap-1 items-center bg-dark text-white rounded-md"
-          >
-            <ArrowLeft size={18} />
-            <span>Back</span>
-          </Link>
-        </div>
+        <Link
+          to="/admin/usermanagement/users"
+          className="px-2 py-1.5  flex gap-1 items-center bg-dark text-white rounded-md"
+        >
+          <ArrowLeft size={18} />
+          <span>Back</span>
+        </Link>
       </div>
 
       {errorMsg && (
@@ -424,7 +498,61 @@ export default function UserManagement() {
               errors={errors}
               labelName="Phone"
             />
-            <Input
+            <div className="relative w-full">
+              <select
+                id="user_role"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className={`block w-full p-[14px] text-sm bg-transparent rounded-md border appearance-none focus:outline-none peer transition 
+      ${
+        errors.role
+          ? "border-red-500"
+          : "border-lightGray dark:border-darkGray focus:border-black"
+      }`}
+              >
+                <option value="" disabled hidden>
+                  Select role
+                </option>
+
+                {loadingRole ? (
+                  <option disabled>
+                    {" "}
+                    <Spinner size={20} />{" "}
+                  </option>
+                ) : (
+                  allRoles.map((role) => (
+                    <option
+                      key={role._id}
+                      value={role._id}
+                      className="text-darkBg"
+                    >
+                      {role.name}
+                    </option>
+                  ))
+                )}
+              </select>
+
+              <label
+                htmlFor="user_role"
+                className={`absolute pointer-events-none font-medium text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
+      peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2
+      peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
+      ${
+        errors.role
+          ? "peer-focus:text-red-500"
+          : "peer-focus:text-darkBg dark:peer-focus:text-white"
+      } rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1`}
+              >
+                Role
+              </label>
+
+              {errors.role && (
+                <p className="text-red-500 text-sm mt-1">{errors.role}</p>
+              )}
+            </div>
+
+            {/* <Input
               id="user_role"
               type="text"
               name="role"
@@ -433,7 +561,7 @@ export default function UserManagement() {
               className="col-span-2 md:col-span-1"
               errors={errors}
               labelName="Role"
-            />
+            /> */}
             <Input
               id="user_dob"
               type="date"

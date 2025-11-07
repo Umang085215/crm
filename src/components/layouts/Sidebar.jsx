@@ -367,7 +367,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         },
         {
           module: "roles",
-          path: "/admin/usermanagement/roles",
+          path: "/admin/rolemanagement/roles",
           label: "Roles & Permission",
           icon: <AiOutlineDashboard size={16} />,
         },

@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useMemo, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -10,33 +10,112 @@ import {
   TableSortLabel,
   TablePagination,
 } from "@mui/material";
-import { Pencil, Trash, Plus, ArrowLeft, Mail, AtSign } from "lucide-react";
-import { FiAtSign } from "react-icons/fi";
-import { IoMail } from "react-icons/io5";
-import listData from "../../jsonData/userList.json";
+import { Pencil, Trash, Plus } from "lucide-react";
+import { useAuth } from "../../auth/AuthContext";
+import DateDisplay from "../ui/DateDisplay";
+import Spinner from "../loaders/Spinner";
 
 const UserList = () => {
+  const { token } = useAuth();
+  const navigate = useNavigate();
+  const [allUsers, setAllUsers] = useState([]);
+  const [counts, setCounts] = useState({ all: 0, active: 0, inactive: 0 });
+  const [pagination, setPagination] = useState({
+    total: 0,
+    page: 1,
+    pages: 1,
+    limit: 10,
+  });
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("user_id");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [activeTab, setActiveTab] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // Sorting
+  useEffect(() => {
+    getAllUsers(pagination.page, pagination.limit, activeTab, searchQuery);
+  }, [pagination.page, pagination.limit, activeTab, token, searchQuery]);
+
+  const getAllUsers = async (page = 1, limit = 5, tab = "All", search = "") => {
+    try {
+      setLoading(true);
+      let url = `https://crm-backend-qbz0.onrender.com/api/users?page=${page}&limit=${limit}`;
+      if (tab === "Active") url += `&status=active`;
+      if (tab === "InActive") url += `&status=inactive`;
+      if (search.trim() !== "") url += `&search=${encodeURIComponent(search)}`;
+
+      const res = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      if (data?.success) {
+        setAllUsers(data.users || []);
+        setPagination(data.pagination);
+        const activeCount = data.users.filter(
+          (u) => u.status === "active"
+        ).length;
+        const inactiveCount = data.users.filter(
+          (u) => u.status === "inactive"
+        ).length;
+        const allCount = data.pagination.total;
+        setCounts({
+          all: allCount,
+          active: activeCount,
+          inactive: inactiveCount,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
   const handleSort = (property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
-  const filteredData = useMemo(() => {
-    let data = listData;
-    if (activeTab !== "All") {
-      data = data.filter((user) => user.status === activeTab);
-    }
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  };
 
-    // Search filter across all data
+  // const handleDeleteUser = async (id) => {
+  //   try {
+  //     const res = await fetch(
+  //       `https://crm-backend-qbz0.onrender.com/api/users/${id}`,
+  //       {
+  //         method: "DELETE",
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     const data = res.json();
+  //     console.log(data.message);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  const filteredData = useMemo(() => {
+    let data = [...allUsers];
+
     if (searchQuery.trim() !== "") {
       const query = searchQuery.toLowerCase();
       data = data.filter((user) =>
@@ -50,44 +129,58 @@ const UserList = () => {
         })
       );
     }
+
     return data;
-  }, [activeTab, searchQuery]);
+  }, [allUsers, searchQuery]);
 
-  // Sort
-  const sortedData = [...filteredData].sort((a, b) => {
-    const aVal = a[orderBy];
-    const bVal = b[orderBy];
-    if (typeof aVal === "string")
+  const sortedData = useMemo(() => {
+    return [...filteredData].sort((a, b) => {
+      const aVal = a[orderBy] ?? "";
+      const bVal = b[orderBy] ?? "";
       return order === "asc"
-        ? aVal.localeCompare(bVal)
-        : bVal.localeCompare(aVal);
-    return order === "asc" ? aVal - bVal : bVal - aVal;
-  });
+        ? aVal.localeCompare?.(bVal)
+        : bVal.localeCompare?.(aVal);
+    });
+  }, [filteredData, order, orderBy]);
 
-  // Paginate
-  const paginatedData = sortedData.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  const handleChangePage = (event, newPage) => {
+    setPagination((prev) => ({ ...prev, page: newPage + 1 }));
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPagination((prev) => ({
+      ...prev,
+      limit: parseInt(event.target.value, 10),
+      page: 1,
+    }));
+  };
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4 ">User List</h2>
-
+      <h2 className="text-2xl font-semibold mb-4">User List</h2>
       {/* Tabs */}
       <div className="relative mb-4">
-        <div className="flex gap-6 border-b border-lightGray dark:border-darkGray relative">
+        <div className="flex gap-4 border-b border-gray-200 mb-4">
           {["All", "Active", "InActive"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`relative px-4 py-2  transition-colors duration-300 ${
+              className={`relative flex items-center gap-2 px-4 py-2 transition-all duration-300 ${
                 activeTab === tab
-                  ? "text-dark border-b-2 border-dark font-semibold"
-                  : "text-gray-500 hover:text-dark"
+                  ? "text-dark  border-b-2 border-dark font-semibold"
+                  : "text-gray-500 hover:opacity-90"
               }`}
             >
-              {tab}
+              <span>{tab}</span>
+              <span className="text-sm ">
+                (
+                {tab === "All"
+                  ? counts.all
+                  : tab === "Active"
+                  ? counts.active
+                  : counts.inactive}
+                )
+              </span>
             </button>
           ))}
         </div>
@@ -95,19 +188,19 @@ const UserList = () => {
 
       {/* Search Box */}
       <div className="mb-6 flex justify-between items-center">
-        <div className="w-1/2 ">
+        <div className="w-1/2">
           <input
             type="text"
             placeholder="Search by name, email or phone..."
-            className="w-full bg-white dark:bg-darkBg p-2 border border-lightGray dark:border-darkGray rounded-md focus:outline-none  focus:border-gray-500 transition"
+            className="w-full bg-white dark:bg-darkBg p-2 border border-lightGray dark:border-darkGray rounded-md focus:outline-none focus:border-gray-500 transition"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
           />
         </div>
         <div>
           <Link
             to="/admin/usermanagement/create-user"
-            className="px-2 py-1.5  flex gap-1 items-center bg-dark text-white rounded-md"
+            className="px-2 py-1.5 flex gap-1 items-center bg-dark text-white rounded-md"
           >
             <Plus size={18} />
             <span>Create User</span>
@@ -119,42 +212,43 @@ const UserList = () => {
       <TableContainer className="rounded-xl border border-lightGray dark:border-darkGray">
         <div
           className={`overflow-x-auto ${
-            paginatedData.length > 10 ? "overflow-y-auto max-h-[700px]" : ""
+            sortedData.length > 10 ? "overflow-y-auto max-h-[700px]" : ""
           }`}
         >
-          <Table className=" min-w-full">
-            <TableHead className="sticky top-0  bg-lightGray dark:bg-darkGray  z-30">
+          <Table className="min-w-full">
+            <TableHead className="sticky top-0 bg-lightGray dark:bg-darkGray z-30">
               <TableRow>
                 {[
-                  { id: "user_id", label: "ID" },
-                  { id: "user_name", label: "Name" },
+                  { id: "_id", label: "ID" },
+                  { id: "fullName", label: "Name" },
                   { id: "status", label: "Status" },
-                  { id: "phone", label: "Phone" },
                   { id: "role", label: "Role" },
-                  { id: "skills", label: "Skills" },
-                  { id: "tech_stack", label: "Tech stack" },
-                  { id: "experience_years", label: "Exp" },
-                  { id: "salary_lpa", label: "Salary" },
-                  { id: "company", label: "Company" },
-                  { id: "location", label: "Location" },
-                  { id: "created_date", label: "Created Date" },
+                  { id: "phone", label: "Phone" },
+                  { id: "dob", label: "DOB" },
+                  { id: "createdAt", label: "Created Dtm" },
+                  { id: "updatedAt", label: "Modified Dtm" },
                   { id: "action", label: "Action", sticky: true },
                 ].map((column) => (
                   <TableCell
                     key={column.id}
                     className={`whitespace-nowrap font-bold text-darkBg dark:text-white bg-[#f2f4f5] dark:bg-darkGray ${
-                      column.sticky ? "sticky right-0  z-20" : ""
+                      column.sticky ? "sticky right-0 z-20" : ""
                     }`}
                   >
-                    {column.id !== "action" ? (
+                    {column.id !== "action" && column.id !== "_id" ? (
                       <TableSortLabel
                         active={orderBy === column.id}
                         direction={orderBy === column.id ? order : "asc"}
                         onClick={() => handleSort(column.id)}
+                        sx={{
+                          color: "inherit !important",
+                          "& .MuiTableSortLabel-icon": {
+                            opacity: 1,
+                            color: "currentColor !important",
+                          },
+                        }}
                       >
-                        <strong className="text-darkBg dark:text-white">
-                          {column.label}
-                        </strong>
+                        <strong>{column.label}</strong>
                       </TableSortLabel>
                     ) : (
                       <strong>{column.label}</strong>
@@ -165,92 +259,113 @@ const UserList = () => {
             </TableHead>
 
             <TableBody>
-              {paginatedData.map((row) => (
-                <TableRow
-                  key={row.user_id}
-                  className="hover:bg-lightGray dark:hover:bg-darkGray"
-                >
-                  <TableCell className="whitespace-nowrap text-darkBg dark:text-white">
-                    {row.user_id}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-darkBg dark:text-white">
-                    <div className="w-max flex items-center gap-3">
-                      <div>
-                        {row.user_image ? (
-                          <img
-                            src={row.user_image}
-                            alt={row.user_name}
-                            className="w-10 h-10 rounded-full object-cover border border-dark mx-auto"
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-full border border-dark flex items-center justify-center bg-gray-200 text-dark font-semibold mx-auto">
-                            {row.user_name?.slice(0, 2).toUpperCase()}
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <span className="font-bold ">{row.user_name}</span>
-                        <span className="flex items-center gap-2 text-darkGray dark:text-white">
-                          {row.user_email}
-                        </span>
-                      </div>
-                    </div>
-                  </TableCell>
-
-                  <TableCell className="whitespace-nowrap ">
-                    <div
-                      className={` p-1 text-xs text-center text-white rounded-xl ${
-                        row.status === "Active" ? "bg-green-800 " : "bg-red-600"
-                      }`}
-                    >
-                      {row.status}
-                    </div>
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-darkBg dark:text-white">
-                    {row.phone}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-darkBg dark:text-white">
-                    {row.role}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-darkBg dark:text-white">
-                    {row.skills.map((skill, i) => (
-                      <span key={i}>
-                        {skill}
-                        {i !== row.skills.length - 1 ? ", " : ""}
-                      </span>
-                    ))}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-darkBg dark:text-white">
-                    {row.tech_stack}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-darkBg dark:text-white">
-                    {row.experience_years}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-darkBg dark:text-white">
-                    {row.salary_lpa}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-darkBg dark:text-white">
-                    {row.company}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-darkBg dark:text-white">
-                    {row.location}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-darkBg dark:text-white">
-                    {row.created_date}
-                  </TableCell>
-                  {/* Sticky Action Column */}
-                  <TableCell className="whitespace-nowrap sticky right-0 bg-[#f2f4f5] dark:bg-darkGray dark:text-white z-20">
-                    <div className="flex gap-2 items-center">
-                      <button className="text-white bg-dark px-1 py-1 rounded">
-                        <Pencil size={18} />
-                      </button>
-                      <button className="text-white bg-red-600 px-1 py-1 rounded">
-                        <Trash size={18} />
-                      </button>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={9}>
+                    <div className="flex justify-center items-center h-[300px]">
+                      <Spinner size={50} color="#3b82f6" text="Loading... " />
                     </div>
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                sortedData.map((row, i) => (
+                  <TableRow
+                    key={row._id}
+                    className="hover:bg-lightGray dark:hover:bg-darkGray"
+                  >
+                    <TableCell className="whitespace-nowrap ">
+                      {i + 1}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap ">
+                      <div className="flex items-center gap-3">
+                        {row.profileImage ? (
+                          <img
+                            src={row.profileImage}
+                            alt={row.fullName}
+                            className="w-10 h-10 rounded-full object-cover border border-dark"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 text-dark font-semibold">
+                            {row.fullName?.slice(0, 2).toUpperCase()}
+                          </div>
+                        )}
+                        <div>
+                          <span className="font-bold">
+                            {row.fullName.charAt(0).toUpperCase() +
+                              row.fullName.slice(1)}
+                          </span>
+                          <p className="text-gray-600 dark:text-gray-300 text-sm">
+                            {row.email}
+                          </p>
+                        </div>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="whitespace-nowrap ">
+                      <div
+                        className={`p-1 text-xs text-center text-white rounded-xl ${
+                          row.status === "active"
+                            ? "bg-green-700"
+                            : "bg-red-600"
+                        }`}
+                      >
+                        {row.status
+                          ? row.status.charAt(0).toUpperCase() +
+                            row.status.slice(1)
+                          : "-"}
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="whitespace-nowrap text-gray-600 dark:text-gray-300">
+                      {row.role?.name
+                        ? row.role.name.charAt(0).toUpperCase() +
+                          row.role.name.slice(1)
+                        : "-"}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-gray-600 dark:text-gray-300">
+                      {row.phone}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-gray-600 dark:text-gray-300">
+                      {formatDate(row.dob)}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-gray-600 dark:text-gray-300">
+                      {new Date(row.createdAt).toLocaleString("en-IN", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                    </TableCell>
+
+                    <TableCell className="whitespace-nowrap text-gray-600 dark:text-gray-200">
+                      <DateDisplay date={row.updatedAt} />
+                    </TableCell>
+
+                    <TableCell className="sticky right-0 bg-[#f2f4f5] dark:bg-darkGray">
+                      <div className="flex gap-2 items-center">
+                        <button
+                          onClick={() =>
+                            navigate(
+                              `/admin/usermanagement/edit-user/${row._id}`
+                            )
+                          }
+                          className="text-white bg-dark px-1 py-1 rounded"
+                        >
+                          <Pencil size={18} />
+                        </button>
+                        <button
+                          // onClick={() => handleDeleteUser(row._id)}
+                          className="text-white bg-red-600 px-1 py-1 rounded"
+                        >
+                          <Trash size={18} />
+                        </button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>
@@ -258,14 +373,11 @@ const UserList = () => {
 
       <TablePagination
         component="div"
-        count={filteredData.length}
-        page={page}
-        onPageChange={(e, newPage) => setPage(newPage)}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={(e) => {
-          setRowsPerPage(parseInt(e.target.value, 10));
-          setPage(0);
-        }}
+        count={pagination.total}
+        page={pagination.page - 1}
+        onPageChange={handleChangePage}
+        rowsPerPage={pagination.limit}
+        onRowsPerPageChange={handleChangeRowsPerPage}
         rowsPerPageOptions={[5, 10, 20, 50]}
       />
     </div>

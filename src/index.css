@@ -75,7 +75,7 @@ body {
 /* MUI Style */
 
 .MuiTableCell-root {
-  font-family: "Montserrat", sans-serif !important;
+  font-family: "Golos Text", sans-serif !important;
 }
 
 .tippy-box[data-theme~="custom"] {
