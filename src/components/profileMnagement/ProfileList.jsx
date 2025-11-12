@@ -246,7 +246,7 @@ const ProfileList = () => {
             <div
               className={`overflow-x-auto ${
                 sortedData.length > 10 ? "overflow-y-auto max-h-[700px]" : ""
-              }`}
+              } `}
             >
               <Table className="min-w-full">
                 <TableHead className="sticky top-0 bg-lightGray dark:bg-darkGray z-30">
@@ -459,14 +459,7 @@ const ProfileList = () => {
                             >
                               <Eye size={18} />
                             </button>
-                            <button
-                              className="text-white bg-red-600 px-1 py-1 rounded"
-                              onClick={() =>
-                                navigate(
-                                  `/admin/profilemanagement/view-profile/${item._id}`
-                                )
-                              }
-                            >
+                            <button className="text-white bg-red-600 px-1 py-1 rounded">
                               <Trash size={18} />
                             </button>
                           </div>
