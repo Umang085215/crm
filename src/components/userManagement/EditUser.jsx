@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
+import SelectField from "../ui/SelectField";
 import * as yup from "yup";
 import { ArrowLeft, Upload, Save, Eye, EyeOff, User } from "lucide-react";
 import Spinner from "../loaders/Spinner";
@@ -384,9 +385,9 @@ export default function EditUser() {
           </div>
           {/* User Form */}
           <div className=" rounded-xl p-6 border border-lightGray dark:border-darkGray">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
-                id="user_name"
+                // id="user_name"
                 type="text"
                 name="fullName"
                 value={formData.fullName}
@@ -396,7 +397,7 @@ export default function EditUser() {
                 labelName="Full Name"
               />
               <Input
-                id="user_email"
+                // id="user_email"
                 type="text"
                 name="email"
                 value={formData.email}
@@ -405,42 +406,37 @@ export default function EditUser() {
                 errors={errors}
                 labelName="Email"
               />
-              <div className="col-span-2 md:col-span-1 flex items-center gap-2">
-                <div className="relative w-full">
-                  <Input
-                    id="user_password"
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    handleChange={handleChange}
-                    errors={errors}
-                    labelName="Password"
-                    icon={
-                      <span
-                        onClick={togglePassword}
-                        className="cursor-pointer   z-20 relative"
-                      >
-                        {showPassword ? (
-                          <EyeOff size={18} />
-                        ) : (
-                          <Eye size={18} />
-                        )}
-                      </span>
-                    }
-                  />
 
-                  <button
-                    type="button"
-                    onClick={generatePassword}
-                    className="absolute right-10 top-4 bg-light text-xs font-medium text-dark py-[2px] px-[6px] rounded whitespace-nowrap z-10"
-                  >
-                    Generate
-                  </button>
-                </div>
+              <div className="relative w-full">
+                <Input
+                  // id="user_password"
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  handleChange={handleChange}
+                  errors={errors}
+                  labelName="Password"
+                  icon={
+                    <span
+                      onClick={togglePassword}
+                      className="cursor-pointer   z-20 relative"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </span>
+                  }
+                />
+
+                <button
+                  type="button"
+                  onClick={generatePassword}
+                  className="absolute right-10 top-4 bg-light text-xs font-medium text-dark py-[2px] px-[6px] rounded whitespace-nowrap z-10"
+                >
+                  Generate
+                </button>
               </div>
 
               <Input
-                id="user_phone"
+                // id="user_phone"
                 type="tel"
                 name="phone"
                 value={formData.phone}
@@ -451,7 +447,7 @@ export default function EditUser() {
               />
               <div className="relative w-full">
                 <select
-                  id="user_role"
+                  // id="user_role"
                   name="role"
                   value={formData.role._id}
                   onChange={handleChange}
@@ -485,7 +481,7 @@ export default function EditUser() {
                 </select>
 
                 <label
-                  htmlFor="user_role"
+                  // htmlFor="user_role"
                   className={`absolute pointer-events-none font-medium text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
                   peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2
                    peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
@@ -502,9 +498,8 @@ export default function EditUser() {
                   <p className="text-red-500 text-sm mt-1">{errors.role}</p>
                 )}
               </div>
-
               <Input
-                id="user_dob"
+                // id="user_dob"
                 type="date"
                 name="dob"
                 value={formData.dob}
@@ -513,109 +508,29 @@ export default function EditUser() {
                 errors={errors}
                 labelName="DOB"
               />
-              {/* Country Dropdown */}
-              <div className="col-span-2 md:col-span-1">
-                <div className="relative w-full">
-                  <select
-                    id="country"
-                    name="country"
-                    value={formData.country}
-                    onChange={handleChange}
-                    className={`block w-full p-[14px] text-sm bg-transparent rounded-md border appearance-none focus:outline-none peer transition 
-        ${
-          errors.country
-            ? "border-red-500 "
-            : "border-lightGray dark:border-darkGray focus:border-black"
-        }
-        `}
-                  >
-                    <option value="" disabled hidden>
-                      Select Country
-                    </option>
-                    {loadingCountries ? (
-                      <option disabled>Loading...</option>
-                    ) : (
-                      countries.map((c) => (
-                        <option key={c} value={c} className="text-darkBg">
-                          {c}
-                        </option>
-                      ))
-                    )}
-                  </select>
-                  <label
-                    htmlFor="country"
-                    className={`absolute pointer-events-none font-medium text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
-            peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2
-            peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
-            ${
-              errors.country
-                ? "peer-focus:text-red-500"
-                : "peer-focus:text-darkBg dark:peer-focus:text-white"
-            }
-            rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1`}
-                  >
-                    Country
-                  </label>
-                  {errors.country && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.country}
-                    </p>
-                  )}
-                </div>
-              </div>
-              {/* State Dropdown */}
-              <div className="col-span-2 md:col-span-1">
-                <div className="relative w-full">
-                  <select
-                    id="user_state"
-                    name="state"
-                    value={formData.state}
-                    onChange={handleChange}
-                    className={`block w-full p-[14px] text-sm bg-transparent rounded-md border appearance-none focus:outline-none peer transition 
-        ${
-          errors.state
-            ? "border-red-500 "
-            : " border-lightGray dark:border-darkGray focus:border-black"
-        }
-        dark:text-white`}
-                  >
-                    <option value="" disabled hidden>
-                      Select State
-                    </option>
-                    {loadingCountries ? (
-                      <option disabled>Loading...</option>
-                    ) : (
-                      states.map((c) => (
-                        <option key={c} value={c} className="text-darkBg">
-                          {c}
-                        </option>
-                      ))
-                    )}
-                  </select>
-                  <label
-                    htmlFor="state"
-                    className={`absolute pointer-events-none font-medium text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
-            peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2
-            peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
-            ${
-              errors.state
-                ? "peer-focus:text-red-500"
-                : "peer-focus:text-darkBg dark:peer-focus:text-white"
-            }
-            rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1`}
-                  >
-                    State
-                  </label>
-                  {errors.state && (
-                    <p className="text-red-500 text-sm mt-1">{errors.state}</p>
-                  )}
-                </div>
-              </div>
 
-              {/* Remaining Inputs */}
+              <SelectField
+                // id="country"
+                name="country"
+                label="Country"
+                value={formData.country}
+                handleChange={handleChange}
+                options={countries}
+                loading={loadingCountries}
+                error={errors.country}
+              />
 
+              <SelectField
+                // id="state"
+                name="state"
+                label="Country"
+                value={formData.state}
+                handleChange={handleChange}
+                options={states}
+                error={errors.state}
+              />
               <Input
-                id="user_address"
+                // id="user_address"
                 type="text"
                 name="address"
                 value={formData.address}
@@ -625,7 +540,7 @@ export default function EditUser() {
                 labelName="Address"
               />
               <Input
-                id="user_zipcode"
+                // id="user_zipcode"
                 type="text"
                 name="zipcode"
                 value={formData.zipcode}
@@ -638,20 +553,26 @@ export default function EditUser() {
               <div className="col-span-2">
                 <div className="relative w-full">
                   <textarea
-                    id="user_about"
+                    // id="user_about"
                     name="about"
                     rows={4}
                     value={formData.about}
                     onChange={handleChange}
                     placeholder=" "
-                    className={`block p-[14px] w-full text-sm bg-transparent rounded-md border  appearance-none focus:outline-none peer transition`}
+                    className="block p-[14px] w-full text-sm bg-transparent rounded-md border appearance-none focus:outline-none peer transition border-lightGray dark:border-darkGray focus:border-black"
                   />
                   <label
-                    htmlFor="about"
-                    className={`absolute pointer-events-none font-medium text-sm text-gray-500  duration-300 transform  z-10 origin-[0] bg-white dark:bg-darkBg px-2
-            peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2
-            peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:text-darkBg dark:peer-focus:text-white
-            rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1`}
+                    // htmlFor="user_about"
+                    className={`absolute pointer-events-none font-medium text-sm text-gray-500 duration-300 transform z-10 origin-[0] bg-white dark:bg-darkBg px-2
+        ${
+          formData.about
+            ? "top-2 scale-75 -translate-y-4 text-darkBg dark:text-white"
+            : "peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2"
+        }
+        peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
+        peer-focus:text-darkBg dark:peer-focus:text-white
+        rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1
+      `}
                   >
                     About
                   </label>

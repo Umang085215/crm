@@ -124,7 +124,7 @@ const Login = () => {
                 Email Address
               </label>
               <Input
-                id="login_email"
+                // id="login_email"
                 type="text"
                 name="email"
                 value={formdata.email}
@@ -137,11 +137,9 @@ const Login = () => {
             </div>
 
             <div className="relative">
-              <label htmlFor="password" className=" font-medium">
-                Password
-              </label>
+              <label className=" font-medium">Password</label>
               <Input
-                id="password"
+                // id="password"
                 type={showPassword ? "text" : "password"}
                 name="password"
                 value={formdata.password}

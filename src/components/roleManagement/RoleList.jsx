@@ -15,6 +15,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import DateDisplay from "../ui/DateDisplay";
 import Spinner from "../loaders/Spinner";
+import NoData from "../ui/NoData";
 
 const RoleList = () => {
   const { token } = useAuth();
@@ -180,8 +181,7 @@ const RoleList = () => {
       <h2 className="text-2xl font-semibold mb-4">
         Role & Permission Management
       </h2>
-
-      {/* Search + Add Button */}
+      {/* Search and Add */}
       <div className="mb-6 flex justify-between items-center">
         <div className="w-1/2">
           <input
@@ -202,7 +202,6 @@ const RoleList = () => {
           </Link>
         </div>
       </div>
-      {/* Loading / Error */}
 
       <>
         {/* Table */}
@@ -264,13 +263,13 @@ const RoleList = () => {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={9}>
+                    <TableCell colSpan={12}>
                       <div className="flex justify-center items-center h-[300px]">
                         <Spinner size={50} color="#3b82f6" text="Loading..." />
                       </div>
                     </TableCell>
                   </TableRow>
-                ) : (
+                ) : paginatedData.length > 0 ? (
                   paginatedData.map((row) => {
                     const isItemSelected = isSelected(row.id);
                     return (
@@ -317,6 +316,15 @@ const RoleList = () => {
                       </TableRow>
                     );
                   })
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={12}>
+                      <NoData
+                        title="No Roles Found"
+                        description="There are currently no roles in the system."
+                      />
+                    </TableCell>
+                  </TableRow>
                 )}
               </TableBody>
             </Table>

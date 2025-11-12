@@ -1,7 +1,7 @@
 import React from "react";
 const Input = ({
   type = "text",
-  id,
+  // id,
   value,
   name,
   handleChange,
@@ -17,7 +17,7 @@ const Input = ({
       <div className="relative w-full">
         <input
           type={type}
-          id={id}
+          // id={id}
           name={name}
           value={value}
           onChange={handleChange}
@@ -34,7 +34,7 @@ const Input = ({
 
         {/* Floating label */}
         <label
-          htmlFor={id}
+          // htmlFor={id}
           className={`absolute pointer-events-none font-medium text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
             peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2
             peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4

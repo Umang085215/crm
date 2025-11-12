@@ -1,0 +1,22 @@
+import React from "react";
+import NoFoundImg from "../../assets/images/no-data.svg";
+
+const NoData = ({ title, description }) => {
+  return (
+    <>
+      <div className="flex flex-col items-center justify-center h-[300px] text-center">
+        <img
+          src={NoFoundImg}
+          alt="No users"
+          className="w-32 h-32 opacity-80 mb-4"
+        />
+        <h3 className="text-lg font-semibold text-dark dark:text-white">
+          {title}
+        </h3>
+        <p className="text-gray-600 dark:text-gray-400 mt-1">{description}</p>
+      </div>
+    </>
+  );
+};
+
+export default NoData;

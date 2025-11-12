@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
@@ -42,6 +42,7 @@ const schema = yup.object().shape({
     ),
 });
 export default function UserManagement() {
+  const navigate = useNavigate();
   const { token } = useAuth();
   const [formData, setFormData] = useState({
     fullName: "",
@@ -289,14 +290,13 @@ export default function UserManagement() {
   return (
     <div className="">
       <div className="mb-4 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold mb-4 ">Create User</h2>
-        <Link
-          to="/admin/usermanagement/users"
-          className="px-2 py-1.5  flex gap-1 items-center bg-dark text-white rounded-md"
+        <h2 className="text-2xl font-semibold">Create User</h2>
+        <button
+          onClick={() => navigate("/admin/usermanagement/users")}
+          className="flex items-center gap-2 px-3 py-1.5 bg-gray-600 text-white text-sm rounded-md hover:opacity-90 transition"
         >
-          <ArrowLeft size={18} />
-          <span>Back</span>
-        </Link>
+          <ArrowLeft size={16} /> Back
+        </button>
       </div>
 
       {errorMsg && (
@@ -393,9 +393,9 @@ export default function UserManagement() {
         </div>
         {/* User Form */}
         <div className=" rounded-xl p-6 border border-lightGray dark:border-darkGray">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              id="user_name"
+              // id="user_name"
               type="text"
               name="fullName"
               value={formData.fullName}
@@ -405,7 +405,7 @@ export default function UserManagement() {
               labelName="Full Name"
             />
             <Input
-              id="user_email"
+              // id="user_email"
               type="text"
               name="email"
               value={formData.email}
@@ -414,38 +414,37 @@ export default function UserManagement() {
               errors={errors}
               labelName="Email"
             />
-            <div className="col-span-2 md:col-span-1 flex items-center gap-2">
-              <div className="relative w-full">
-                <Input
-                  id="user_password"
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  handleChange={handleChange}
-                  errors={errors}
-                  labelName="Password"
-                  icon={
-                    <span
-                      onClick={togglePassword}
-                      className="cursor-pointer   z-20 relative"
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </span>
-                  }
-                />
 
-                <button
-                  type="button"
-                  onClick={generatePassword}
-                  className="absolute right-10 top-4 bg-light text-xs font-medium text-dark py-[2px] px-[6px] rounded whitespace-nowrap z-10"
-                >
-                  Generate
-                </button>
-              </div>
+            <div className="relative w-full">
+              <Input
+                // id="user_password"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                handleChange={handleChange}
+                errors={errors}
+                labelName="Password"
+                icon={
+                  <span
+                    onClick={togglePassword}
+                    className="cursor-pointer   z-20 relative"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </span>
+                }
+              />
+
+              <button
+                type="button"
+                onClick={generatePassword}
+                className="absolute right-10 top-4 bg-light text-xs font-medium text-dark py-[2px] px-[6px] rounded whitespace-nowrap z-10"
+              >
+                Generate
+              </button>
             </div>
 
             <Input
-              id="user_phone"
+              // id="user_phone"
               type="tel"
               name="phone"
               value={formData.phone}
@@ -509,7 +508,7 @@ export default function UserManagement() {
             </div>
 
             <Input
-              id="user_dob"
+              // id="user_dob"
               type="date"
               name="dob"
               value={formData.dob}
@@ -518,57 +517,9 @@ export default function UserManagement() {
               errors={errors}
               labelName="DOB"
             />
-            {/* Country Dropdown */}
-            {/* <div className="col-span-2 md:col-span-1">
-              <div className="relative w-full">
-                <select
-                  id="country"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  className={`block w-full p-[14px] text-sm bg-transparent rounded-md border appearance-none focus:outline-none peer transition 
-        ${
-          errors.country
-            ? "border-red-500 "
-            : "border-lightGray dark:border-darkGray focus:border-black"
-        }
-        `}
-                >
-                  <option value="" disabled hidden>
-                    Select Country
-                  </option>
-                  {loadingCountries ? (
-                    <option disabled>Loading...</option>
-                  ) : (
-                    countries.map((c) => (
-                      <option key={c} value={c} className="text-darkBg">
-                        {c}
-                      </option>
-                    ))
-                  )}
-                </select>
-                <label
-                  htmlFor="country"
-                  className={`absolute pointer-events-none font-medium text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
-            peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2
-            peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
-            ${
-              errors.country
-                ? "peer-focus:text-red-500"
-                : "peer-focus:text-darkBg dark:peer-focus:text-white"
-            }
-            rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1`}
-                >
-                  Country
-                </label>
-                {errors.country && (
-                  <p className="text-red-500 text-sm mt-1">{errors.country}</p>
-                )}
-              </div>
-            </div> */}
 
             <SelectField
-              id="country"
+              // id="country"
               name="country"
               label="Country"
               value={formData.country}
@@ -578,56 +529,8 @@ export default function UserManagement() {
               error={errors.country}
             />
 
-            {/* State Dropdown */}
-            {/* <div className="col-span-2 md:col-span-1">
-              <div className="relative w-full">
-                <select
-                  id="user_state"
-                  name="state"
-                  value={formData.country}
-                  onChange={handleChange}
-                  className={`block w-full p-[14px] text-sm bg-transparent rounded-md border appearance-none focus:outline-none peer transition 
-        ${
-          errors.country
-            ? "border-red-500 "
-            : " border-lightGray dark:border-darkGray focus:border-black"
-        }
-        dark:text-white`}
-                >
-                  <option value="" disabled hidden>
-                    Select State
-                  </option>
-                  {loadingCountries ? (
-                    <option disabled>Loading...</option>
-                  ) : (
-                    states.map((c) => (
-                      <option key={c} value={c} className="text-darkBg">
-                        {c}
-                      </option>
-                    ))
-                  )}
-                </select>
-                <label
-                  htmlFor="state"
-                  className={`absolute pointer-events-none font-medium text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
-            peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2
-            peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
-            ${
-              errors.state
-                ? "peer-focus:text-red-500"
-                : "peer-focus:text-darkBg dark:peer-focus:text-white"
-            }
-            rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1`}
-                >
-                  State
-                </label>
-                {errors.state && (
-                  <p className="text-red-500 text-sm mt-1">{errors.state}</p>
-                )}
-              </div>
-            </div> */}
             <SelectField
-              id="user_state"
+              // id="user_state"
               name="state"
               label="State"
               value={formData.state}
@@ -637,7 +540,7 @@ export default function UserManagement() {
             />
             {/* Remaining Inputs */}
             <Input
-              id="user_address"
+              // id="user_address"
               type="text"
               name="address"
               value={formData.address}
@@ -647,7 +550,7 @@ export default function UserManagement() {
               labelName="Address"
             />
             <Input
-              id="user_zipcode"
+              // id="user_zipcode"
               type="text"
               name="zipcode"
               value={formData.zipcode}
@@ -660,38 +563,37 @@ export default function UserManagement() {
             <div className="col-span-2">
               <div className="relative w-full">
                 <textarea
-                  id="user_about"
+                  // id="user_about"
                   name="about"
                   rows={4}
                   value={formData.about}
                   onChange={handleChange}
                   placeholder=" "
-                  className={`block p-[14px] w-full text-sm bg-transparent rounded-md border  appearance-none focus:outline-none peer transition
-        ${
-          errors.about
-            ? "border-red-500 "
-            : "border-lightGray dark:border-darkGray focus:border-black"
-        }
-        `}
+                  className="block p-[14px] w-full text-sm bg-transparent rounded-md border  appearance-none focus:outline-none peer transition
+        
+          border-lightGray dark:border-darkGray focus:border-black"
                 />
                 <label
                   htmlFor="about"
-                  className={`absolute pointer-events-none font-medium text-sm text-gray-500  duration-300 transform  z-10 origin-[0] bg-white dark:bg-darkBg px-2
-            peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2
-            peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:text-darkBg dark:peer-focus:text-white
-            rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1`}
+                  className={`absolute pointer-events-none font-medium text-sm text-gray-500 duration-300 transform z-10 origin-[0] bg-white dark:bg-darkBg px-2
+        ${
+          formData.about
+            ? "top-2 scale-75 -translate-y-4 text-darkBg dark:text-white"
+            : "peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2"
+        }
+        peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
+        peer-focus:text-darkBg dark:peer-focus:text-white
+        rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1
+      `}
                 >
                   About
                 </label>
-                {errors.about && (
-                  <p className="text-red-500 text-sm mt-1">{errors.about}</p>
-                )}
               </div>
             </div>
             {/* Checkbox */}
             <div className="col-span-2 flex items-start space-x-2 mt-2">
               <input
-                id="terms"
+                // id="terms"
                 type="checkbox"
                 name="terms"
                 checked={formData.sendWelcomeEmail}

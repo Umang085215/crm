@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
-import { FolderClosed, Save, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { FolderClosed, Save, X, ArrowLeft } from "lucide-react";
 import * as yup from "yup";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
@@ -46,6 +47,7 @@ const schema = yup.object().shape({
 
 const ProfileSubmission = () => {
   const { token } = useAuth();
+  const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     resume: null,
@@ -221,20 +223,21 @@ const ProfileSubmission = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-6">Profile Submission</h2>
+      <div className="mb-4 flex justify-between items-center ">
+        <h2 className="text-2xl font-semibold">Profile Submissions</h2>
+        <button
+          onClick={() => navigate("/admin/profilemanagement/profiles")}
+          className="flex items-center gap-2 px-3 py-1.5 bg-gray-600 text-white text-sm rounded-md hover:opacity-90 transition"
+        >
+          <ArrowLeft size={16} /> Back
+        </button>
+      </div>
       <form
         onSubmit={handleSubmit}
         className="space-y-6 border border-gray-200 p-6 rounded-lg  shadow-sm"
       >
         {/* Resume Upload */}
         <div>
-          {/* <label
-            className={`font-medium mb-2 block ${
-              errors.resume ? "text-red-500" : ""
-            }`}
-          >
-            Resume *
-          </label> */}
           <div
             onClick={handleBoxClick}
             className={`border rounded-md bg-gray-50 dark:bg-gray-800 p-12 text-center cursor-pointer ${
@@ -277,7 +280,7 @@ const ProfileSubmission = () => {
 
         {/*Personal Information */}
         <section>
-          <h3 className="text-lg font-semibold mb-3 border-b pb-1">
+          <h3 className="text-lg font-semibold mb-3 border-b pb-2">
             Personal Information
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -328,7 +331,7 @@ const ProfileSubmission = () => {
 
         {/* Professional Information */}
         <section>
-          <h3 className="text-lg font-semibold mb-3 border-b pb-1">
+          <h3 className="text-lg font-semibold mb-3 border-b pb-2">
             Professional Information
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -455,7 +458,7 @@ const ProfileSubmission = () => {
 
         {/* Additional Information */}
         <section>
-          <h3 className="text-lg font-semibold mb-3 border-b pb-1">
+          <h3 className="text-lg font-semibold mb-3 border-b pb-2">
             Additional Information
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -478,18 +481,35 @@ const ProfileSubmission = () => {
               ]}
               error={errors.candidateSource}
             />
-            <div className="md:col-span-2">
-              <label className="block font-medium mb-1">
-                Description (Optional)
-              </label>
-              <textarea
-                name="description"
-                rows="2"
-                value={formData.description}
-                onChange={handleChange}
-                className="w-full border  rounded-md p-2 bg-white dark:bg-gray-800"
-                placeholder="Short description about this profile ..."
-              ></textarea>
+            <div className="col-span-2">
+              <div className="relative w-full">
+                <textarea
+                  id="description"
+                  name="description"
+                  rows={4}
+                  value={formData.description}
+                  onChange={handleChange}
+                  placeholder=" "
+                  className="block p-[14px] w-full text-sm bg-transparent rounded-md border  appearance-none focus:outline-none peer transition
+        
+          border-lightGray dark:border-darkGray focus:border-black"
+                />
+                <label
+                  htmlFor="description"
+                  className={`absolute pointer-events-none font-medium text-sm text-gray-500 duration-300 transform z-10 origin-[0] bg-white dark:bg-darkBg px-2
+        ${
+          formData.description
+            ? "top-2 scale-75 -translate-y-4 text-darkBg dark:text-white"
+            : "peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2"
+        }
+        peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
+        peer-focus:text-darkBg dark:peer-focus:text-white
+        rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1
+      `}
+                >
+                  Description
+                </label>
+              </div>
             </div>
           </div>
         </section>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Save } from "lucide-react";
+import { Save, ArrowLeft } from "lucide-react";
 import img1 from "../../assets/logo/loginBg.jpg";
 import * as yup from "yup";
 
@@ -17,7 +17,6 @@ const EditRole = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-
   const [role, setRole] = useState({ name: "", description: "" });
   const [errors, setErrors] = useState({});
   const [permissions, setPermissions] = useState([]);
@@ -26,7 +25,6 @@ const EditRole = () => {
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  // ✅ Fetch role details
   useEffect(() => {
     const fetchRole = async () => {
       try {
@@ -74,7 +72,6 @@ const EditRole = () => {
     fetchRole();
   }, [id, token]);
 
-  // ✅ Fetch all available permissions
   useEffect(() => {
     const fetchPermissions = async () => {
       try {
@@ -91,10 +88,8 @@ const EditRole = () => {
     fetchPermissions();
   }, [token]);
 
-  // ✅ Group by module/resource
   const groupedModules = [...new Set(permissions.map((p) => p.resource))];
 
-  // ✅ Handle toggle per action
   const handleToggle = (module, action) => {
     setSelected((prev) => {
       const prevModule = prev[module] || {
@@ -118,7 +113,6 @@ const EditRole = () => {
     });
   };
 
-  // ✅ Handle "Allow All"
   const handleAllowAll = (module) => {
     setSelected((prev) => {
       const prevModule = prev[module] || {
@@ -150,14 +144,12 @@ const EditRole = () => {
     });
   };
 
-  // ✅ Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setRole((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  // ✅ Save role
   const handleSave = async () => {
     setLoading(true);
     setErrorMsg("");
@@ -228,139 +220,152 @@ const EditRole = () => {
   if (!role) return <p>Loading...</p>;
 
   return (
-    <div className="space-y-6">
-      {errorMsg && (
-        <div className="mb-4 p-2 bg-red-100 text-center text-red-700 rounded">
-          {errorMsg}
-        </div>
-      )}
-      {successMsg && (
-        <div className="mb-4 p-2 bg-green-100 text-center text-green-700 rounded">
-          {successMsg}
-        </div>
-      )}
+    <>
+      <div className="mb-4 flex justify-between items-center">
+        <h2 className="text-2xl font-semibold ">
+          Role & Permission Management
+        </h2>
+        <button
+          onClick={() => navigate("/admin/rolemanagement/roles")}
+          className="flex items-center gap-2 px-3 py-1.5 bg-gray-600 text-white text-sm rounded-md hover:opacity-90 transition"
+        >
+          <ArrowLeft size={16} /> Back
+        </button>
+      </div>
+      <div className="space-y-6">
+        {errorMsg && (
+          <div className="mb-4 p-2 bg-red-100 text-center text-red-700 rounded">
+            {errorMsg}
+          </div>
+        )}
+        {successMsg && (
+          <div className="mb-4 p-2 bg-green-100 text-center text-green-700 rounded">
+            {successMsg}
+          </div>
+        )}
 
-      {/* Role Details */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-2 p-6 bg-white dark:bg-darkBg border border-lightGray dark:border-darkGray rounded-lg">
-          <h2 className="text-2xl font-semibold mb-4">Edit Role</h2>
+        {/* Role Details */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="col-span-2 p-6 bg-white dark:bg-darkBg border border-lightGray dark:border-darkGray rounded-lg">
+            <h2 className="text-2xl font-semibold mb-4">Edit Role</h2>
 
-          <div className="grid grid-cols-1 gap-4">
-            {/* Role Name */}
-            <div>
-              <label className="block font-medium mb-1">Role Name</label>
-              <input
-                type="text"
-                name="name"
-                value={role.name || ""}
-                onChange={handleChange}
-                className={`w-full p-2 border ${
-                  errors.name ? "border-red-500" : "border-lightGray"
-                } rounded-md focus:outline-none focus:border-gray-500 dark:bg-darkGray dark:text-white`}
-              />
-              {errors.name && (
-                <p className="text-red-600 text-sm mt-1 font-medium">
-                  {errors.name}
-                </p>
-              )}
+            <div className="grid grid-cols-1 gap-4">
+              {/* Role Name */}
+              <div>
+                <label className="block font-medium mb-1">Role Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={role.name || ""}
+                  onChange={handleChange}
+                  className={`w-full p-2 border ${
+                    errors.name ? "border-red-500" : "border-lightGray"
+                  } rounded-md focus:outline-none focus:border-gray-500 dark:bg-darkGray dark:text-white`}
+                />
+                {errors.name && (
+                  <p className="text-red-600 text-sm mt-1 font-medium">
+                    {errors.name}
+                  </p>
+                )}
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block font-medium mb-1">Description</label>
+                <textarea
+                  name="description"
+                  value={role.description || ""}
+                  onChange={handleChange}
+                  className={`w-full p-2 border ${
+                    errors.description ? "border-red-500" : "border-lightGray"
+                  } rounded-md focus:outline-none focus:border-gray-500 dark:bg-darkGray dark:text-white`}
+                  rows="1"
+                />
+                {errors.description && (
+                  <p className="text-red-600 text-sm mt-1 font-medium">
+                    {errors.description}
+                  </p>
+                )}
+              </div>
             </div>
+          </div>
 
-            {/* Description */}
-            <div>
-              <label className="block font-medium mb-1">Description</label>
-              <textarea
-                name="description"
-                value={role.description || ""}
-                onChange={handleChange}
-                className={`w-full p-2 border ${
-                  errors.description ? "border-red-500" : "border-lightGray"
-                } rounded-md focus:outline-none focus:border-gray-500 dark:bg-darkGray dark:text-white`}
-                rows="1"
-              />
-              {errors.description && (
-                <p className="text-red-600 text-sm mt-1 font-medium">
-                  {errors.description}
-                </p>
-              )}
-            </div>
+          <div className="p-2 bg-white dark:bg-darkBg border border-lightGray dark:border-darkGray rounded-lg">
+            <img src={img1} alt="image" className="object-contain rounded-lg" />
           </div>
         </div>
 
-        <div className="p-2 bg-white dark:bg-darkBg border border-lightGray dark:border-darkGray rounded-lg">
-          <img src={img1} alt="image" className="object-contain rounded-lg" />
-        </div>
-      </div>
+        {/* Permissions Table */}
+        <div className="bg-white dark:bg-darkBg rounded-lg shadow-md border">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-sm">
+              <thead className="bg-gray-100 dark:bg-gray-800">
+                <tr>
+                  <th className="border p-3 text-left">Modules</th>
+                  <th className="border p-3 text-center">
+                    Create <br />
+                    <small>able to add new data</small>
+                  </th>
+                  <th className="border p-3 text-center">
+                    Read <br />
+                    <small>able to view data only</small>
+                  </th>
+                  <th className="border p-3 text-center">
+                    Update
+                    <br /> <small>able to modify existing data</small>
+                  </th>
+                  <th className="border p-3 text-center">
+                    Delete <br /> <small>able to delete data</small>
+                  </th>
+                  <th className="border p-3 text-center">
+                    Allow All <br /> <small>able to access all Crud</small>
+                  </th>
+                </tr>
+              </thead>
 
-      {/* Permissions Table */}
-      <div className="bg-white dark:bg-darkBg rounded-lg shadow-md border">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-sm">
-            <thead className="bg-gray-100 dark:bg-gray-800">
-              <tr>
-                <th className="border p-3 text-left">Modules</th>
-                <th className="border p-3 text-center">
-                  Create <br />
-                  <small>able to add new data</small>
-                </th>
-                <th className="border p-3 text-center">
-                  Read <br />
-                  <small>able to view data only</small>
-                </th>
-                <th className="border p-3 text-center">
-                  Update
-                  <br /> <small>able to modify existing data</small>
-                </th>
-                <th className="border p-3 text-center">
-                  Delete <br /> <small>able to delete data</small>
-                </th>
-                <th className="border p-3 text-center">
-                  Allow All <br /> <small>able to access all Crud</small>
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {groupedModules.map((module) => (
-                <tr key={module} className="border-b hover:bg-gray-50">
-                  <td className="border p-3 font-medium capitalize">
-                    {module}
-                  </td>
-                  {["create", "read", "update", "delete"].map((action) => (
-                    <td key={action} className="border text-center">
+              <tbody>
+                {groupedModules.map((module) => (
+                  <tr key={module} className="border-b hover:bg-gray-50">
+                    <td className="border p-3 font-medium capitalize">
+                      {module}
+                    </td>
+                    {["create", "read", "update", "delete"].map((action) => (
+                      <td key={action} className="border text-center">
+                        <input
+                          type="checkbox"
+                          checked={selected[module]?.[action] || false}
+                          onChange={() => handleToggle(module, action)}
+                        />
+                      </td>
+                    ))}
+                    <td className="border text-center">
                       <input
                         type="checkbox"
-                        checked={selected[module]?.[action] || false}
-                        onChange={() => handleToggle(module, action)}
+                        onChange={() => handleAllowAll(module)}
+                        checked={selected[module]?.manage || false}
                       />
                     </td>
-                  ))}
-                  <td className="border text-center">
-                    <input
-                      type="checkbox"
-                      onChange={() => handleAllowAll(module)}
-                      checked={selected[module]?.manage || false}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-        <div className="flex justify-end border-t px-6 py-4 bg-gray-50">
-          <button
-            onClick={handleSave}
-            disabled={loading}
-            className={`flex items-center gap-2 bg-dark text-white font-medium px-4 py-2 rounded-md transition ${
-              loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"
-            }`}
-          >
-            <Save size={18} />
-            <span>{loading ? "Saving..." : "Save"}</span>
-          </button>
+          <div className="flex justify-end border-t px-6 py-4 bg-gray-50">
+            <button
+              onClick={handleSave}
+              disabled={loading}
+              className={`flex items-center gap-2 bg-dark text-white font-medium px-4 py-2 rounded-md transition ${
+                loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"
+              }`}
+            >
+              <Save size={18} />
+              <span>{loading ? "Saving..." : "Save"}</span>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

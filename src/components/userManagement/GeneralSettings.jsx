@@ -151,7 +151,7 @@ const GeneralSettings = () => {
         {/* Form Fields */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
-            id="company_name"
+            // id="company_name"
             type="text"
             name="company_name"
             value={formData.company_name}
@@ -160,7 +160,7 @@ const GeneralSettings = () => {
             errors={errors}
           />
           <Input
-            id="company_email"
+            // id="company_email"
             type="text"
             name="company_email"
             value={formData.company_email}
@@ -169,7 +169,7 @@ const GeneralSettings = () => {
             errors={errors}
           />
           <Input
-            id="company_phone"
+            // id="company_phone"
             type="tel"
             name="company_phone"
             value={formData.company_phone}
@@ -178,7 +178,7 @@ const GeneralSettings = () => {
             errors={errors}
           />
           <Input
-            id="company_state"
+            // id="company_state"
             type="text"
             name="company_state"
             value={formData.company_state}
@@ -187,7 +187,7 @@ const GeneralSettings = () => {
             errors={errors}
           />
           <Input
-            id="company_city"
+            // id="company_city"
             type="text"
             name="company_city"
             value={formData.company_city}
@@ -196,7 +196,7 @@ const GeneralSettings = () => {
             errors={errors}
           />
           <Input
-            id="company_gst"
+            // id="company_gst"
             type="text"
             name="company_gst"
             value={formData.company_gst}
@@ -210,7 +210,7 @@ const GeneralSettings = () => {
         <div className="col-span-2">
           <div className="relative w-full">
             <textarea
-              id="company_address"
+              // id="company_address"
               name="company_address"
               rows={4}
               value={formData.company_address}
@@ -224,7 +224,7 @@ const GeneralSettings = () => {
         }`}
             />
             <label
-              htmlFor="company_address"
+              // htmlFor="company_address"
               className={`absolute pointer-events-none font-medium text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
             peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2
             peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
