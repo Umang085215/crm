@@ -472,7 +472,10 @@ const ProfileList = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={12}>
+                      <TableCell
+                        colSpan={15}
+                        className="py-10 text-center bg-white dark:bg-darkBg"
+                      >
                         <NoData
                           title="No Profiles Found"
                           description="There are currently no profiles in the system."

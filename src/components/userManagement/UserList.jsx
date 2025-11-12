@@ -368,7 +368,10 @@ const UserList = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={12}>
+                      <TableCell
+                        colSpan={15}
+                        className="py-10 text-center bg-white dark:bg-darkBg"
+                      >
                         <NoData
                           title="No Users Found"
                           description="There are currently no users in the system."
