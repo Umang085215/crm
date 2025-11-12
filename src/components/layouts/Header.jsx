@@ -76,7 +76,7 @@ const Header = ({ toggleSidebar }) => {
           background: "#f9fafb",
           color: "#1f2937",
           showConfirmButton: false,
-          timer: 5000,
+          timer: 2000,
           customClass: {
             popup: "rounded-2xl shadow-xl p-6",
             title: "text-lg font-semibold text-gray-800",

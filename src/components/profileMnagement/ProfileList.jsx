@@ -159,7 +159,10 @@ const ProfileList = () => {
   };
   const getStickyClass = (columnId) => {
     if (columnId === "action") return "sticky right-0 z-30";
-    if (columnId === "status") return "sticky right-[126px] z-20";
+    if (columnId === "status")
+      return `${
+        sortedData.length > 0 ? "right-[126px]" : "right-[77px]"
+      } sticky  z-20`;
     return "";
   };
   const handleFavourite = (profileId) => {
