@@ -404,26 +404,38 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         },
       ],
     },
+    // {
+    //   section: "PROFILE",
+    //   items: [
+    //     {
+    //       module: "profile",
+    //       path: "/admin/profile",
+    //       label: "Profile",
+    //       icon: <TbReportAnalytics size={16} />,
+    //       submodules: [
+    //         {
+    //           module: "profile",
+    //           path: "/admin/profilemanagement/profiles",
+    //           label: "Manage Profiles",
+    //           icon: <AiOutlineDashboard size={16} />,
+    //         },
+    //       ],
+    //     },
+    //   ],
+    // },
     {
-      section: "PROFILE",
+      section: "Profile Management",
       items: [
         {
           module: "profile",
-          path: "/admin/profile",
-          label: "Profile",
-          icon: <TbReportAnalytics size={16} />,
-          submodules: [
-            {
-              module: "profile-add",
-              path: "/admin/profile-add",
-              label: "Add Profile",
-              icon: <AiOutlineDashboard size={16} />,
-            },
-          ],
+          path: "/admin/profilemanagement/profiles",
+          label: "Profiles",
+          icon: <LayoutDashboard size={16} />,
         },
       ],
     },
     {
+      section: "Settings",
       items: [
         {
           module: "settings",
