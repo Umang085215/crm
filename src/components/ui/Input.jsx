@@ -23,7 +23,7 @@ const Input = ({
           onChange={handleChange}
           placeholder=" "
           className={`block w-full text-sm bg-transparent rounded-md appearance-none focus:outline-none peer transition border p-[14px] 
-            ${icon ? "pr-10" : ""}  /* 👈 adds padding if icon exists */
+            ${icon ? "pr-10" : ""}  
             ${
               hasError
                 ? "border-red-500"

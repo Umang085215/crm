@@ -6,6 +6,7 @@ import { FaRegUser } from "react-icons/fa";
 import LightDarkMode from "../themes/LightDarkMode";
 import Tippy from "@tippyjs/react";
 import { useAuth } from "../../auth/AuthContext";
+import ToolTip from "../ui/ToolTip";
 
 const IconButton = ({ title, icon: Icon, badge }) => (
   <Tippy

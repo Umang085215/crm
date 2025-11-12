@@ -1,57 +1,6 @@
-// import React from "react";
-// import { Navigate } from "react-router-dom";
-// import { useAuth } from "../../auth/AuthContext";
-// export default function ProtectedRoute({
-//   children,
-//   allowedModules = [],
-//   allowedRoles = [],
-//   allowedSubmodules = [],
-// }) {
-//   const { token, role, modules } = useAuth();
-//   if (!token) return <Navigate to="/login" replace />;
-
-//   if (role?.toLowerCase() === "superadmin") return children;
-
-//   if (
-//     allowedRoles.length &&
-//     !allowedRoles.some((r) => r.toLowerCase() === role?.toLowerCase())
-//   ) {
-//     return <Navigate to="/unauthorized" replace />;
-//   }
-
-//   const userModules = (modules || []).map((m) =>
-//     typeof m === "string" ? m.toLowerCase() : m.name?.toLowerCase()
-//   );
-
-//   if (
-//     allowedModules.length &&
-//     !allowedModules.some((am) => userModules.includes(am.toLowerCase()))
-//   ) {
-//     return <Navigate to="/unauthorized" replace />;
-//   }
-
-//   if (allowedSubmodules.length) {
-//     const userSubmodules = (modules || [])
-//       .flatMap((m) => m.submodules || [])
-//       .map((s) =>
-//         typeof s === "string" ? s.toLowerCase() : s.name?.toLowerCase()
-//       );
-
-//     const hasSub = allowedSubmodules.some((sub) =>
-//       userSubmodules.includes(sub.toLowerCase())
-//     );
-
-//     if (!hasSub) return <Navigate to="/unauthorized" replace />;
-//   }
-
-//   return children;
-// }
-
-// components/auth/ProtectedRoute.jsx
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
-
 export default function ProtectedRoute({
   children,
   allowedModules = [],

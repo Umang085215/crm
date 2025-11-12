@@ -1,6 +1,4 @@
-// SelectField.jsx
 import React from "react";
-
 const SelectField = ({
   id,
   name,

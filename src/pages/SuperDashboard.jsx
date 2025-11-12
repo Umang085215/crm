@@ -1,10 +1,10 @@
 import React from "react";
 import { useAuth } from "../auth/AuthContext";
 import DashboardCard from "../components/cards/DashboardCard";
-import img1 from "../assets/adminImages/d1.png";
-import img2 from "../assets/adminImages/d2.png";
-import img3 from "../assets/adminImages/d3.png";
-import img4 from "../assets/adminImages/d4.png";
+import img1 from "../assets/images/d1.png";
+import img2 from "../assets/images/d2.png";
+import img3 from "../assets/images/d3.png";
+import img4 from "../assets/images/d4.png";
 import DashboardStats from "../components/cards/DashboardStats";
 
 const products = [

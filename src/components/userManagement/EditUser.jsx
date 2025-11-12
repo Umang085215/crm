@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
@@ -26,6 +26,7 @@ const schema = yup.object().shape({
 export default function EditUser() {
   const { id } = useParams();
   const { token } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -272,17 +273,16 @@ export default function EditUser() {
 
   return (
     <div>
-      <div className="mb-4 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold mb-4">
-          {id ? "Edit User" : "Create User"}
-        </h2>
-        <Link
-          to="/admin/usermanagement/users"
-          className="px-2 py-1.5 flex gap-1 items-center bg-dark text-white rounded-md"
-        >
-          <ArrowLeft size={18} />
-          <span>Back</span>
-        </Link>
+      <div className="mb-4 flex justify-between items-center ">
+        <h2 className="text-2xl font-semibold">Edit User</h2>
+        <div className="flex items-center gap-3 mt-3 sm:mt-0">
+          <button
+            onClick={() => navigate("/admin/usermanagement/users")}
+            className="flex items-center gap-2 px-3 py-1.5 bg-gray-600 text-white text-sm rounded-md hover:opacity-90 transition"
+          >
+            <ArrowLeft size={16} /> Back
+          </button>
+        </div>
       </div>
 
       {errorMsg && (
@@ -659,7 +659,7 @@ export default function EditUser() {
               </div>
 
               <div className="col-span-2 flex justify-end">
-                <Button type="submit" text="Save" icon={<Save size={18} />} />
+                <Button type="submit" text="Update" icon={<Save size={18} />} />
               </div>
             </div>
           </div>

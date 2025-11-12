@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
+import SelectField from "../ui/SelectField";
 import * as yup from "yup";
 import { ArrowLeft, Upload, Save, Eye, EyeOff, User } from "lucide-react";
 import Spinner from "../loaders/Spinner";
@@ -82,51 +83,6 @@ export default function UserManagement() {
   useEffect(() => {
     getAllStates();
   }, [formData.country, fullCountryData]);
-
-  // Get user by Id
-
-  const getUserById = async (userId) => {
-    try {
-      setLoadingUser(true);
-      const res = await fetch(
-        `https://crm-backend-qbz0.onrender.com/api/users/${userId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data = await res.json();
-
-      if (res.ok && data.user) {
-        const user = data.user;
-        setFormData({
-          fullName: user.fullName || "",
-          email: user.email || "",
-          phone: user.phone || "",
-          dob: user.dob || "",
-          address: user.address || "",
-          country: user.country || "",
-          state: user.state || "",
-          zipcode: user.zipcode || "",
-          role: user.role?.name || "",
-          about: user.about || "",
-          profileImage: null,
-          status: user.status || "active",
-          sendWelcomeEmail: true,
-          password: "",
-        });
-        if (user.profileImage) setProfilePreview(user.profileImage);
-      } else {
-        setErrorMsg("User not found or unauthorized.");
-      }
-    } catch (err) {
-      console.error("Error fetching user:", err);
-      setErrorMsg("Failed to fetch user details.");
-    }
-  };
 
   // Fetch all roles
   const getAllRoles = async () => {
@@ -552,16 +508,6 @@ export default function UserManagement() {
               )}
             </div>
 
-            {/* <Input
-              id="user_role"
-              type="text"
-              name="role"
-              value={formData.role}
-              handleChange={handleChange}
-              className="col-span-2 md:col-span-1"
-              errors={errors}
-              labelName="Role"
-            /> */}
             <Input
               id="user_dob"
               type="date"
@@ -573,7 +519,7 @@ export default function UserManagement() {
               labelName="DOB"
             />
             {/* Country Dropdown */}
-            <div className="col-span-2 md:col-span-1">
+            {/* <div className="col-span-2 md:col-span-1">
               <div className="relative w-full">
                 <select
                   id="country"
@@ -619,9 +565,21 @@ export default function UserManagement() {
                   <p className="text-red-500 text-sm mt-1">{errors.country}</p>
                 )}
               </div>
-            </div>
+            </div> */}
+
+            <SelectField
+              id="country"
+              name="country"
+              label="Country"
+              value={formData.country}
+              handleChange={handleChange}
+              options={countries}
+              loading={loadingCountries}
+              error={errors.country}
+            />
+
             {/* State Dropdown */}
-            <div className="col-span-2 md:col-span-1">
+            {/* <div className="col-span-2 md:col-span-1">
               <div className="relative w-full">
                 <select
                   id="user_state"
@@ -667,10 +625,17 @@ export default function UserManagement() {
                   <p className="text-red-500 text-sm mt-1">{errors.state}</p>
                 )}
               </div>
-            </div>
-
+            </div> */}
+            <SelectField
+              id="user_state"
+              name="state"
+              label="State"
+              value={formData.state}
+              handleChange={handleChange}
+              options={states}
+              error={errors.state}
+            />
             {/* Remaining Inputs */}
-
             <Input
               id="user_address"
               type="text"

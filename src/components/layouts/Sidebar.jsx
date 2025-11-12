@@ -334,7 +334,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { AiOutlineDashboard } from "react-icons/ai";
 import { TbReportAnalytics } from "react-icons/tb";
-import logo from "../../assets/adminImages/logo/logo.png";
+import logo from "../../assets/logo/logo.png";
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const { modules = [], role } = useAuth();

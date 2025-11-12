@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Save } from "lucide-react";
-import img1 from "../../assets/adminImages/logo/loginBg.jpg";
+import img1 from "../../assets/logo/loginBg.jpg";
 import * as yup from "yup";
 
 const schema = yup.object().shape({
