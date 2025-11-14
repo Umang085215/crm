@@ -231,7 +231,7 @@ const ClientList = () => {
                   { id: "empanelmentDate", label: "Empanelment Date" },
                   { id: "addedBy", label: "Added By" },
                   { id: "createdAt", label: "Created At" },
-                  { id: "status", label: "Status" },
+                  { id: "status", label: "Status", sticky: true },
                   { id: "action", label: "Action", sticky: true },
                 ].map((col) => (
                   <TableCell
