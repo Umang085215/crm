@@ -1,40 +1,43 @@
 import React from "react";
-const Input = ({
-  type = "text",
-  // id,
-  value,
+
+const BasicDatePicker = ({
   name,
+  value,
+  labelName,
   handleChange,
   errors = {},
-  labelName,
   className = "",
-  icon = null,
 }) => {
   const hasError = errors[name];
 
   return (
     <div className={className}>
-      <div className="relative w-full">
+      <div
+        className={`relative w-full transition 
+        ${hasError ? "animate-shake" : ""}`}
+      >
         <input
-          type={type}
-          // id={id}
+          type="date"
           name={name}
           value={value}
-          onChange={handleChange}
+          onChange={(e) =>
+            handleChange({
+              target: { name, value: e.target.value },
+            })
+          }
           placeholder=" "
-          className={`block w-full text-sm bg-transparent rounded-md appearance-none focus:outline-none peer transition border p-[14px] 
-            ${icon ? "pr-10" : ""}  
+          className={`block w-full text-sm bg-transparent rounded-md appearance-none focus:outline-none peer transition border p-[14px]
             ${
               hasError
                 ? "border-red-500"
                 : "border-lightGray dark:border-darkGray focus:border-black"
             }
-            dark:text-white`}
+            dark:text-white
+          `}
         />
 
-        {/* Floating label */}
+        {/* Floating Label (same as Input component) */}
         <label
-          // htmlFor={id}
           className={`absolute pointer-events-none font-medium text-[15px] text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
             peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2
             peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
@@ -47,13 +50,6 @@ const Input = ({
         >
           {labelName}
         </label>
-
-        {/* Optional right-side icon */}
-        {icon && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer">
-            {icon}
-          </span>
-        )}
       </div>
 
       {hasError && <p className="text-red-500 text-sm mt-1">{hasError}</p>}
@@ -61,4 +57,4 @@ const Input = ({
   );
 };
 
-export default Input;
+export default BasicDatePicker;

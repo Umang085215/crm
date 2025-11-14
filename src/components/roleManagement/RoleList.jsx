@@ -10,12 +10,13 @@ import {
   TablePagination,
   Checkbox,
 } from "@mui/material";
-import { Plus, Pencil } from "lucide-react";
+import { Plus, Pencil, RefreshCcw } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import DateDisplay from "../ui/DateDisplay";
 import Spinner from "../loaders/Spinner";
 import NoData from "../ui/NoData";
+import ToolTip from "../ui/ToolTip";
 
 const RoleList = () => {
   const { token } = useAuth();
@@ -31,10 +32,10 @@ const RoleList = () => {
   const [selected, setSelected] = useState([]);
 
   useEffect(() => {
-    fetchRoles();
+    getAllRoles();
   }, []);
 
-  const fetchRoles = async () => {
+  const getAllRoles = async () => {
     try {
       setLoading(true);
       setError("");
@@ -178,9 +179,18 @@ const RoleList = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4">
-        Role & Permission Management
-      </h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-semibold ">
+          Role & Permission Management
+        </h2>
+        <button className="flex items-center gap-2 " onClick={getAllRoles}>
+          <ToolTip
+            title="Refresh"
+            placement="top"
+            icon={<RefreshCcw size={16} />}
+          />
+        </button>
+      </div>
       {/* Search and Add */}
       <div className="mb-6 flex justify-between items-center">
         <div className="w-1/2">
@@ -204,6 +214,19 @@ const RoleList = () => {
       </div>
 
       <>
+        {/* Pagination */}
+        <TablePagination
+          component="div"
+          count={filteredData.length}
+          page={page}
+          onPageChange={(e, newPage) => setPage(newPage)}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10));
+            setPage(0);
+          }}
+          rowsPerPageOptions={[5, 10, 20, 30, 50]}
+        />
         {/* Table */}
         <TableContainer className="rounded-xl border border-lightGray dark:border-darkGray">
           <div className="overflow-x-auto">
@@ -330,20 +353,6 @@ const RoleList = () => {
             </Table>
           </div>
         </TableContainer>
-
-        {/* Pagination */}
-        <TablePagination
-          component="div"
-          count={filteredData.length}
-          page={page}
-          onPageChange={(e, newPage) => setPage(newPage)}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={(e) => {
-            setRowsPerPage(parseInt(e.target.value, 10));
-            setPage(0);
-          }}
-          rowsPerPageOptions={[5, 10, 20, 30, 50]}
-        />
       </>
     </div>
   );

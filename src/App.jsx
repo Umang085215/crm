@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+import "./styles/style.css";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import PublicRoute from "./components/auth/PublicRoute";
@@ -20,6 +21,8 @@ import ProfileList from "./components/profileMnagement/ProfileList";
 import EditProfile from "./components/profileMnagement/EditProfile";
 import Profiles from "./pages/Profiles";
 import ViewProfile from "./components/profileMnagement/ViewProfile";
+import AddClient from "./components/clientManagement/AddClient";
+import ClientList from "./components/clientManagement/ClientsList";
 
 const App = () => {
   return (
@@ -145,7 +148,8 @@ const App = () => {
         <Route
           path="/admin/rolemanagement/roles"
           element={
-            <ProtectedRoute allowedModules={["roles"]}>
+            <ProtectedRoute allowedModules={["users", "roles"]}>
+              {/* allowedModules={["roles"]} */}
               <RoleManagement />
             </ProtectedRoute>
           }
@@ -153,7 +157,7 @@ const App = () => {
         <Route
           path="/admin/rolemanagement/create-roles"
           element={
-            <ProtectedRoute allowedModules={["roles"]}>
+            <ProtectedRoute allowedModules={["users", "roles"]}>
               <CreateRole />
             </ProtectedRoute>
           }
@@ -161,7 +165,7 @@ const App = () => {
         <Route
           path="/admin/rolemanagement/edit-roles/:id"
           element={
-            <ProtectedRoute allowedModules={["roles"]}>
+            <ProtectedRoute allowedModules={["users", "roles"]}>
               <EditRole />
             </ProtectedRoute>
           }
@@ -188,6 +192,23 @@ const App = () => {
           element={
             <ProtectedRoute allowedModules={["users"]}>
               <EditUser />
+            </ProtectedRoute>
+          }
+        />
+        {/* Clients */}
+        <Route
+          path="/admin/clientmanagement/clients"
+          element={
+            <ProtectedRoute allowedModules={["users"]}>
+              <ClientList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/clientmanagement/add-client"
+          element={
+            <ProtectedRoute allowedModules={["users"]}>
+              <AddClient />
             </ProtectedRoute>
           }
         />

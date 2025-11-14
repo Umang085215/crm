@@ -5,6 +5,7 @@ import img1 from "../assets/images/d1.png";
 import img2 from "../assets/images/d2.png";
 import img3 from "../assets/images/d3.png";
 import img4 from "../assets/images/d4.png";
+import DashboardStats from "../components/cards/DashboardStats";
 
 const products = [
   {
@@ -96,6 +97,9 @@ const Dashboard = () => {
           color="blue"
           isPositive={false}
         />
+      </div>
+      <div>
+        <DashboardStats />
       </div>
       {/* Product Details Table */}
       <div className=" border border-lightGray dark:border-darkGray rounded-xl p-4  overflow-x-auto">

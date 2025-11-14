@@ -7,6 +7,7 @@ import SelectField from "../ui/SelectField";
 import * as yup from "yup";
 import { ArrowLeft, Upload, Save, Eye, EyeOff, User } from "lucide-react";
 import Spinner from "../loaders/Spinner";
+import { getUserById } from "../../services/userServices";
 
 const schema = yup.object().shape({
   fullName: yup.string().required("Name is required"),
@@ -68,7 +69,7 @@ export default function EditUser() {
   }, [formData.country]);
 
   useEffect(() => {
-    if (id) getUserById(id);
+    if (id) fetchUserById(id);
   }, [id]);
 
   const getAllRoles = async () => {
@@ -95,26 +96,17 @@ export default function EditUser() {
     }
   };
 
-  const getUserById = async (userId) => {
+  const fetchUserById = async (userId) => {
     try {
       setLoadingUser(true);
-      const res = await fetch(
-        `https://crm-backend-qbz0.onrender.com/api/users/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data = await res.json();
-      console.log(data.user.role.name);
-      if (res.ok && data.user) {
+      const data = await getUserById(userId);
+      console.log(data);
+      if (data?.user) {
         const user = data.user;
         const formattedDob = user.dob
           ? new Date(user.dob).toISOString().split("T")[0]
           : "";
-        await setFormData({
+        setFormData({
           fullName: user.fullName || "",
           email: user.email || "",
           password: "",
@@ -124,20 +116,16 @@ export default function EditUser() {
           country: user.country || "",
           state: user.state || "",
           zipcode: user.zipcode || "",
-          role: user.role || "",
+          role: user.role?._id || user.role || "",
           about: user.about || "",
           profileImage: null,
           status: user.status || "active",
           sendWelcomeEmail: true,
         });
-
         if (user.profileImage) setProfilePreview(user.profileImage);
-      } else {
-        setErrorMsg(data.message || "User not found.");
       }
     } catch (err) {
-      console.error("Error fetching user:", err);
-      setErrorMsg("Failed to fetch user details.");
+      setErrorMsg(err);
     } finally {
       setLoadingUser(false);
     }
@@ -181,7 +169,6 @@ export default function EditUser() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name === "phone" || name === "zipcode") {
       const digits = value.replace(/\D/g, "");
       if (value !== digits) {

@@ -17,6 +17,8 @@ import DateDisplay from "../ui/DateDisplay";
 import Spinner from "../loaders/Spinner";
 import ToolTip from "../ui/ToolTip";
 import NoData from "../ui/NoData";
+import { getAllUsers } from "../../services/userServices";
+
 const UserList = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -32,48 +34,65 @@ const UserList = () => {
   const [orderBy, setOrderBy] = useState("user_id");
   const [activeTab, setActiveTab] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    getAllUsers(pagination.page, pagination.limit, activeTab, searchQuery);
-  }, [pagination.page, pagination.limit, activeTab, token, searchQuery]);
+    fetchUsers();
+  }, [pagination.page, pagination.limit, activeTab, searchQuery]);
 
-  const getAllUsers = async (page = 1, limit = 5, tab = "All", search = "") => {
+  const fetchUsers = async () => {
     try {
       setLoading(true);
-      let url = `https://crm-backend-qbz0.onrender.com/api/users?page=${page}&limit=${limit}`;
-      if (tab === "Active") url += `&status=active`;
-      if (tab === "InActive") url += `&status=inactive`;
-      if (search.trim() !== "") url += `&search=${encodeURIComponent(search)}`;
-
-      const res = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+      const data = await getAllUsers(
+        pagination.page,
+        pagination.limit,
+        activeTab,
+        searchQuery
+      );
+      setAllUsers(data.users || []);
+      setPagination((prev) => ({
+        ...prev,
+        total: data.pagination?.total || 0,
+        pages: data.pagination?.pages || 1,
+      }));
+      const activeCount =
+        data.users?.filter((u) => u.status === "active").length || 0;
+      const inactiveCount =
+        data.users?.filter((u) => u.status === "inactive").length || 0;
+      const allCount = data.pagination?.total || 0;
+      setCounts({
+        all: allCount,
+        active: activeCount,
+        inactive: inactiveCount,
       });
-      const data = await res.json();
-      if (data?.success) {
-        setAllUsers(data.users || []);
-        setPagination(data.pagination);
-        const activeCount = data.users.filter(
-          (u) => u.status === "active"
-        ).length;
-        const inactiveCount = data.users.filter(
-          (u) => u.status === "inactive"
-        ).length;
-        const allCount = data.pagination.total;
-        setCounts({
-          all: allCount,
-          active: activeCount,
-          inactive: inactiveCount,
-        });
-      }
     } catch (error) {
-      console.error("Error fetching users:", error);
+      setErrorMsg(`"Errors  when fetching users" || ${error}`);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPagination((prev) => ({ ...prev, page: newPage + 1 }));
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPagination((prev) => ({
+      ...prev,
+      limit: parseInt(event.target.value, 10),
+      page: 1,
+    }));
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  };
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
   const formatDate = (dateString) => {
@@ -90,11 +109,6 @@ const UserList = () => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
   const filteredData = useMemo(() => {
@@ -127,24 +141,15 @@ const UserList = () => {
     });
   }, [filteredData, order, orderBy]);
 
-  const handleChangePage = (event, newPage) => {
-    setPagination((prev) => ({ ...prev, page: newPage + 1 }));
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setPagination((prev) => ({
-      ...prev,
-      limit: parseInt(event.target.value, 10),
-      page: 1,
-    }));
-  };
-
   return (
     <>
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-semibold ">All Users</h2>
-          <button className="flex items-center gap-2 " onClick={getAllUsers}>
+          <button
+            className="flex items-center gap-2 "
+            onClick={() => fetchUsers()}
+          >
             <ToolTip
               title="Refresh"
               placement="top"
@@ -153,29 +158,26 @@ const UserList = () => {
           </button>
         </div>
         <div>
+          {errorMsg && (
+            <div className="mb-4 p-2 bg-red-100 text-center text-red-700 rounded">
+              {errorMsg}
+            </div>
+          )}
+
           {/* Tabs */}
           <div className="relative mb-4">
             <div className="flex gap-4 border-b border-gray-200 mb-4">
               {["All", "Active", "InActive"].map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => setActiveTab(tab)}
+                  onClick={() => handleTabChange(tab)}
                   className={`relative flex items-center gap-2 px-4 py-2 transition-all duration-300 ${
                     activeTab === tab
                       ? "text-dark  border-b-2 border-dark font-semibold"
                       : "text-gray-500 hover:opacity-90"
                   }`}
                 >
-                  <span>{tab}</span>
-                  <span className="text-sm ">
-                    (
-                    {tab === "All"
-                      ? counts.all
-                      : tab === "Active"
-                      ? counts.active
-                      : counts.inactive}
-                    )
-                  </span>
+                  {tab} ({counts[tab.toLowerCase()] || 0})
                 </button>
               ))}
             </div>
@@ -201,6 +203,16 @@ const UserList = () => {
               </Link>
             </div>
           </div>
+          {/* Pgination */}
+          <TablePagination
+            component="div"
+            count={pagination.total}
+            page={pagination.page - 1}
+            onPageChange={handleChangePage}
+            rowsPerPage={pagination.limit}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPageOptions={[5, 10, 20, 50]}
+          />
           {/* Table */}
           <TableContainer className="rounded-xl border border-lightGray dark:border-darkGray">
             <div
@@ -383,16 +395,6 @@ const UserList = () => {
               </Table>
             </div>
           </TableContainer>
-          {/* Pgination */}
-          <TablePagination
-            component="div"
-            count={pagination.total}
-            page={pagination.page - 1}
-            onPageChange={handleChangePage}
-            rowsPerPage={pagination.limit}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            rowsPerPageOptions={[5, 10, 20, 50]}
-          />
         </div>
       </div>
     </>

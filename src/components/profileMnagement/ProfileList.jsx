@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -27,10 +27,13 @@ import DateDisplay from "../ui/DateDisplay";
 import Spinner from "../loaders/Spinner";
 import ToolTip from "../ui/ToolTip";
 import NoData from "../ui/NoData";
+import { getAllProfiles } from "../../services/profileServices";
 
 const ProfileList = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [successMsg, setSuccessMsg] = useState("");
   const [allProfiles, setAllProfiles] = useState([]);
   const [counts, setCounts] = useState({
     all: 0,
@@ -43,79 +46,95 @@ const ProfileList = () => {
     total: 0,
     page: 1,
     pages: 1,
-    limit: 2,
+    limit: 10,
   });
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("user_id");
   const [activeTab, setActiveTab] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [favourites, setFavourites] = useState([]);
 
   useEffect(() => {
-    getAllProfiles();
-  }, []);
+    if (location.state?.successMsg) {
+      setSuccessMsg(location.state.successMsg);
+      const timer = setTimeout(() => {
+        setSuccessMsg("");
+        navigate(location.pathname, { replace: true });
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [location, navigate]);
 
-  const getAllProfiles = async (
-    page = 1,
-    limit = 5,
-    tab = "All",
-    search = ""
-  ) => {
+  useEffect(() => {
+    fetchProfiles();
+  }, [pagination.page, pagination.limit, activeTab, searchQuery]);
+
+  const fetchProfiles = async () => {
     try {
       setLoading(true);
-      let url = `https://crm-backend-qbz0.onrender.com/api/profiles?page=${page}&limit=${limit}`;
-      if (tab === "Active") url += `&status=Active`;
-      if (tab === "InActive") url += `&status=Inactive`;
-      if (search.trim() !== "") url += `&search=${encodeURIComponent(search)}`;
+      const data = await getAllProfiles(
+        pagination.page,
+        pagination.limit,
+        activeTab,
+        searchQuery
+      );
+      setAllProfiles(data.profiles || []);
+      setPagination((prev) => ({
+        ...prev,
+        total: data.pagination?.total || 0,
+        pages: data.pagination?.pages || 1,
+      }));
+      const activeCount =
+        data.profiles?.filter((u) => u.status === "Active").length || 0;
+      const inactiveCount =
+        data.profiles?.filter((u) => u.status === "Inactive").length || 0;
+      const allCount = data.pagination?.total || 0;
+      const bannedCount =
+        data.profiles?.filter((u) => u.status === "Banned").length || 0;
+      const defaulterCount =
+        data.profiles?.filter((u) => u.status === "Defaulter").length || 0;
 
-      const res = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+      setCounts({
+        all: allCount,
+        active: activeCount,
+        inactive: inactiveCount,
+        banned: bannedCount,
+        defaulter: defaulterCount,
       });
-      const data = await res.json();
-      if (data?.success) {
-        setAllProfiles(data.profiles || []);
-        setPagination(data.pagination);
-        const activeCount = data.profiles.filter(
-          (p) => p.status === "Active"
-        ).length;
-        const inactiveCount = data.profiles.filter(
-          (p) => p.status === "Inactive"
-        ).length;
-        const bannedCount = data.profiles.filter(
-          (p) => p.status === "Banned"
-        ).length;
-        const defaulterCount = data.profiles.filter(
-          (p) => p.status === "Defaulter"
-        ).length;
-        const allCount = data.pagination.total;
-        setCounts({
-          all: allCount,
-          active: activeCount,
-          inactive: inactiveCount,
-          banned: bannedCount,
-          defaulter: defaulterCount,
-        });
-      }
     } catch (error) {
-      console.error("Error fetching profiles:", error);
+      setErrorMsg(`"Errors  when fetching users" || ${error}`);
     } finally {
       setLoading(false);
     }
+  };
+  const handleChangePage = (event, newPage) => {
+    setPagination((prev) => ({ ...prev, page: newPage + 1 }));
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPagination((prev) => ({
+      ...prev,
+      limit: parseInt(event.target.value, 10),
+      page: 1,
+    }));
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  };
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
   const handleSort = (property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
   const filteredData = useMemo(() => {
@@ -146,17 +165,6 @@ const ProfileList = () => {
     });
   }, [filteredData, order, orderBy]);
 
-  const handleChangePage = (event, newPage) => {
-    setPagination((prev) => ({ ...prev, page: newPage + 1 }));
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setPagination((prev) => ({
-      ...prev,
-      limit: parseInt(event.target.value, 10),
-      page: 1,
-    }));
-  };
   const getStickyClass = (columnId) => {
     if (columnId === "action") return "sticky right-0 z-30";
     if (columnId === "status")
@@ -178,7 +186,10 @@ const ProfileList = () => {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-semibold ">All Profiles</h2>
-          <button className="flex items-center gap-2 " onClick={getAllProfiles}>
+          <button
+            className="flex items-center gap-2 "
+            onClick={() => fetchProfiles()}
+          >
             <ToolTip
               title="Refresh"
               placement="top"
@@ -186,6 +197,16 @@ const ProfileList = () => {
             />
           </button>
         </div>
+        {successMsg && (
+          <div className="mb-4 p-2 bg-green-400 text-center text-md font-semibold  text-white rounded">
+            {successMsg}
+          </div>
+        )}
+        {errorMsg && (
+          <div className="mb-4 p-2 bg-red-100 text-center text-red-700 rounded">
+            {errorMsg}
+          </div>
+        )}
         <div>
           {/* Tabs */}
           <div className="relative mb-4">
@@ -194,27 +215,14 @@ const ProfileList = () => {
                 (tab) => (
                   <button
                     key={tab}
-                    onClick={() => setActiveTab(tab)}
+                    onClick={() => handleTabChange(tab)}
                     className={`relative flex items-center gap-2 px-4 py-2 transition-all duration-300 ${
                       activeTab === tab
                         ? "text-dark  border-b-2 border-dark font-semibold"
                         : "text-gray-500 hover:opacity-90"
                     }`}
                   >
-                    <span>{tab}</span>
-                    <span className="text-sm ">
-                      (
-                      {tab === "All"
-                        ? counts.all
-                        : tab === "Active"
-                        ? counts.active
-                        : tab === "Banned"
-                        ? counts.banned
-                        : tab === "Defaulter"
-                        ? counts.defaulter
-                        : counts.inactive}
-                      )
-                    </span>
+                    {tab} ({counts[tab.toLowerCase()] || 0})
                   </button>
                 )
               )}
@@ -241,12 +249,24 @@ const ProfileList = () => {
               </Link>
             </div>
           </div>
+          {/* Pgination */}
+          <TablePagination
+            component="div"
+            count={pagination.total}
+            page={pagination.page - 1}
+            onPageChange={handleChangePage}
+            rowsPerPage={pagination.limit}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPageOptions={[5, 10, 20, 50]}
+          />
           {/* Table */}
           <TableContainer className="rounded-xl border border-lightGray dark:border-darkGray">
             <div
-              className={`overflow-x-auto ${
+              className={` ${
                 sortedData.length > 10 ? "overflow-y-auto max-h-[700px]" : ""
-              } `}
+              } ${
+                sortedData.length > 0 ? "overflow-x-auto " : "overflow-x-hidden"
+              }`}
             >
               <Table className="min-w-full">
                 <TableHead className="sticky top-0 bg-lightGray dark:bg-darkGray z-30">
@@ -469,7 +489,7 @@ const ProfileList = () => {
                   ) : (
                     <TableRow>
                       <TableCell
-                        colSpan={15}
+                        colSpan={10}
                         className="py-10 text-center bg-white dark:bg-darkBg"
                       >
                         <NoData
@@ -483,16 +503,6 @@ const ProfileList = () => {
               </Table>
             </div>
           </TableContainer>
-          {/* Pgination */}
-          <TablePagination
-            component="div"
-            count={pagination.total}
-            page={pagination.page - 1}
-            onPageChange={handleChangePage}
-            rowsPerPage={pagination.limit}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            rowsPerPageOptions={[5, 10, 20, 50]}
-          />
         </div>
       </div>
     </>

@@ -366,7 +366,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           icon: <Users size={16} />,
         },
         {
-          module: "roles",
+          module: "users",
           path: "/admin/rolemanagement/roles",
           label: "Roles & Permission",
           icon: <AiOutlineDashboard size={16} />,
@@ -374,49 +374,41 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       ],
     },
     {
-      section: "REPORTS",
+      section: "CLIENT MANAGEMENT",
       items: [
         {
-          module: "reports",
-          path: "/admin/reports",
-          label: "Reports",
-          icon: <TbReportAnalytics size={16} />,
-          submodules: [
-            {
-              module: "hr",
-              path: "/admin/reports/hr",
-              label: "HR",
-              icon: <AiOutlineDashboard size={16} />,
-            },
-            {
-              module: "bde",
-              path: "/admin/reports/bde",
-              label: "BDE",
-              icon: <AiOutlineDashboard size={16} />,
-            },
-            {
-              module: "sales",
-              path: "/admin/reports/sales",
-              label: "Sales",
-              icon: <AiOutlineDashboard size={16} />,
-            },
-          ],
+          module: "users",
+          path: "/admin/clientmanagement/clients",
+          label: "Manage Clients",
+          icon: <Users size={16} />,
         },
       ],
     },
     // {
-    //   section: "PROFILE",
+    //   section: "REPORTS",
     //   items: [
     //     {
-    //       module: "profile",
-    //       path: "/admin/profile",
-    //       label: "Profile",
+    //       module: "reports",
+    //       path: "/admin/reports",
+    //       label: "Reports",
     //       icon: <TbReportAnalytics size={16} />,
     //       submodules: [
     //         {
-    //           module: "profile",
-    //           path: "/admin/profilemanagement/profiles",
-    //           label: "Manage Profiles",
+    //           module: "hr",
+    //           path: "/admin/reports/hr",
+    //           label: "HR",
+    //           icon: <AiOutlineDashboard size={16} />,
+    //         },
+    //         {
+    //           module: "bde",
+    //           path: "/admin/reports/bde",
+    //           label: "BDE",
+    //           icon: <AiOutlineDashboard size={16} />,
+    //         },
+    //         {
+    //           module: "sales",
+    //           path: "/admin/reports/sales",
+    //           label: "Sales",
     //           icon: <AiOutlineDashboard size={16} />,
     //         },
     //       ],

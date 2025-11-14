@@ -7,6 +7,7 @@ import SelectField from "../ui/SelectField";
 import * as yup from "yup";
 import { ArrowLeft, Upload, Save, Eye, EyeOff, User } from "lucide-react";
 import Spinner from "../loaders/Spinner";
+import { createUser } from "../../services/userServices";
 
 const schema = yup.object().shape({
   fullName: yup.string().required("Name is required"),
@@ -208,7 +209,74 @@ export default function UserManagement() {
     setFormData((prev) => ({ ...prev, status }));
   };
   // Handle form submit
-  const handleSubmit = async (e) => {
+  // const handleCreateUser = async (e) => {
+  //   e.preventDefault();
+  //   setErrors({});
+  //   setErrorMsg("");
+  //   setSuccessMsg("");
+  //   try {
+  //     await schema.validate(formData, { abortEarly: false });
+  //     const payload = {
+  //       fullName: formData.fullName,
+  //       email: formData.email,
+  //       password: formData.password,
+  //       phone: formData.phone,
+  //       role: formData.role,
+  //       dob: formData.dob,
+  //       country: formData.country,
+  //       state: formData.state,
+  //       address: formData.address,
+  //       zipcode: formData.zipcode,
+  //       status: formData.status,
+  //       about: formData.about,
+  //       sendWelcomeEmail: formData.sendWelcomeEmail,
+  //     };
+  //     const res = await fetch(
+  //       "https://crm-backend-qbz0.onrender.com/api/auth/register",
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         body: JSON.stringify(payload),
+  //       }
+  //     );
+  //     const data = await res.json();
+  //     if (!res.ok) {
+  //       throw new Error(data.message || "Failed to register user");
+  //     }
+  //     setSuccessMsg("User registered successfully!");
+  //     setFormData({
+  //       fullName: "",
+  //       email: "",
+  //       password: "",
+  //       phone: "",
+  //       dob: "",
+  //       address: "",
+  //       country: "",
+  //       state: "",
+  //       zipcode: "",
+  //       role: "",
+  //       about: "",
+  //       profileImage: null,
+  //       status: "active",
+  //       sendWelcomeEmail: true,
+  //     });
+  //     setProfilePreview(null);
+  //     setStates([]);
+  //   } catch (err) {
+  //     if (err.inner) {
+  //       const validationErrors = {};
+  //       err.inner.forEach((e) => (validationErrors[e.path] = e.message));
+  //       setErrors(validationErrors);
+  //     } else {
+  //       setErrorMsg(err.message);
+  //     }
+  //   }
+  // };
+
+  const handleCreateUser = async (e) => {
     e.preventDefault();
     setErrors({});
     setErrorMsg("");
@@ -230,22 +298,12 @@ export default function UserManagement() {
         about: formData.about,
         sendWelcomeEmail: formData.sendWelcomeEmail,
       };
-      const res = await fetch(
-        "https://crm-backend-qbz0.onrender.com/api/auth/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to register user");
+      const res = await createUser(payload);
+      if (res?.success) {
+        setSuccessMsg("User registered successfully!");
+      } else {
+        setErrorMsg(res.message);
       }
-      setSuccessMsg("User registered successfully!");
       setFormData({
         fullName: "",
         email: "",
@@ -264,6 +322,7 @@ export default function UserManagement() {
       });
       setProfilePreview(null);
       setStates([]);
+      navigate("/admin/usermanagement/users");
     } catch (err) {
       if (err.inner) {
         const validationErrors = {};
@@ -274,9 +333,11 @@ export default function UserManagement() {
       }
     }
   };
+
   const togglePassword = () => {
     setShowPassword(!showPassword);
   };
+
   const generatePassword = () => {
     const chars =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
@@ -288,7 +349,7 @@ export default function UserManagement() {
   };
 
   return (
-    <div className="">
+    <div>
       <div className="mb-4 flex justify-between items-center">
         <h2 className="text-2xl font-semibold">Create User</h2>
         <button
@@ -311,7 +372,7 @@ export default function UserManagement() {
       )}
 
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleCreateUser}
         autoComplete="off"
         className="grid grid-cols-1 sm:grid-cols-[minmax(0,30%)_minmax(0,70%)] gap-5 items-stretch"
       >

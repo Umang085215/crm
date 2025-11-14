@@ -6,6 +6,7 @@ import Button from "../ui/Button";
 import Input from "../ui/Input";
 import SelectField from "../ui/SelectField";
 import { useAuth } from "../../auth/AuthContext";
+import { addProfile } from "../../services/profileServices";
 
 const schema = yup.object().shape({
   resume: yup
@@ -38,7 +39,7 @@ const schema = yup.object().shape({
   expectedCTC: yup.string().required("Expected CTC is required"),
   workMode: yup.string().required("Work mode is required"),
   noticePeriod: yup.string().required("Notice period is required"),
-  candidateStatus: yup.string().required("Candidate status is required"),
+  status: yup.string().required("Candidate status is required"),
   techStack: yup.string().required("Tech stack is required"),
   candidateSource: yup.string().required("Candidate source is required"),
   skills: yup.array().min(8, "Add at least 8 skill"),
@@ -49,6 +50,7 @@ const ProfileSubmission = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [formData, setFormData] = useState({
     resume: null,
     fullName: "",
@@ -63,7 +65,7 @@ const ProfileSubmission = () => {
     expectedCTC: "",
     workMode: "",
     noticePeriod: "",
-    candidateStatus: "",
+    status: "",
     skills: [],
     techStack: "",
     candidateSource: "",
@@ -72,6 +74,7 @@ const ProfileSubmission = () => {
   const [skillInput, setSkillInput] = useState("");
   const [errors, setErrors] = useState({});
   const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSkillKeyDown = (e) => {
@@ -101,26 +104,47 @@ const ProfileSubmission = () => {
     }));
   };
 
+  // Resume
+
   const handleBoxClick = () => {
     fileInputRef.current.click();
   };
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
+    validateAndSetFile(file);
+  };
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    validateAndSetFile(file);
+  };
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+  const handleDragLeave = () => setIsDragging(false);
+
+  const validateAndSetFile = (file) => {
     if (!file) return;
     if (file.type !== "application/pdf") {
-      setErrors((prev) => ({ ...prev, resume: "Only PDF files allowed" }));
+      setErrors((prev) => ({ ...prev, resume: "Only pdf allowed" }));
       return;
     }
     if (file.size > 50 * 1024 * 1024) {
       setErrors((prev) => ({
         ...prev,
-        resume: "File size must be under 50MB",
+        resume: "File size must be less than 50MB!",
       }));
+
       return;
     }
     setFormData((prev) => ({ ...prev, resume: file }));
-    setErrors((prev) => ({ ...prev, resume: "" }));
+    setErrors((prev) => ({
+      ...prev,
+      resume: "",
+    }));
   };
 
   const handleChange = (e) => {
@@ -160,7 +184,7 @@ const ProfileSubmission = () => {
     e.preventDefault();
     setErrors({});
     setSuccessMsg("");
-    console.log(token);
+    setErrorMsg("");
     try {
       await schema.validate(formData, { abortEarly: false });
       setLoading(true);
@@ -172,47 +196,41 @@ const ProfileSubmission = () => {
           formDataToSend.append(key, value);
         }
       });
-      const response = await fetch(
-        "https://crm-backend-qbz0.onrender.com/api/profiles",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formDataToSend,
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to submit profile. Please try again.");
+      const response = await addProfile(formDataToSend);
+      console.log(response);
+      if (!response.success) {
+        setErrorMsg(response.message);
+      } else {
+        setSuccessMsg(response.message);
+        setFormData({
+          resume: null,
+          fullName: "",
+          email: "",
+          phone: "",
+          alternatePhone: "",
+          preferredLocation: "",
+          currentLocation: "",
+          currentCompany: "",
+          totalExp: "",
+          currentCTC: "",
+          expectedCTC: "",
+          workMode: "",
+          noticePeriod: "",
+          status: "",
+          skills: [],
+          techStack: "",
+          candidateSource: "",
+          description: "",
+        });
+        navigate("/admin/profilemanagement/profiles");
       }
-      setSuccessMsg("Profile submitted successfully");
-      setFormData({
-        resume: null,
-        fullName: "",
-        email: "",
-        phone: "",
-        alternatePhone: "",
-        preferredLocation: "",
-        currentLocation: "",
-        currentCompany: "",
-        totalExp: "",
-        currentCTC: "",
-        expectedCTC: "",
-        workMode: "",
-        noticePeriod: "",
-        candidateStatus: "",
-        skills: [],
-        techStack: "",
-        candidateSource: "",
-        description: "",
-      });
     } catch (err) {
       if (err.name === "ValidationError") {
         const validationErrors = {};
         err.inner.forEach((e) => (validationErrors[e.path] = e.message));
         setErrors(validationErrors);
       } else {
-        setErrors({
+        setErrorMsg({
           api: err.message || "Failed to submit profile. Please try again.",
         });
       }
@@ -232,6 +250,16 @@ const ProfileSubmission = () => {
           <ArrowLeft size={16} /> Back
         </button>
       </div>
+      {errorMsg && (
+        <div className="mb-4 p-2 bg-red-100 text-center text-red-700 rounded">
+          {errorMsg}
+        </div>
+      )}
+      {successMsg && (
+        <div className="mb-4 p-2 bg-green-400 text-center text-md font-semibold  text-white rounded">
+          {successMsg}
+        </div>
+      )}
       <form
         onSubmit={handleSubmit}
         className="space-y-6 border border-gray-200 p-6 rounded-lg  shadow-sm"
@@ -240,6 +268,9 @@ const ProfileSubmission = () => {
         <div>
           <div
             onClick={handleBoxClick}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
             className={`border rounded-md bg-gray-50 dark:bg-gray-800 p-12 text-center cursor-pointer ${
               errors.resume
                 ? "border-red-500"
@@ -267,7 +298,7 @@ const ProfileSubmission = () => {
               <>
                 <FolderClosed className="mx-auto text-dark mb-2" size={24} />
                 <p className="text-gray-600 font-semibold">
-                  Upload your Resume{" "}
+                  {isDragging ? "Drop your Resume here" : "Upload your Resume"}
                 </p>
                 <p className="text-sm text-gray-500">Only PDF (max 50 MB)</p>
               </>
@@ -403,12 +434,12 @@ const ProfileSubmission = () => {
               error={errors.noticePeriod}
             />
             <SelectField
-              name="candidateStatus"
+              name="status"
               label="Candidate Status"
-              value={formData.candidateStatus}
+              value={formData.status}
               handleChange={handleChange}
-              options={["Active", "In-active", "Banned", "Defaulter"]}
-              error={errors.candidateStatus}
+              options={["Active", "Inactive", "Banned", "Defaulter"]}
+              error={errors.status}
             />
             <Input
               name="techStack"

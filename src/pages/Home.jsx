@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   Users,
@@ -15,8 +16,12 @@ import {
   Award,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
+import Swal from "sweetalert2";
 
 export default function Home() {
+  const { token, user, logout } = useAuth();
+  const navigate = useNavigate();
   const [scrollY, setScrollY] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState({});
@@ -190,6 +195,51 @@ export default function Home() {
     },
   ];
 
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Log out of your account?",
+      text: "You’ll be signed out and need to log in again to continue.",
+      icon: "question",
+      iconColor: "#dc2626",
+      showCancelButton: true,
+      confirmButtonText: "Yes, log me out",
+      cancelButtonText: "Stay logged in",
+      background: "#f9fafb",
+      color: "#dc2626",
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+      customClass: {
+        popup: "rounded-2xl shadow-xl p-6",
+        title: "text-lg font-semibold text-[#dc2626]",
+        htmlContainer: "text-sm text-gray-600",
+        confirmButton:
+          "px-5 py-2 rounded-lg font-medium bg-[#dc2626] hover:opacity-90 transition-all",
+        cancelButton:
+          "px-5 py-2 rounded-lg font-medium bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all",
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logout();
+        Swal.fire({
+          title: "See you soon! 👋",
+          text: "You’ve been logged out successfully.",
+          icon: "success",
+          background: "#f9fafb",
+          color: "#1f2937",
+          showConfirmButton: false,
+          timer: 2000,
+          customClass: {
+            popup: "rounded-2xl shadow-xl p-6",
+            title: "text-lg font-semibold text-gray-800",
+            htmlContainer: "text-sm text-gray-600",
+          },
+        }).then(() => {
+          navigate("/login");
+        });
+      }
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 text-gray-900 overflow-hidden">
       {/* Animated background shapes */}
@@ -241,14 +291,34 @@ export default function Home() {
               >
                 Pricing
               </Link>
-              <Link
-                to="/login"
-                className="px-6 py-2.5 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-full hover:shadow-lg hover:shadow-red-500/50 transition-all duration-300 hover:scale-105 font-medium"
+              {token ? (
+                <button
+                  className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-400 text-white rounded-full hover:shadow-lg hover:shadow-green-500/50 transition-all duration-300 hover:scale-105 font-medium"
+                  onClick={() =>
+                    navigate(
+                      user.role.name === "admin" ||
+                        user.role.name === "superAdmin"
+                        ? "/admin/super-dashboard"
+                        : "/dashboard"
+                    )
+                  }
+                >
+                  Go to Dashboard
+                </button>
+              ) : (
+                <Link
+                  to="/login"
+                  className="px-6 py-2.5 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-full hover:shadow-lg hover:shadow-red-500/50 transition-all duration-300 hover:scale-105 font-medium"
+                >
+                  Sign in
+                </Link>
+              )}
+
+              <button
+                className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 font-medium"
+                onClick={token ? handleLogout : navigate("/login")}
               >
-                Sign in
-              </Link>
-              <button className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 font-medium">
-                Get Started
+                {token ? "Sign out" : "GetStarted"}
               </button>
             </div>
 

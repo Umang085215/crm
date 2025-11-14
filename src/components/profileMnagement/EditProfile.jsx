@@ -6,6 +6,7 @@ import Input from "../ui/Input";
 import SelectField from "../ui/SelectField";
 import { useAuth } from "../../auth/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
+import { getProfileById, updateProfile } from "../../services/profileServices";
 
 const schema = yup.object().shape({
   resume: yup
@@ -38,7 +39,7 @@ const schema = yup.object().shape({
   expectedCTC: yup.string().required("Expected CTC is required"),
   workMode: yup.string().required("Work mode is required"),
   noticePeriod: yup.string().required("Notice period is required"),
-  candidateStatus: yup.string().required("Candidate status is required"),
+  status: yup.string().required("Candidate status is required"),
   techStack: yup.string().required("Tech stack is required"),
   candidateSource: yup.string().required("Candidate source is required"),
   skills: yup.array().min(1, "Add at least one skill"),
@@ -64,7 +65,7 @@ const EditProfile = () => {
     expectedCTC: "",
     workMode: "",
     noticePeriod: "",
-    candidateStatus: "",
+    status: "",
     skills: [],
     techStack: "",
     candidateSource: "",
@@ -77,22 +78,14 @@ const EditProfile = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (id) getProfileById(id);
+    if (id) fetchProfileById(id);
   }, [id]);
 
-  const getProfileById = async (userId) => {
+  const fetchProfileById = async (userId) => {
     try {
-      const res = await fetch(
-        `https://crm-backend-qbz0.onrender.com/api/profiles/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = await res.json();
-      if (res.ok && data.profile) {
-        const p = data.profile;
+      const res = await getProfileById(userId);
+      if (res.success && res.profile) {
+        const p = res.profile;
         setFormData({
           resume: null,
           fullName: p.fullName || "",
@@ -107,7 +100,7 @@ const EditProfile = () => {
           expectedCTC: p.expectedCTC || "",
           workMode: p.workMode || "",
           noticePeriod: p.noticePeriod || "",
-          candidateStatus: p.status || "Active",
+          status: p.status || "Active",
           skills: Array.isArray(p.skills) ? p.skills : [],
           techStack: p.techStack || "",
           candidateSource: p.candidateSource || "",
@@ -172,44 +165,42 @@ const EditProfile = () => {
     setFormData((prev) => ({ ...prev, [name]: newValue }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleUpdateProfile = async (e) => {
     e.preventDefault();
     setErrors({});
     setSuccessMsg("");
     setErrorMsg("");
+    setLoading(true);
+
     try {
       await schema.validate(formData, { abortEarly: false });
-      setLoading(true);
       const formDataToSend = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
-        if (key === "skills") formDataToSend.append("skills", value.join(", "));
-        else if (value !== null) formDataToSend.append(key, value);
+        if (key === "skills" && Array.isArray(value)) {
+          formDataToSend.append("skills", value.join(","));
+        } else if (value !== null && value !== undefined) {
+          formDataToSend.append(key, value);
+        }
       });
 
-      const response = await fetch(
-        `https://crm-backend-qbz0.onrender.com/api/profiles/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formDataToSend,
-        }
-      );
-
-      const result = await response.json();
-      if (response.ok) {
-        setSuccessMsg(result.message);
-      } else {
-        setErrorMsg(result.message);
-      }
+      const result = await updateProfile(id, formDataToSend);
+      setSuccessMsg(result.message || "Profile updated successfully!");
+      navigate("/admin/profilemanagement/profiles", {
+        state: { successMsg: "Profile updated successfully!" },
+        replace: true,
+      });
     } catch (err) {
       if (err.name === "ValidationError") {
         const validationErrors = {};
-        err.inner.forEach((e) => (validationErrors[e.path] = e.message));
+        err.inner.forEach((e) => {
+          validationErrors[e.path] = e.message;
+        });
         setErrors(validationErrors);
       } else {
-        setErrors({ api: err.message || "Something went wrong." });
+        console.error("Update Error:", err);
+        setErrorMsg(
+          err.message || "Something went wrong while updating profile."
+        );
       }
     } finally {
       setLoading(false);
@@ -235,13 +226,13 @@ const EditProfile = () => {
         </div>
       )}
       {successMsg && (
-        <div className="mb-4 p-2 bg-lightBottelGreen text-center text-bottelGreen rounded">
+        <div className="mb-4 p-2 bg-green-400 text-center text-md font-semibold  text-white rounded">
           {successMsg}
         </div>
       )}
 
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleUpdateProfile}
         className="space-y-6 border border-gray-200 p-6 rounded-lg shadow-sm"
       >
         {/* Resume Upload */}
@@ -412,10 +403,10 @@ const EditProfile = () => {
             <SelectField
               name="candidateStatus"
               label="Candidate Status"
-              value={formData.candidateStatus}
+              value={formData.status}
               handleChange={handleChange}
               options={["Active", "In-active", "Banned", "Defaulter"]}
-              error={errors.candidateStatus}
+              error={errors.status}
             />
             <Input
               name="techStack"
@@ -434,12 +425,15 @@ const EditProfile = () => {
                   errors.skills ? "border-red-500" : "border-gray-300"
                 }`}
               >
-                {formData.skills.map((skill, i) => (
+                {(Array.isArray(formData.skills)
+                  ? formData.skills
+                  : formData.skills.split(",")
+                ).map((skill, i) => (
                   <span
                     key={i}
                     className="flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
                   >
-                    {skill}
+                    {skill.trim()}
                     <X
                       size={14}
                       onClick={() => handleRemoveSkill(skill)}
@@ -447,6 +441,7 @@ const EditProfile = () => {
                     />
                   </span>
                 ))}
+
                 <input
                   type="text"
                   placeholder="Type a skill and press Enter"
