@@ -229,9 +229,9 @@ const ClientList = () => {
                   { id: "clientSource", label: "Source" },
                   { id: "companySize", label: "Company Size" },
                   { id: "empanelmentDate", label: "Empanelment Date" },
-                  { id: "status", label: "Status" },
                   { id: "addedBy", label: "Added By" },
                   { id: "createdAt", label: "Created At" },
+                  { id: "status", label: "Status" },
                   { id: "action", label: "Action", sticky: true },
                 ].map((col) => (
                   <TableCell
