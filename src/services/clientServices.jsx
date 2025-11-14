@@ -17,5 +17,10 @@ export const getAllOptions = () => {
   return fetchHandler("/api/clients/options");
 };
 
+export const getClientById = (id) => fetchHandler(`/api/clients/${id}`);
+
 export const addClients = (clientData) =>
   fetchHandler("/api/clients", "POST", clientData);
+
+export const updateClient = (id, clientData) =>
+  fetchHandler(`/api/clients/${id}`, "PUT", clientData);

@@ -15,6 +15,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Spinner from "../loaders/Spinner";
 import NoData from "../ui/NoData";
 import ToolTip from "../ui/ToolTip";
+import DateDisplay from "../ui/DateDisplay";
 import { getAllClients } from "../../services/clientServices";
 
 const ClientList = () => {
@@ -228,9 +229,11 @@ const ClientList = () => {
                   { id: "clientCategory", label: "Category" },
                   { id: "clientSource", label: "Source" },
                   { id: "companySize", label: "Company Size" },
+                  { id: "headquarterAddress", label: "Headquarter Address" },
                   { id: "empanelmentDate", label: "Empanelment Date" },
                   { id: "addedBy", label: "Added By" },
-                  { id: "createdAt", label: "Created At" },
+                  { id: "createdAt", label: "Created Dtm" },
+                  { id: "updatedAt", label: "Modified Dtm" },
                   { id: "status", label: "Status", sticky: true },
                   { id: "action", label: "Action", sticky: true },
                 ].map((col) => (
@@ -245,11 +248,18 @@ const ClientList = () => {
                         active={orderBy === col.id}
                         direction={orderBy === col.id ? order : "asc"}
                         onClick={() => handleSort(col.id)}
+                        sx={{
+                          color: "inherit !important",
+                          "& .MuiTableSortLabel-icon": {
+                            opacity: 1,
+                            color: "currentColor !important",
+                          },
+                        }}
                       >
-                        {col.label}
+                        <strong> {col.label}</strong>
                       </TableSortLabel>
                     ) : (
-                      col.label
+                      <strong> {col.label}</strong>
                     )}
                   </TableCell>
                 ))}
@@ -306,6 +316,9 @@ const ClientList = () => {
                       {row.companySize}
                     </TableCell>
                     <TableCell className="whitespace-nowrap">
+                      {row.headquarterAddress}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">
                       {formatDate(row.empanelmentDate)}
                     </TableCell>
 
@@ -314,7 +327,17 @@ const ClientList = () => {
                     </TableCell>
 
                     <TableCell className="whitespace-nowrap">
-                      {formatDate(row.createdAt)}
+                      {new Date(row.createdAt).toLocaleString("en-IN", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap  dark:text-gray-200">
+                      <DateDisplay date={row.updatedAt} />
                     </TableCell>
                     <TableCell className="sticky right-[126px] bg-[#f2f4f5] dark:bg-darkGray z-20 whitespace-nowrap">
                       <div
@@ -348,7 +371,7 @@ const ClientList = () => {
                           <Pencil size={18} />
                         </button>
                         <button
-                          className="text-white bg-green-500 px-1 py-1 rounded"
+                          className="text-white bg-[#1abe17] px-1 py-1 rounded"
                           onClick={() =>
                             navigate(
                               `/admin/clientmanagement/view-client/${row._id}`

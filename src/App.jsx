@@ -23,6 +23,8 @@ import Profiles from "./pages/Profiles";
 import ViewProfile from "./components/profileMnagement/ViewProfile";
 import AddClient from "./components/clientManagement/AddClient";
 import ClientList from "./components/clientManagement/ClientsList";
+import EditClient from "./components/clientManagement/EditClient";
+import ViewClient from "./components/clientManagement/ViewClient";
 
 const App = () => {
   return (
@@ -209,6 +211,22 @@ const App = () => {
           element={
             <ProtectedRoute allowedModules={["users"]}>
               <AddClient />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/clientmanagement/edit-client/:id"
+          element={
+            <ProtectedRoute allowedModules={["users"]}>
+              <EditClient />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/clientmanagement/view-client/:id"
+          element={
+            <ProtectedRoute allowedModules={["users"]}>
+              <ViewClient />
             </ProtectedRoute>
           }
         />

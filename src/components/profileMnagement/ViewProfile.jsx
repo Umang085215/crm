@@ -26,6 +26,8 @@ import ToolTip from "../ui/ToolTip";
 import { getProfileById } from "../../services/profileServices";
 import { div } from "framer-motion/client";
 import NoData from "../ui/NoData";
+import ViewSection from "../ui/ViewSection";
+import ViewInfo from "../ui/ViewInfo";
 
 const IconButton = ({ title, icon }) => (
   <Tippy
@@ -84,7 +86,6 @@ const ViewProfile = () => {
           className="flex items-center gap-2 "
           onClick={() => fetchProfileById()}
         >
-          {/* <IconButton title="Refresh" icon={<RefreshCcw size={16} />} /> */}
           <ToolTip
             title="Refresh"
             placement="top"
@@ -154,7 +155,7 @@ const ViewProfile = () => {
                 {/* Left Column */}
                 <div className="md:col-span-1 space-y-6">
                   {profile.resume && (
-                    <Section title="Resume" icon={<FileText size={18} />}>
+                    <ViewSection title="Resume" icon={<FileText size={18} />}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 text-sm text-dark ">
                           <FileText size={18} />
@@ -169,11 +170,11 @@ const ViewProfile = () => {
                           View
                         </a>
                       </div>
-                    </Section>
+                    </ViewSection>
                   )}
 
                   {/* Personal Information */}
-                  <Section
+                  <ViewSection
                     title="Personal Information"
                     icon={<Users size={18} />}
                   >
@@ -206,13 +207,13 @@ const ViewProfile = () => {
                         value={profile.preferredLocation}
                       />
                     </div>
-                  </Section>
+                  </ViewSection>
                 </div>
 
                 {/* Right Column */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* Professional Information */}
-                  <Section
+                  <ViewSection
                     title="Professional Information"
                     icon={<Briefcase size={18} />}
                   >
@@ -258,10 +259,10 @@ const ViewProfile = () => {
                         value={profile.candidateSource}
                       />
                     </div>
-                  </Section>
+                  </ViewSection>
 
                   {/* Additional Information */}
-                  <Section
+                  <ViewSection
                     title="Additional Information"
                     icon={<Info size={18} />}
                   >
@@ -304,7 +305,7 @@ const ViewProfile = () => {
                         {new Date(profile.createdAt).toLocaleString()}
                       </div>
                     )}
-                  </Section>
+                  </ViewSection>
                 </div>
               </div>
             </div>
