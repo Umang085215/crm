@@ -33,7 +33,7 @@ const ClientList = () => {
     total: 0,
     page: 1,
     pages: 1,
-    limit: 10,
+    limit: 25,
   });
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("clientName");
@@ -214,7 +214,7 @@ const ClientList = () => {
           onPageChange={handleChangePage}
           rowsPerPage={pagination.limit}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[5, 10, 20, 50]}
+          rowsPerPageOptions={[25, 50, 100]}
         />
 
         <TableContainer className="rounded-xl border border-lightGray dark:border-darkGray ">
@@ -411,7 +411,7 @@ const ClientList = () => {
           onPageChange={handleChangePage}
           rowsPerPage={pagination.limit}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[5, 10, 20, 50]}
+          rowsPerPageOptions={[25, 50, 100]}
         />
       </div>
     </>

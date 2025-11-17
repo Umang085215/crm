@@ -406,7 +406,7 @@ const UserList = () => {
               onPageChange={handleChangePage}
               rowsPerPage={pagination.limit}
               onRowsPerPageChange={handleChangeRowsPerPage}
-              rowsPerPageOptions={[5, 10, 20, 50]}
+              rowsPerPageOptions={[25, 50, 100]}
             />
           </div>
         </div>

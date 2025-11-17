@@ -27,7 +27,7 @@ const RoleList = () => {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("role_name");
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
   const [searchQuery, setSearchQuery] = useState("");
   const [selected, setSelected] = useState([]);
 
@@ -227,7 +227,7 @@ const RoleList = () => {
               setRowsPerPage(parseInt(e.target.value, 10));
               setPage(0);
             }}
-            rowsPerPageOptions={[5, 10, 20, 30, 50]}
+            rowsPerPageOptions={[25, 50, 100]}
           />
           {/* Table */}
           <TableContainer className="rounded-xl bg-white dark:bg-gray-800 border border-lightGray dark:border-darkGray">
@@ -372,7 +372,7 @@ const RoleList = () => {
               setRowsPerPage(parseInt(e.target.value, 10));
               setPage(0);
             }}
-            rowsPerPageOptions={[5, 10, 20, 30, 50]}
+            rowsPerPageOptions={[25, 50, 100]}
           />
         </>
       </div>
