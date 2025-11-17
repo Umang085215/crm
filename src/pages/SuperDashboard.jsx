@@ -100,32 +100,6 @@ const SuperDashboard = () => {
         />
       </div>
       <DashboardStats />
-      {/* Product Details Table */}
-      <div className="border border-lightGray dark:border-darkGray rounded-xl p-4  overflow-x-auto">
-        <h2 className="text-xl font-bold mb-4 ">Product Details</h2>
-        <table className="min-w-full table-auto border-collapse">
-          <thead>
-            <tr className="bg-[#e0f2e9] text-[#003b19]">
-              <th className="py-2 px-4 text-left">ID</th>
-              <th className="py-2 px-4 text-left">Name</th>
-              <th className="py-2 px-4 text-left">Category</th>
-              <th className="py-2 px-4 text-left">Price</th>
-              <th className="py-2 px-4 text-left">Stock</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product) => (
-              <tr key={product.id} className="border-b hover:bg-gray-50">
-                <td className="py-2 px-4">{product.id}</td>
-                <td className="py-2 px-4">{product.name}</td>
-                <td className="py-2 px-4">{product.category}</td>
-                <td className="py-2 px-4">{product.price}</td>
-                <td className="py-2 px-4">{product.stock}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 };
