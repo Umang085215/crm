@@ -11,7 +11,7 @@ const Settings = () => {
     <div className=" ">
       <h2 className="text-2xl font-semibold mb-4">Settings</h2>
       {/* Tabs */}
-      <div className="mb-6 border-b border-lightGray dark:border-darkGray flex gap-4 overflow-x-auto">
+      <div className="mb-6 border-b border-gray-300 dark:border-gray-600 flex gap-4 overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab}

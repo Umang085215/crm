@@ -191,14 +191,14 @@ const RoleList = () => {
           />
         </button>
       </div>
-      <div className="p-3 bg-white dark:bg-gray-800 border border-lightGray dark:border-darkGray rounded-xl">
+      <div className="p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl">
         {/* Search and Add */}
-        <div className="py-4 border-b border-lightGray dark:border-darkGray flex justify-between items-center">
+        <div className="py-4 border-b border-gray-300 dark:border-gray-600 flex justify-between items-center">
           <div className="w-1/2">
             <input
               type="text"
               placeholder="Search by role name..."
-              className="w-full bg-white dark:bg-darkBg p-2 border border-lightGray dark:border-darkGray rounded-md focus:outline-none focus:border-gray-500 transition"
+              className="w-full bg-white dark:bg-darkBg p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:border-gray-500 transition"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -230,7 +230,7 @@ const RoleList = () => {
             rowsPerPageOptions={[25, 50, 100]}
           />
           {/* Table */}
-          <TableContainer className="rounded-xl bg-white dark:bg-gray-800 border border-lightGray dark:border-darkGray">
+          <TableContainer className="rounded-xl bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600">
             <div className="overflow-x-auto">
               <Table className="min-w-full">
                 <TableHead className="sticky top-0 bg-lightGray dark:bg-darkGray z-30">

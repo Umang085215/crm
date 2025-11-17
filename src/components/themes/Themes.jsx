@@ -59,8 +59,8 @@ const Themes = () => {
 
   return (
     <div className="relative bg-white dark:bg-gray-800" ref={dropdownRef}>
-      <div className="right-0 mt-3 border border-lightGray dark:border-darkGray rounded-xl z-50 overflow-hidden">
-        <div className="px-4 py-3 border-b border-lightGray dark:border-darkGray">
+      <div className="right-0 mt-3 border border-gray-300 dark:border-gray-600 rounded-xl z-50 overflow-hidden">
+        <div className="px-4 py-3 border-b border-gray-300 dark:border-gray-600">
           <h3 className="text-sm font-semibold">Select Theme</h3>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             Choose a color scheme for your dashboard.
@@ -78,7 +78,7 @@ const Themes = () => {
               }`}
             >
               <span
-                className="w-8 h-8 rounded-full border border-lightGray dark:border-darkGray"
+                className="w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600"
                 style={{
                   backgroundColor: c.value === "dark" ? "black" : c.dark,
                 }}

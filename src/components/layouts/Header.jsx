@@ -101,7 +101,7 @@ const Header = ({ toggleSidebar }) => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 flex items-center bg-white dark:bg-darkBg justify-between px-6 py-3 border-b border-lightGray dark:border-darkGray">
+    <header className="sticky top-0 z-40 flex items-center bg-white dark:bg-darkBg justify-between px-6 py-3 border-b border-gray-300 dark:border-gray-600">
       {/* Left */}
       <div className="flex gap-5 items-center text-md font-medium">
         <button
@@ -128,7 +128,7 @@ const Header = ({ toggleSidebar }) => {
           className="flex gap-3 items-center cursor-pointer"
           onClick={() => setPopupOpen((prev) => !prev)}
         >
-          <div className="h-8 w-8 flex justify-center items-center text-dark border border-lightGray dark:border-darkGray rounded-md">
+          <div className="h-8 w-8 flex justify-center items-center text-dark border border-gray-300 dark:border-gray-600 rounded-md">
             <User size={20} />
           </div>
           <div className="hidden md:block">
@@ -143,7 +143,7 @@ const Header = ({ toggleSidebar }) => {
         {popupOpen && (
           <div className="absolute right-0 top-full mt-3 w-72 px-6 py-6 font-semibold bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
             <div className="flex flex-col items-center space-y-2">
-              <p className="w-10 h-10 flex justify-center items-center text-white text-lg font-bold bg-dark border border-lightGray dark:border-darkGray rounded-full">
+              <p className="w-10 h-10 flex justify-center items-center text-white text-lg font-bold bg-dark border border-gray-300 dark:border-gray-600 rounded-full">
                 {user?.fullName?.charAt(0).toUpperCase()}
               </p>
               <p className="text-xl font-extrabold text-darkGray dark:text-lightGray">
@@ -156,7 +156,7 @@ const Header = ({ toggleSidebar }) => {
                 Manage your account
               </button>
             </div>
-            <hr className="my-2 border-lightGray dark:border-darkGray" />
+            <hr className="my-2 border-gray-300 dark:border-gray-600" />
             <ul className="flex flex-col space-y-1">
               {menuItems.map((item, i) => (
                 <li key={i}>

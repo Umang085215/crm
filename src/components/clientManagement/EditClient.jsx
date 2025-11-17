@@ -235,7 +235,7 @@ const EditClient = () => {
               onChange={handleChange}
               placeholder=" "
               className={`block p-[14px] w-full text-sm bg-transparent rounded-md border appearance-none focus:outline-none peer transition
-                  border-lightGray dark:border-darkGray focus:border-black`}
+                  border-gray-300 dark:border-gray-600 focus:border-black`}
             />
             <label
               className={`absolute pointer-events-none font-medium text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
@@ -255,7 +255,7 @@ const EditClient = () => {
               onChange={handleChange}
               placeholder=" "
               className={`block p-[14px] w-full text-sm bg-transparent rounded-md border appearance-none focus:outline-none peer transition
-                  border-lightGray dark:border-darkGray focus:border-black`}
+                  border-gray-300 dark:border-gray-600 focus:border-black`}
             />
             <label
               className={`absolute pointer-events-none font-medium text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2

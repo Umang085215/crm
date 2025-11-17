@@ -27,7 +27,7 @@ const Input = ({
             ${
               hasError
                 ? "border-red-500"
-                : "border-lightGray dark:border-darkGray focus:border-black"
+                : "border-gray-300 dark:border-gray-600 focus:border-black"
             }
             dark:text-white`}
         />

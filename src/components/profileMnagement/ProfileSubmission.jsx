@@ -523,7 +523,7 @@ const ProfileSubmission = () => {
                   placeholder=" "
                   className="block p-[14px] w-full text-sm bg-transparent rounded-md border  appearance-none focus:outline-none peer transition
         
-          border-lightGray dark:border-darkGray focus:border-black"
+          border-gray-300 dark:border-gray-600 focus:border-black"
                 />
                 <label
                   htmlFor="description"

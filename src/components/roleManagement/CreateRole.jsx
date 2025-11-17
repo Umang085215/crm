@@ -90,7 +90,7 @@ const CreateRole = () => {
           <ArrowLeft size={16} /> Back
         </button>
       </div>
-      <div className="mx-auto bg-white dark:bg-darkBg border border-lightGray dark:border-darkGray rounded-xl p-6 ">
+      <div className="mx-auto bg-white dark:bg-darkBg border border-gray-300 dark:border-gray-600 rounded-xl p-6 ">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-darkBg dark:text-white">
@@ -126,7 +126,7 @@ const CreateRole = () => {
         ${
           errors.description
             ? "border-red-500"
-            : "border-lightGray dark:border-darkGray focus:border-black"
+            : "border-gray-300 dark:border-gray-600 focus:border-black"
         }`}
               />
               <label

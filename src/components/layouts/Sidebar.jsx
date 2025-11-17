@@ -172,12 +172,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       {/* Sidebar */}
       <aside
         id="app-sidebar"
-        className={`fixed top-0 left-0 h-screen bg-white dark:bg-darkBg border-r-none sm:border-r border-lightGray dark:border-darkGray shadow-sm z-50 transition-all duration-300 transform
+        className={`fixed top-0 left-0 h-screen bg-white dark:bg-darkBg border-r-none sm:border-r border-gray-300 dark:border-gray-600 shadow-sm z-50 transition-all duration-300 transform
         ${isOpen ? "translate-x-0 w-64" : "-translate-x-full w-64"}
         md:translate-x-0 ${isOpen ? "md:w-64" : "md:w-20"} flex flex-col`}
       >
         {/* Header */}
-        <div className="px-4 py-4 flex items-center justify-between border-b border-lightGray dark:border-darkGray flex-shrink-0">
+        <div className="px-4 py-4 flex items-center justify-between border-b border-gray-300 dark:border-gray-600 flex-shrink-0">
           {isOpen ? (
             <div className="w-full flex items-center justify-between p-0 sm:p-0.5">
               <Link

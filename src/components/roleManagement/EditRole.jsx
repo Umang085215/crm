@@ -247,7 +247,7 @@ const EditRole = () => {
 
         {/* Role Details */}
         <div className="grid grid-cols-3 gap-4">
-          <div className="col-span-2 p-6 bg-white dark:bg-darkBg border border-lightGray dark:border-darkGray rounded-lg">
+          <div className="col-span-2 p-6 bg-white dark:bg-darkBg border border-gray-300 dark:border-gray-600 rounded-lg">
             <h2 className="text-2xl font-semibold mb-4">Edit Role</h2>
 
             <div className="grid grid-cols-1 gap-4">
@@ -291,7 +291,7 @@ const EditRole = () => {
             </div>
           </div>
 
-          <div className="p-2 bg-white dark:bg-darkBg border border-lightGray dark:border-darkGray rounded-lg">
+          <div className="p-2 bg-white dark:bg-darkBg border border-gray-300 dark:border-gray-600 rounded-lg">
             <img src={img1} alt="image" className="object-contain rounded-lg" />
           </div>
         </div>

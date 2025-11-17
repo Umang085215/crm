@@ -104,7 +104,7 @@ const GeneralSettings = () => {
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 border border-lightGray dark:border-darkGray rounded-xl">
+    <div className="p-6 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl">
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Logo Upload */}
         <div className="flex flex-col items-center p-5 rounded-md space-y-3">
@@ -112,11 +112,11 @@ const GeneralSettings = () => {
             className={`border  rounded-full p-1 ${
               errors.company_logo
                 ? "border-red-500"
-                : "border-lightGray dark:border-darkGray"
+                : "border-gray-300 dark:border-gray-600"
             }`}
           >
             <div
-              className={`w-28 h-28 bg-gray-100 rounded-full overflow-hidden border border-lightGray dark:border-darkGray flex items-center justify-center text-gray-400 `}
+              className={`w-28 h-28 bg-gray-100 rounded-full overflow-hidden border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-400 `}
             >
               {logoPreview ? (
                 <img
@@ -220,7 +220,7 @@ const GeneralSettings = () => {
         ${
           errors.company_address
             ? "border-red-500"
-            : "border-lightGray dark:border-darkGray focus:border-black"
+            : "border-gray-300 dark:border-gray-600 focus:border-black"
         }`}
             />
             <label

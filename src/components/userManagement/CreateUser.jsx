@@ -377,18 +377,18 @@ export default function UserManagement() {
         className="grid grid-cols-1 sm:grid-cols-[minmax(0,30%)_minmax(0,70%)] gap-5 items-stretch"
       >
         {/* User Profile */}
-        <div className="p-6 flex flex-col items-center gap-4 bg-white dark:bg-gray-800  border border-lightGray dark:border-darkGray rounded-xl">
+        <div className="p-6 flex flex-col items-center gap-4 bg-white dark:bg-gray-800  border border-gray-300 dark:border-gray-600 rounded-xl">
           {/* Profile Image Upload */}
           <div className="flex flex-col items-center  rounded-md space-y-2 col-span-2">
             <div
               className={`border rounded-full p-1 ${
                 errors.profileImage
                   ? "border-red-500"
-                  : "border-lightGray dark:border-darkGray"
+                  : "border-gray-300 dark:border-gray-600"
               }`}
             >
               <div
-                className={`w-28 h-28 bg-gray-100 rounded-full overflow-hidden border border-lightGray dark:border-darkGray flex items-center justify-center text-gray-400`}
+                className={`w-28 h-28 bg-gray-100 rounded-full overflow-hidden border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-400`}
               >
                 {profilePreview ? (
                   <img
@@ -453,7 +453,7 @@ export default function UserManagement() {
           </div>
         </div>
         {/* User Form */}
-        <div className=" rounded-xl p-6 bg-white dark:bg-gray-800 border border-lightGray dark:border-darkGray">
+        <div className=" rounded-xl p-6 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               // id="user_name"
@@ -524,7 +524,7 @@ export default function UserManagement() {
       ${
         errors.role
           ? "border-red-500"
-          : "border-lightGray dark:border-darkGray focus:border-black"
+          : "border-gray-300 dark:border-gray-600 focus:border-black"
       }`}
               >
                 <option value="" disabled hidden>
@@ -632,7 +632,7 @@ export default function UserManagement() {
                   placeholder=" "
                   className="block p-[14px] w-full text-sm bg-transparent rounded-md border  appearance-none focus:outline-none peer transition
         
-          border-lightGray dark:border-darkGray focus:border-black"
+          border-gray-300 dark:border-gray-600 focus:border-black"
                 />
                 <label
                   htmlFor="about"
