@@ -24,7 +24,6 @@ import Spinner from "../loaders/Spinner";
 import Tippy from "@tippyjs/react";
 import ToolTip from "../ui/ToolTip";
 import { getProfileById } from "../../services/profileServices";
-import { div } from "framer-motion/client";
 import NoData from "../ui/NoData";
 import ViewSection from "../ui/ViewSection";
 import ViewInfo from "../ui/ViewInfo";
@@ -153,10 +152,10 @@ const ViewProfile = () => {
               {/* Grid Layout */}
               <div className="grid md:grid-cols-3 gap-6">
                 {/* Left Column */}
-                <div className="md:col-span-1 space-y-6">
+                <div className="md:col-span-1 border border-gray-300 dark:border-gray-600 rounded-lg space-y-6">
                   {profile.resume && (
                     <ViewSection title="Resume" icon={<FileText size={18} />}>
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between mt-4">
                         <div className="flex items-center gap-2 text-sm text-dark ">
                           <FileText size={18} />
                           {profile.resume.originalName}
@@ -165,7 +164,7 @@ const ViewProfile = () => {
                           href={`https://crm-backend-qbz0.onrender.com/${profile.resume.path}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-dark  text-sm underline"
+                          className="text-light text-sm px-2 py-0.5 bg-dark  rounded-md"
                         >
                           View
                         </a>
@@ -179,29 +178,29 @@ const ViewProfile = () => {
                     icon={<Users size={18} />}
                   >
                     <div className="space-y-3">
-                      <InfoItem
+                      <ViewInfo
                         icon={<Mail size={16} />}
                         label="Email"
                         value={profile.email}
                       />
-                      <InfoItem
+                      <ViewInfo
                         icon={<Phone size={16} />}
                         label="Phone"
                         value={profile.phone}
                       />
                       {profile.alternatePhone && (
-                        <InfoItem
+                        <ViewInfo
                           icon={<Phone size={16} />}
                           label="Alt Phone"
                           value={profile.alternatePhone}
                         />
                       )}
-                      <InfoItem
+                      <ViewInfo
                         icon={<MapPin size={16} />}
                         label="Current Location"
                         value={profile.currentLocation}
                       />
-                      <InfoItem
+                      <ViewInfo
                         icon={<MapPin size={16} />}
                         label="Preferred Location"
                         value={profile.preferredLocation}
@@ -211,49 +210,49 @@ const ViewProfile = () => {
                 </div>
 
                 {/* Right Column */}
-                <div className="lg:col-span-2 space-y-6">
+                <div className="lg:col-span-2 border border-gray-300 dark:border-gray-600 rounded-lg space-y-6">
                   {/* Professional Information */}
                   <ViewSection
                     title="Professional Information"
                     icon={<Briefcase size={18} />}
                   >
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <InfoItem
+                    <div className="grid sm:grid-cols-2 ">
+                      <ViewInfo
                         icon={<Building size={16} />}
                         label="Current Company"
                         value={profile.currentCompany}
                       />
-                      <InfoItem
+                      <ViewInfo
                         icon={<Briefcase size={16} />}
                         label="Total Experience"
                         value={profile.totalExp}
                       />
-                      <InfoItem
+                      <ViewInfo
                         icon={<Wallet size={16} />}
                         label="Current CTC"
                         value={`₹${profile.currentCTC}`}
                       />
-                      <InfoItem
+                      <ViewInfo
                         icon={<TrendingUp size={16} />}
                         label="Expected CTC"
                         value={`₹${profile.expectedCTC}`}
                       />
-                      <InfoItem
+                      <ViewInfo
                         icon={<Laptop size={16} />}
                         label="Work Mode"
                         value={profile.workMode}
                       />
-                      <InfoItem
+                      <ViewInfo
                         icon={<Clock size={16} />}
                         label="Notice Period"
                         value={profile.noticePeriod}
                       />
-                      <InfoItem
+                      <ViewInfo
                         icon={<Shield size={16} />}
                         label="Candidate Status"
                         value={profile.status}
                       />
-                      <InfoItem
+                      <ViewInfo
                         icon={<Users size={16} />}
                         label="Candidate Source"
                         value={profile.candidateSource}
@@ -319,25 +318,5 @@ const ViewProfile = () => {
     </>
   );
 };
-const Section = ({ title, icon, children }) => (
-  <section className="border border-gray-300 dark:border-gray-600 rounded-lg p-5 bg-white dark:bg-gray-800 transition">
-    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 dark:text-white border-b border-gray-300 dark:border-gray-600 pb-2">
-      {icon && <span className=" dark:text-white">{icon}</span>}
-      {title}
-    </h3>
-    {children}
-  </section>
-);
-
-const InfoItem = ({ icon, label, value }) => (
-  <div className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
-    {icon && (
-      <span className="mt-0.5 text-gray-500 dark:text-gray-400">{icon}</span>
-    )}
-    <p>
-      <span className="font-medium">{label}:</span> {value || "-"}
-    </p>
-  </div>
-);
 
 export default ViewProfile;

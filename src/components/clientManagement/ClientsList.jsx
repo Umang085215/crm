@@ -306,27 +306,27 @@ const ClientList = () => {
                     </TableCell>
 
                     {/* <TableCell>{row.clientName}</TableCell> */}
-                    <TableCell className="whitespace-nowrap">
+                    <TableCell className="whitespace-nowrap dark:text-gray-300">
                       {row.clientCategory}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap">
+                    <TableCell className="whitespace-nowrap dark:text-gray-300">
                       {row.clientSource}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap">
+                    <TableCell className="whitespace-nowrap dark:text-gray-300">
                       {row.companySize}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap">
+                    <TableCell className="whitespace-nowrap dark:text-gray-300">
                       {row.headquarterAddress}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap">
+                    <TableCell className="whitespace-nowrap dark:text-gray-300">
                       {formatDate(row.empanelmentDate)}
                     </TableCell>
 
-                    <TableCell className="whitespace-nowrap">
+                    <TableCell className="whitespace-nowrap dark:text-gray-300">
                       {row.addedBy?.fullName || "-"}
                     </TableCell>
 
-                    <TableCell className="whitespace-nowrap">
+                    <TableCell className="whitespace-nowrap dark:text-gray-300">
                       {new Date(row.createdAt).toLocaleString("en-IN", {
                         day: "2-digit",
                         month: "short",
@@ -398,6 +398,15 @@ const ClientList = () => {
           </Table>
         </div>
       </TableContainer>
+      <TablePagination
+        component="div"
+        count={pagination.total}
+        page={pagination.page - 1}
+        onPageChange={handleChangePage}
+        rowsPerPage={pagination.limit}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        rowsPerPageOptions={[5, 10, 20, 50]}
+      />
     </>
   );
 };

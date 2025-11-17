@@ -503,6 +503,15 @@ const ProfileList = () => {
               </Table>
             </div>
           </TableContainer>
+          <TablePagination
+            component="div"
+            count={pagination.total}
+            page={pagination.page - 1}
+            onPageChange={handleChangePage}
+            rowsPerPage={pagination.limit}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPageOptions={[5, 10, 20, 50]}
+          />
         </div>
       </div>
     </>

@@ -291,13 +291,15 @@ export default function Home() {
               >
                 Pricing
               </Link>
-              {token ? (
+
+              {/* Go to Dashboard (Only if logged in) */}
+              {token && (
                 <button
                   className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-400 text-white rounded-full hover:shadow-lg hover:shadow-green-500/50 transition-all duration-300 hover:scale-105 font-medium"
                   onClick={() =>
                     navigate(
-                      user.role.name === "admin" ||
-                        user.role.name === "superAdmin"
+                      user?.role?.name === "admin" ||
+                        user?.role?.name === "superAdmin"
                         ? "/admin/super-dashboard"
                         : "/dashboard"
                     )
@@ -305,18 +307,20 @@ export default function Home() {
                 >
                   Go to Dashboard
                 </button>
-              ) : (
+              )}
+
+              {!token && (
                 <Link
                   to="/login"
                   className="px-6 py-2.5 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-full hover:shadow-lg hover:shadow-red-500/50 transition-all duration-300 hover:scale-105 font-medium"
                 >
-                  Sign in
+                  Sign In
                 </Link>
               )}
 
               <button
                 className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 font-medium"
-                onClick={token ? handleLogout : navigate("/login")}
+                onClick={() => (token ? handleLogout() : navigate("/login"))}
               >
                 {token ? "Sign out" : "GetStarted"}
               </button>

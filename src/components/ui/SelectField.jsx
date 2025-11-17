@@ -25,16 +25,19 @@ const SelectField = ({
             } dark:text-white`}
         >
           <option value="" disabled hidden>
-            Select {label}
+            --- Select ---
           </option>
+
           {loading ? (
             <option disabled>Loading...</option>
           ) : (
-            options.map((opt) => (
-              <option key={opt} value={opt} className="text-darkBg">
-                {opt}
-              </option>
-            ))
+            <>
+              {options.map((opt) => (
+                <option key={opt} value={opt} className="text-darkBg">
+                  {opt}
+                </option>
+              ))}
+            </>
           )}
         </select>
 

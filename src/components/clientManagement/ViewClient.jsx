@@ -129,10 +129,9 @@ const ViewClient = () => {
             </div>
 
             {/* GRID LAYOUT */}
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-6 ">
               {/* LEFT COLUMN */}
-              {/* LEFT COLUMN */}
-              <div className="md:col-span-1 space-y-6">
+              <div className="md:col-span-1 border border-gray-300 dark:border-gray-600 rounded-lg space-y-6">
                 {/* POC 1 */}
                 {client.poc1 && (
                   <ViewSection
@@ -207,12 +206,12 @@ const ViewClient = () => {
               </div>
 
               {/* RIGHT COLUMN */}
-              <div className="lg:col-span-2 space-y-6">
+              <div className="lg:col-span-2 border border-gray-300 dark:border-gray-600 rounded-lg space-y-6">
                 <ViewSection
                   title="Company Information"
                   icon={<Building size={18} />}
                 >
-                  <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="grid sm:grid-cols-2 ">
                     <ViewInfo
                       label="Category"
                       value={client.clientCategory}

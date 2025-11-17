@@ -52,7 +52,7 @@ export default function UserManagement() {
     phone: "",
     dob: "",
     address: "",
-    country: "",
+    country: "India",
     state: "",
     zipcode: "",
     role: "",
