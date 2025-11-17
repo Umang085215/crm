@@ -191,169 +191,191 @@ const RoleList = () => {
           />
         </button>
       </div>
-      {/* Search and Add */}
-      <div className="mb-6 flex justify-between items-center">
-        <div className="w-1/2">
-          <input
-            type="text"
-            placeholder="Search by role name..."
-            className="w-full bg-white dark:bg-darkBg p-2 border border-lightGray dark:border-darkGray rounded-md focus:outline-none focus:border-gray-500 transition"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+      <div className="p-3 bg-white dark:bg-gray-800 border border-lightGray dark:border-darkGray rounded-xl">
+        {/* Search and Add */}
+        <div className="py-4 border-b border-lightGray dark:border-darkGray flex justify-between items-center">
+          <div className="w-1/2">
+            <input
+              type="text"
+              placeholder="Search by role name..."
+              className="w-full bg-white dark:bg-darkBg p-2 border border-lightGray dark:border-darkGray rounded-md focus:outline-none focus:border-gray-500 transition"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div>
+            <Link
+              to="/admin/rolemanagement/create-roles"
+              className="px-3 py-1.5 flex gap-1 items-center bg-dark text-white rounded-md hover:opacity-90"
+            >
+              <Plus size={18} />
+              <span>Add New Role</span>
+            </Link>
+          </div>
+        </div>
+
+        <>
+          {/* Pagination */}
+          <TablePagination
+            component="div"
+            className="text-black dark:text-white"
+            count={filteredData.length}
+            page={page}
+            onPageChange={(e, newPage) => setPage(newPage)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={(e) => {
+              setRowsPerPage(parseInt(e.target.value, 10));
+              setPage(0);
+            }}
+            rowsPerPageOptions={[5, 10, 20, 30, 50]}
           />
-        </div>
-        <div>
-          <Link
-            to="/admin/rolemanagement/create-roles"
-            className="px-3 py-1.5 flex gap-1 items-center bg-dark text-white rounded-md hover:opacity-90"
-          >
-            <Plus size={18} />
-            <span>Add New Role</span>
-          </Link>
-        </div>
-      </div>
-
-      <>
-        {/* Pagination */}
-        <TablePagination
-          component="div"
-          count={filteredData.length}
-          page={page}
-          onPageChange={(e, newPage) => setPage(newPage)}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={(e) => {
-            setRowsPerPage(parseInt(e.target.value, 10));
-            setPage(0);
-          }}
-          rowsPerPageOptions={[5, 10, 20, 30, 50]}
-        />
-        {/* Table */}
-        <TableContainer className="rounded-xl border border-lightGray dark:border-darkGray">
-          <div className="overflow-x-auto">
-            <Table className="min-w-full">
-              <TableHead className="sticky top-0 bg-lightGray dark:bg-darkGray z-30">
-                <TableRow>
-                  {/* Checkbox Header */}
-                  <TableCell
-                    padding="checkbox"
-                    className="bg-[#f2f4f5] dark:bg-darkGray"
-                  >
-                    <Checkbox
-                      color="primary"
-                      indeterminate={numSelected > 0 && numSelected < rowCount}
-                      checked={rowCount > 0 && numSelected === rowCount}
-                      onChange={handleSelectAllClick}
-                    />
-                  </TableCell>
-
-                  {/* Columns */}
-                  {[
-                    { id: "role_name", label: "Role Name" },
-                    { id: "role_description", label: "Description" },
-                    { id: "created_date", label: "Created" },
-                    { id: "updated_date", label: "Modified Dtm" },
-                    { id: "action", label: "Action", sticky: true },
-                  ].map((column) => (
+          {/* Table */}
+          <TableContainer className="rounded-xl bg-white dark:bg-gray-800 border border-lightGray dark:border-darkGray">
+            <div className="overflow-x-auto">
+              <Table className="min-w-full">
+                <TableHead className="sticky top-0 bg-lightGray dark:bg-darkGray z-30">
+                  <TableRow>
+                    {/* Checkbox Header */}
                     <TableCell
-                      key={column.id}
-                      className={`whitespace-nowrap font-bold text-darkBg dark:text-white bg-[#f2f4f5] dark:bg-darkGray ${
-                        column.sticky ? "sticky right-0 z-20" : ""
-                      }`}
+                      padding="checkbox"
+                      className="bg-[#f2f4f5] dark:bg-darkGray"
                     >
-                      {column.id !== "action" ? (
-                        <TableSortLabel
-                          active={orderBy === column.id}
-                          direction={orderBy === column.id ? order : "asc"}
-                          onClick={() => handleSort(column.id)}
-                          sx={{
-                            color: "inherit !important",
-                            "& .MuiTableSortLabel-icon": {
-                              opacity: 1,
-                              color: "currentColor !important",
-                            },
-                          }}
-                        >
-                          <strong>{column.label}</strong>
-                        </TableSortLabel>
-                      ) : (
-                        <strong>{column.label}</strong>
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={12}>
-                      <div className="flex justify-center items-center h-[300px]">
-                        <Spinner size={50} color="#3b82f6" text="Loading..." />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ) : paginatedData.length > 0 ? (
-                  paginatedData.map((row) => {
-                    const isItemSelected = isSelected(row.id);
-                    return (
-                      <TableRow
-                        key={row.id}
-                        hover
-                        role="checkbox"
-                        aria-checked={isItemSelected}
-                        selected={isItemSelected}
-                        className="hover:bg-lightGray dark:hover:bg-darkGray"
-                      >
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            color="primary"
-                            checked={isItemSelected}
-                            onChange={() => handleCheckboxClick(row.id)}
-                          />
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap text-darkBg dark:text-white font-semibold">
-                          {row.role_name.charAt(0).toUpperCase() +
-                            row.role_name.slice(1)}
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap text-darkBg dark:text-white font-semibold">
-                          {row.role_description}
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap text-darkBg dark:text-white">
-                          {row.created_date}
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap text-darkBg dark:text-white">
-                          <DateDisplay date={row.updated_date} />
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap sticky right-0 bg-[#f2f4f5] dark:bg-darkGray dark:text-white z-20">
-                          <button
-                            className="text-white bg-dark px-1.5 py-1 rounded hover:opacity-90"
-                            onClick={() =>
-                              navigate(
-                                `/admin/rolemanagement/edit-roles/${row.id}`
-                              )
-                            }
-                          >
-                            <Pencil size={18} />
-                          </button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={12}>
-                      <NoData
-                        title="No Roles Found"
-                        description="There are currently no roles in the system."
+                      <Checkbox
+                        color="primary"
+                        indeterminate={
+                          numSelected > 0 && numSelected < rowCount
+                        }
+                        checked={rowCount > 0 && numSelected === rowCount}
+                        onChange={handleSelectAllClick}
                       />
                     </TableCell>
+
+                    {/* Columns */}
+                    {[
+                      { id: "role_name", label: "Role Name" },
+                      { id: "role_description", label: "Description" },
+                      { id: "created_date", label: "Created" },
+                      { id: "updated_date", label: "Modified Dtm" },
+                      { id: "action", label: "Action", sticky: true },
+                    ].map((column) => (
+                      <TableCell
+                        key={column.id}
+                        className={`whitespace-nowrap font-bold text-darkBg dark:text-white bg-[#f2f4f5] dark:bg-darkGray ${
+                          column.sticky ? "sticky right-0 z-20" : ""
+                        }`}
+                      >
+                        {column.id !== "action" ? (
+                          <TableSortLabel
+                            active={orderBy === column.id}
+                            direction={orderBy === column.id ? order : "asc"}
+                            onClick={() => handleSort(column.id)}
+                            sx={{
+                              color: "inherit !important",
+                              "& .MuiTableSortLabel-icon": {
+                                opacity: 1,
+                                color: "currentColor !important",
+                              },
+                            }}
+                          >
+                            <strong>{column.label}</strong>
+                          </TableSortLabel>
+                        ) : (
+                          <strong>{column.label}</strong>
+                        )}
+                      </TableCell>
+                    ))}
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </TableContainer>
-      </>
+                </TableHead>
+
+                <TableBody>
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={12}>
+                        <div className="flex justify-center items-center h-[300px]">
+                          <Spinner
+                            size={50}
+                            color="#3b82f6"
+                            text="Loading..."
+                          />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : paginatedData.length > 0 ? (
+                    paginatedData.map((row) => {
+                      const isItemSelected = isSelected(row.id);
+                      return (
+                        <TableRow
+                          key={row.id}
+                          hover
+                          role="checkbox"
+                          aria-checked={isItemSelected}
+                          selected={isItemSelected}
+                          className="hover:bg-lightGray dark:hover:bg-darkGray"
+                        >
+                          <TableCell padding="checkbox">
+                            <Checkbox
+                              color="primary"
+                              checked={isItemSelected}
+                              onChange={() => handleCheckboxClick(row.id)}
+                            />
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap text-darkBg dark:text-white font-semibold">
+                            {row.role_name.charAt(0).toUpperCase() +
+                              row.role_name.slice(1)}
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap text-darkBg dark:text-white font-semibold">
+                            {row.role_description}
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap text-darkBg dark:text-white">
+                            {row.created_date}
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap text-darkBg dark:text-white">
+                            <DateDisplay date={row.updated_date} />
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap sticky right-0 bg-[#f2f4f5] dark:bg-darkGray dark:text-white z-20">
+                            <button
+                              className="text-white bg-dark px-1.5 py-1 rounded hover:opacity-90"
+                              onClick={() =>
+                                navigate(
+                                  `/admin/rolemanagement/edit-roles/${row.id}`
+                                )
+                              }
+                            >
+                              <Pencil size={18} />
+                            </button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={12}>
+                        <NoData
+                          title="No Roles Found"
+                          description="There are currently no roles in the system."
+                        />
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </TableContainer>
+          <TablePagination
+            component="div"
+            className="text-black dark:text-white"
+            count={filteredData.length}
+            page={page}
+            onPageChange={(e, newPage) => setPage(newPage)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={(e) => {
+              setRowsPerPage(parseInt(e.target.value, 10));
+              setPage(0);
+            }}
+            rowsPerPageOptions={[5, 10, 20, 30, 50]}
+          />
+        </>
+      </div>
     </div>
   );
 };

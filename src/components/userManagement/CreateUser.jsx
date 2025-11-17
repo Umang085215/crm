@@ -377,7 +377,7 @@ export default function UserManagement() {
         className="grid grid-cols-1 sm:grid-cols-[minmax(0,30%)_minmax(0,70%)] gap-5 items-stretch"
       >
         {/* User Profile */}
-        <div className="p-6 flex flex-col items-center gap-4 border border-lightGray dark:border-darkGray rounded-xl">
+        <div className="p-6 flex flex-col items-center gap-4 bg-white dark:bg-gray-800  border border-lightGray dark:border-darkGray rounded-xl">
           {/* Profile Image Upload */}
           <div className="flex flex-col items-center  rounded-md space-y-2 col-span-2">
             <div
@@ -453,7 +453,7 @@ export default function UserManagement() {
           </div>
         </div>
         {/* User Form */}
-        <div className=" rounded-xl p-6 border border-lightGray dark:border-darkGray">
+        <div className=" rounded-xl p-6 bg-white dark:bg-gray-800 border border-lightGray dark:border-darkGray">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               // id="user_name"

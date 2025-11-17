@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Save, ArrowLeft } from "lucide-react";
 import img1 from "../../assets/logo/loginBg.jpg";
 import * as yup from "yup";
+import Button from "../ui/Button";
 
 const schema = yup.object().shape({
   name: yup.string().trim().required("Role name is required"),
@@ -260,7 +261,7 @@ const EditRole = () => {
                   onChange={handleChange}
                   className={`w-full p-2 border ${
                     errors.name ? "border-red-500" : "border-lightGray"
-                  } rounded-md focus:outline-none focus:border-gray-500 dark:bg-darkGray dark:text-white`}
+                  } rounded-md focus:outline-none focus:border-gray-500 bg-transparent `}
                 />
                 {errors.name && (
                   <p className="text-red-600 text-sm mt-1 font-medium">
@@ -278,7 +279,7 @@ const EditRole = () => {
                   onChange={handleChange}
                   className={`w-full p-2 border ${
                     errors.description ? "border-red-500" : "border-lightGray"
-                  } rounded-md focus:outline-none focus:border-gray-500 dark:bg-darkGray dark:text-white`}
+                  } rounded-md focus:outline-none focus:border-gray-500 bg-transparent `}
                   rows="1"
                 />
                 {errors.description && (
@@ -296,12 +297,12 @@ const EditRole = () => {
         </div>
 
         {/* Permissions Table */}
-        <div className="bg-white dark:bg-darkBg rounded-lg shadow-md border">
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
+        <div className="bg-white dark:bg-darkBg ">
+          <div className="overflow-x-auto ">
+            <table className="w-full  text-sm">
               <thead className="bg-gray-100 dark:bg-gray-800">
-                <tr>
-                  <th className="border p-3 text-left">Modules</th>
+                <tr className="">
+                  <th className="border p-3 text-left rounded-md">Modules</th>
                   <th className="border p-3 text-center">
                     Create <br />
                     <small>able to add new data</small>
@@ -325,7 +326,10 @@ const EditRole = () => {
 
               <tbody>
                 {groupedModules.map((module) => (
-                  <tr key={module} className="border-b hover:bg-gray-50">
+                  <tr
+                    key={module}
+                    className="border-b hover:bg-gray-50  dark:hover:bg-gray-600"
+                  >
                     <td className="border p-3 font-medium capitalize">
                       {module}
                     </td>
@@ -351,11 +355,11 @@ const EditRole = () => {
             </table>
           </div>
 
-          <div className="flex justify-end border-t px-6 py-4 bg-gray-50">
+          <div className="flex justify-end  mt-2">
             <button
               onClick={handleSave}
               disabled={loading}
-              className={`flex items-center gap-2 bg-dark text-white font-medium px-4 py-2 rounded-md transition ${
+              className={`flex items-center  bg-dark text-white font-medium px-4 py-2 rounded-md transition ${
                 loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"
               }`}
             >
@@ -363,6 +367,13 @@ const EditRole = () => {
               <span>{loading ? "Saving..." : "Save"}</span>
             </button>
           </div>
+          {/* <div className="col-span-2 flex justify-end">
+            <Button
+              type="submit"
+              text="Save"
+              icon={<Save size={18} handleClick={handleSave} />}
+            />
+          </div> */}
         </div>
       </div>
     </>

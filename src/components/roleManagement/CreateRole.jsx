@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import * as yup from "yup";
 import { div } from "framer-motion/client";
+import Input from "../ui/Input";
 
 // Validation Schema
 const schema = yup.object().shape({
@@ -89,7 +90,7 @@ const CreateRole = () => {
           <ArrowLeft size={16} /> Back
         </button>
       </div>
-      <div className="mx-auto bg-white dark:bg-darkBg border border-lightGray dark:border-darkGray rounded-xl p-6 shadow-md">
+      <div className="mx-auto bg-white dark:bg-darkBg border border-lightGray dark:border-darkGray rounded-xl p-6 ">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-darkBg dark:text-white">
@@ -102,51 +103,47 @@ const CreateRole = () => {
           <div className="grid grid-cols-2 gap-4">
             {/* Role Name */}
             <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
-                Role Name <span className="text-red-600">*</span>
-              </label>
-              <input
-                id="name"
-                name="name"
+              <Input
                 type="text"
-                placeholder="Enter role name"
-                className={`w-full p-2 border ${
-                  errors.name ? "border-red-500" : "border-lightGray"
-                } dark:border-darkGray rounded-md focus:outline-none focus:border-gray-500 dark:bg-darkGray dark:text-white`}
+                name="name"
                 value={formData.name}
-                onChange={handleChange}
+                handleChange={handleChange}
+                className="col-span-2 md:col-span-1"
+                errors={errors}
+                labelName="Role name"
               />
-              {errors.name && (
-                <p className="text-red-600 text-sm mt-1 font-medium">
-                  {errors.name}
-                </p>
-              )}
             </div>
 
             {/* Description */}
-            <div>
-              <label
-                htmlFor="description"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
-                Description <span className="text-red-600">*</span>
-              </label>
+            <div className="relative w-full">
               <textarea
-                id="description"
                 name="description"
-                rows="1"
-                placeholder="Enter at least 10 characters"
-                className={`w-full p-2 border ${
-                  errors.description ? "border-red-500" : "border-lightGray"
-                } dark:border-darkGray rounded-md focus:outline-none focus:border-gray-500 dark:bg-darkGray dark:text-white resize-none`}
+                rows={1}
                 value={formData.description}
                 onChange={handleChange}
+                placeholder=" "
+                className={`block p-[14px] w-full text-sm bg-transparent rounded-md border appearance-none focus:outline-none peer transition
+        ${
+          errors.description
+            ? "border-red-500"
+            : "border-lightGray dark:border-darkGray focus:border-black"
+        }`}
               />
+              <label
+                className={`absolute pointer-events-none font-medium text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
+            peer-placeholder-shown:scale-100  peer-placeholder-shown:top-1/2
+            peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
+            ${
+              errors.description
+                ? "peer-focus:text-red-500 peer-placeholder-shown:-translate-y-[100%]"
+                : "peer-focus:text-[#181c1f] dark:peer-focus:text-white peer-placeholder-shown:-translate-y-1/2"
+            }
+            rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1`}
+              >
+                Description
+              </label>
               {errors.description && (
-                <p className="text-red-600 text-sm mt-1 font-medium">
+                <p className="text-red-500 text-sm mt-1">
                   {errors.description}
                 </p>
               )}

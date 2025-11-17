@@ -262,7 +262,7 @@ const ProfileSubmission = () => {
       )}
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 border border-gray-200 p-6 rounded-lg  shadow-sm"
+        className="space-y-6 border border-gray-300 dark:border-gray-600 p-6 rounded-lg bg-white dark:bg-gray-800 shadow-sm"
       >
         {/* Resume Upload */}
         <div>

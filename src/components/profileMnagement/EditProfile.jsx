@@ -233,7 +233,7 @@ const EditProfile = () => {
 
       <form
         onSubmit={handleUpdateProfile}
-        className="space-y-6 border border-gray-200 p-6 rounded-lg shadow-sm"
+        className="space-y-6 border border-gray-300 dark:border-gray-600 p-6 rounded-lg bg-white dark:bg-gray-800"
       >
         {/* Resume Upload */}
         <div>
@@ -484,15 +484,13 @@ const EditProfile = () => {
               error={errors.candidateSource}
             />
             <div className="md:col-span-2">
-              <label className="block font-medium mb-1">
-                Description (Optional)
-              </label>
+              <label className="block font-medium mb-1">Description</label>
               <textarea
                 name="description"
                 rows="2"
                 value={formData.description}
                 onChange={handleChange}
-                className="w-full border rounded-md p-2 bg-white dark:bg-gray-800"
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800"
                 placeholder="Short description about this profile ..."
               ></textarea>
             </div>

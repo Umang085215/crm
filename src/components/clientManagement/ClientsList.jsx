@@ -182,231 +182,238 @@ const ClientList = () => {
         </div>
       </div>
 
-      {/* Search */}
-      <div className="mb-6 flex justify-between items-center">
-        <div className="w-1/2">
-          <input
-            type="text"
-            placeholder="Search by name, email or phone..."
-            className="w-full bg-white dark:bg-darkBg p-2 border border-lightGray dark:border-darkGray rounded-md focus:outline-none focus:border-gray-500 transition"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
+      <div className="p-3 bg-white dark:bg-gray-800 border border-lightGray dark:border-darkGray rounded-xl">
+        {/* Search */}
+        <div className="py-4 border-b border-lightGray dark:border-darkGray flex justify-between items-center">
+          <div className="w-1/2">
+            <input
+              type="text"
+              placeholder="Search by name, email or phone..."
+              className="w-full bg-white dark:bg-darkBg p-2 border border-lightGray dark:border-darkGray rounded-md focus:outline-none focus:border-gray-500 transition"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </div>
+          <div>
+            <Link
+              to="/admin/clientmanagement/add-client"
+              className="px-2 py-1.5 flex gap-1 items-center bg-dark text-white rounded-md"
+            >
+              <Plus size={18} />
+              <span>Add New Client</span>
+            </Link>
+          </div>
         </div>
-        <div>
-          <Link
-            to="/admin/clientmanagement/add-client"
-            className="px-2 py-1.5 flex gap-1 items-center bg-dark text-white rounded-md"
-          >
-            <Plus size={18} />
-            <span>Add Client</span>
-          </Link>
-        </div>
-      </div>
 
-      {/* Pagination */}
-      <TablePagination
-        component="div"
-        count={pagination.total}
-        page={pagination.page - 1}
-        onPageChange={handleChangePage}
-        rowsPerPage={pagination.limit}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 20, 50]}
-      />
+        {/* Pagination */}
+        <TablePagination
+          component="div"
+          className="text-black dark:text-white"
+          count={pagination.total}
+          page={pagination.page - 1}
+          onPageChange={handleChangePage}
+          rowsPerPage={pagination.limit}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPageOptions={[5, 10, 20, 50]}
+        />
 
-      <TableContainer className="rounded-xl border border-lightGray dark:border-darkGray">
-        <div className="overflow-x-auto">
-          <Table className="min-w-full">
-            <TableHead className="sticky top-0 bg-lightGray dark:bg-darkGray z-20">
-              <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox color="primary" />
-                </TableCell>
-
-                {[
-                  { id: "clientName", label: "Client Name" },
-                  { id: "clientCategory", label: "Category" },
-                  { id: "clientSource", label: "Source" },
-                  { id: "companySize", label: "Company Size" },
-                  { id: "headquarterAddress", label: "Headquarter Address" },
-                  { id: "empanelmentDate", label: "Empanelment Date" },
-                  { id: "addedBy", label: "Added By" },
-                  { id: "createdAt", label: "Created Dtm" },
-                  { id: "updatedAt", label: "Modified Dtm" },
-                  { id: "status", label: "Status", sticky: true },
-                  { id: "action", label: "Action", sticky: true },
-                ].map((col) => (
-                  <TableCell
-                    key={col.id}
-                    className={`whitespace-nowrap font-bold text-darkBg dark:text-white bg-[#f2f4f5] dark:bg-darkGray ${
-                      col.sticky ? getStickyClass(col.id) : ""
-                    }`}
-                  >
-                    {col.id !== "action" ? (
-                      <TableSortLabel
-                        active={orderBy === col.id}
-                        direction={orderBy === col.id ? order : "asc"}
-                        onClick={() => handleSort(col.id)}
-                        sx={{
-                          color: "inherit !important",
-                          "& .MuiTableSortLabel-icon": {
-                            opacity: 1,
-                            color: "currentColor !important",
-                          },
-                        }}
-                      >
-                        <strong> {col.label}</strong>
-                      </TableSortLabel>
-                    ) : (
-                      <strong> {col.label}</strong>
-                    )}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              {loading ? (
+        <TableContainer className="rounded-xl border border-lightGray dark:border-darkGray ">
+          <div className="overflow-x-auto">
+            <Table className="min-w-full">
+              <TableHead className="sticky top-0 bg-lightGray dark:bg-darkGray z-20">
                 <TableRow>
-                  <TableCell colSpan={12} className="text-center py-10">
-                    <Spinner size={45} text="Loading clients..." />
-                  </TableCell>
-                </TableRow>
-              ) : sortedData.length > 0 ? (
-                sortedData.map((row) => (
-                  <TableRow
-                    key={row._id}
-                    className="hover:bg-lightGray dark:hover:bg-darkGray"
+                  <TableCell
+                    padding="checkbox"
+                    className="bg-[#f2f4f5] dark:bg-darkGray"
                   >
-                    <TableCell padding="checkbox">
-                      <Checkbox color="primary" />
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap">
-                      <div className="flex items-center gap-3">
-                        {row.profileImage ? (
-                          <img
-                            src={row.profileImage}
-                            alt={row.clientName}
-                            className="w-10 h-10 rounded-md object-cover border border-dark"
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-md flex items-center justify-center bg-gray-200 text-dark font-semibold">
-                            {row.clientName?.slice(0, 2).toUpperCase()}
-                          </div>
-                        )}
-                        <div>
-                          <p className="flex items-center gap-2  dark:text-gray-300 font-semibold">
-                            <AtSign size={14} />
-                            {row.clientName.charAt(0).toUpperCase() +
-                              row.clientName.slice(1)}
-                          </p>
-                        </div>
-                      </div>
-                    </TableCell>
+                    <Checkbox color="primary" />
+                  </TableCell>
 
-                    {/* <TableCell>{row.clientName}</TableCell> */}
-                    <TableCell className="whitespace-nowrap dark:text-gray-300">
-                      {row.clientCategory}
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap dark:text-gray-300">
-                      {row.clientSource}
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap dark:text-gray-300">
-                      {row.companySize}
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap dark:text-gray-300">
-                      {row.headquarterAddress}
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap dark:text-gray-300">
-                      {formatDate(row.empanelmentDate)}
-                    </TableCell>
-
-                    <TableCell className="whitespace-nowrap dark:text-gray-300">
-                      {row.addedBy?.fullName || "-"}
-                    </TableCell>
-
-                    <TableCell className="whitespace-nowrap dark:text-gray-300">
-                      {new Date(row.createdAt).toLocaleString("en-IN", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                      })}
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap  dark:text-gray-200">
-                      <DateDisplay date={row.updatedAt} />
-                    </TableCell>
-                    <TableCell className="sticky right-[126px] bg-[#f2f4f5] dark:bg-darkGray z-20 whitespace-nowrap">
-                      <div
-                        className={`w-max px-2 py-1 text-xs text-center font-[500] text-white rounded-md ${
-                          row.status === "active"
-                            ? "bg-[#1abe17]"
-                            : row.status === "terminated"
-                            ? "bg-red-800"
-                            : row.status === "on_hold"
-                            ? "bg-[#f9b801]"
-                            : "bg-red-500"
-                        }`}
-                      >
-                        {row.status
-                          ? row.status.charAt(0).toUpperCase() +
-                            row.status.slice(1)
-                          : "-"}
-                      </div>
-                    </TableCell>
-                    {/* Action */}
-                    <TableCell className="sticky right-0 bg-[#f2f4f5] dark:bg-darkGray z-30">
-                      <div className="flex gap-2 items-center">
-                        <button
-                          className="text-white bg-dark px-1 py-1 rounded"
-                          onClick={() =>
-                            navigate(
-                              `/admin/clientmanagement/edit-client/${row._id}`
-                            )
-                          }
+                  {[
+                    { id: "clientName", label: "Client Name" },
+                    { id: "clientCategory", label: "Category" },
+                    { id: "clientSource", label: "Source" },
+                    { id: "companySize", label: "Company Size" },
+                    { id: "headquarterAddress", label: "Headquarter Address" },
+                    { id: "empanelmentDate", label: "Empanelment Date" },
+                    { id: "addedBy", label: "Added By" },
+                    { id: "createdAt", label: "Created Dtm" },
+                    { id: "updatedAt", label: "Modified Dtm" },
+                    { id: "status", label: "Status", sticky: true },
+                    { id: "action", label: "Action", sticky: true },
+                  ].map((col) => (
+                    <TableCell
+                      key={col.id}
+                      className={`whitespace-nowrap font-bold text-darkBg dark:text-white bg-[#f2f4f5] dark:bg-darkGray ${
+                        col.sticky ? getStickyClass(col.id) : ""
+                      }`}
+                    >
+                      {col.id !== "action" ? (
+                        <TableSortLabel
+                          active={orderBy === col.id}
+                          direction={orderBy === col.id ? order : "asc"}
+                          onClick={() => handleSort(col.id)}
+                          sx={{
+                            color: "inherit !important",
+                            "& .MuiTableSortLabel-icon": {
+                              opacity: 1,
+                              color: "currentColor !important",
+                            },
+                          }}
                         >
-                          <Pencil size={18} />
-                        </button>
-                        <button
-                          className="text-white bg-[#1abe17] px-1 py-1 rounded"
-                          onClick={() =>
-                            navigate(
-                              `/admin/clientmanagement/view-client/${row._id}`
-                            )
-                          }
-                        >
-                          <Eye size={18} />
-                        </button>
-                        <button className="text-white bg-red-600 px-1 py-1 rounded">
-                          <Trash size={18} />
-                        </button>
-                      </div>
+                          <strong> {col.label}</strong>
+                        </TableSortLabel>
+                      ) : (
+                        <strong> {col.label}</strong>
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={12} className="text-center py-10">
+                      <Spinner size={45} text="Loading clients..." />
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={12} className="py-10 text-center">
-                    <NoData title="No Clients Found" />
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </TableContainer>
-      <TablePagination
-        component="div"
-        count={pagination.total}
-        page={pagination.page - 1}
-        onPageChange={handleChangePage}
-        rowsPerPage={pagination.limit}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 20, 50]}
-      />
+                ) : sortedData.length > 0 ? (
+                  sortedData.map((row) => (
+                    <TableRow
+                      key={row._id}
+                      className="hover:bg-lightGray dark:hover:bg-darkGray"
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox color="primary" />
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        <div className="flex items-center gap-3">
+                          {row.profileImage ? (
+                            <img
+                              src={row.profileImage}
+                              alt={row.clientName}
+                              className="w-10 h-10 rounded-md object-cover border border-dark"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-md flex items-center justify-center bg-gray-200 text-dark font-semibold">
+                              {row.clientName?.slice(0, 2).toUpperCase()}
+                            </div>
+                          )}
+                          <div>
+                            <p className="flex items-center gap-2  dark:text-gray-300 font-semibold">
+                              <AtSign size={14} />
+                              {row.clientName.charAt(0).toUpperCase() +
+                                row.clientName.slice(1)}
+                            </p>
+                          </div>
+                        </div>
+                      </TableCell>
+
+                      {/* <TableCell>{row.clientName}</TableCell> */}
+                      <TableCell className="whitespace-nowrap dark:text-gray-300">
+                        {row.clientCategory}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap dark:text-gray-300">
+                        {row.clientSource}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap dark:text-gray-300">
+                        {row.companySize}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap dark:text-gray-300">
+                        {row.headquarterAddress}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap dark:text-gray-300">
+                        {formatDate(row.empanelmentDate)}
+                      </TableCell>
+
+                      <TableCell className="whitespace-nowrap dark:text-gray-300">
+                        {row.addedBy?.fullName || "-"}
+                      </TableCell>
+
+                      <TableCell className="whitespace-nowrap dark:text-gray-300">
+                        {new Date(row.createdAt).toLocaleString("en-IN", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap  dark:text-gray-200">
+                        <DateDisplay date={row.updatedAt} />
+                      </TableCell>
+                      <TableCell className="sticky right-[126px] bg-[#f2f4f5] dark:bg-darkGray z-20 whitespace-nowrap">
+                        <div
+                          className={`w-max px-2 py-1 text-xs text-center font-[500] text-white rounded-md ${
+                            row.status === "active"
+                              ? "bg-[#1abe17]"
+                              : row.status === "terminated"
+                              ? "bg-red-800"
+                              : row.status === "on_hold"
+                              ? "bg-[#f9b801]"
+                              : "bg-red-500"
+                          }`}
+                        >
+                          {row.status
+                            ? row.status.charAt(0).toUpperCase() +
+                              row.status.slice(1)
+                            : "-"}
+                        </div>
+                      </TableCell>
+                      {/* Action */}
+                      <TableCell className="sticky right-0 bg-[#f2f4f5] dark:bg-darkGray z-30">
+                        <div className="flex gap-2 items-center">
+                          <button
+                            className="text-white bg-dark px-1 py-1 rounded"
+                            onClick={() =>
+                              navigate(
+                                `/admin/clientmanagement/edit-client/${row._id}`
+                              )
+                            }
+                          >
+                            <Pencil size={18} />
+                          </button>
+                          <button
+                            className="text-white bg-[#1abe17] px-1 py-1 rounded"
+                            onClick={() =>
+                              navigate(
+                                `/admin/clientmanagement/view-client/${row._id}`
+                              )
+                            }
+                          >
+                            <Eye size={18} />
+                          </button>
+                          <button className="text-white bg-red-600 px-1 py-1 rounded">
+                            <Trash size={18} />
+                          </button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={12} className="py-10 text-center">
+                      <NoData title="No Clients Found" />
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </TableContainer>
+        <TablePagination
+          component="div"
+          className="text-black dark:text-white"
+          count={pagination.total}
+          page={pagination.page - 1}
+          onPageChange={handleChangePage}
+          rowsPerPage={pagination.limit}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPageOptions={[5, 10, 20, 50]}
+        />
+      </div>
     </>
   );
 };

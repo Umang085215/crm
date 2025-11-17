@@ -104,7 +104,7 @@ const GeneralSettings = () => {
   };
 
   return (
-    <div className="p-6 border border-lightGray dark:border-darkGray rounded-xl">
+    <div className="p-6 bg-white dark:bg-gray-800 border border-lightGray dark:border-darkGray rounded-xl">
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Logo Upload */}
         <div className="flex flex-col items-center p-5 rounded-md space-y-3">

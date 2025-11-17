@@ -58,7 +58,7 @@ const Themes = () => {
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative bg-white dark:bg-gray-800" ref={dropdownRef}>
       <div className="right-0 mt-3 border border-lightGray dark:border-darkGray rounded-xl z-50 overflow-hidden">
         <div className="px-4 py-3 border-b border-lightGray dark:border-darkGray">
           <h3 className="text-sm font-semibold">Select Theme</h3>
