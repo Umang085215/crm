@@ -8,49 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { addClients, getAllOptions } from "../../services/clientServices";
 import BasicDatePicker from "../ui/BasicDatePicker";
 
-const clientCategoryOptions = [
-  "IT Services",
-  "Manufacturing",
-  "Retail",
-  "Finance",
-  "Healthcare",
-  "Education",
-  "Telecom",
-  "Energy",
-  "Automobile",
-  "E-commerce",
-  "Real Estate",
-  "Logistics",
-  "Entertainment",
-  "Hospitality",
-  "Government",
-];
-const clientSourceOptions = [
-  "Referral",
-  "Website",
-  "LinkedIn",
-  "Cold Email",
-  "Event",
-  "Advertisement",
-  "Direct Inquiry",
-  "Existing Client",
-  "Partnership",
-  "Tender",
-  "Inbound Call",
-  "Consultant",
-  "Other",
-];
-const companySizeOptions = [
-  "1-10",
-  "11-50",
-  "51-100",
-  "101-500",
-  "501-1000",
-  "1001-5000",
-  "5000+",
-];
-const statusOptions = ["active", "inactive", "on_hold", "terminated"];
-
 const schema = yup.object().shape({
   empanelmentDate: yup
     .string()
@@ -99,7 +56,7 @@ const schema = yup.object().shape({
 const AddClient = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    empanelmentDate: "",
+    empanelmentDate: new Date().toISOString().split("T")[0],
     clientName: "",
     clientCategory: "",
     clientSource: "",
@@ -328,20 +285,46 @@ const AddClient = () => {
             errors={errors}
           />
 
-          <Input
-            labelName="About Vendor"
-            name="aboutVendor"
-            value={formData.aboutVendor}
-            handleChange={handleChange}
-            errors={errors}
-          />
-          <Input
-            labelName="Instructions"
-            name="instructions"
-            value={formData.instructions}
-            handleChange={handleChange}
-            errors={errors}
-          />
+          <div className="relative w-full">
+            <textarea
+              name="aboutVendor"
+              rows={2}
+              value={formData.aboutVendor}
+              onChange={handleChange}
+              placeholder=" "
+              className={`block p-[14px] w-full text-sm bg-transparent rounded-md border appearance-none focus:outline-none peer transition
+                  border-lightGray dark:border-darkGray focus:border-black`}
+            />
+            <label
+              className={`absolute pointer-events-none font-medium text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
+                      peer-placeholder-shown:scale-100  peer-placeholder-shown:top-1/2
+                      peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
+                      peer-focus:text-[#181c1f] dark:peer-focus:text-white peer-placeholder-shown:-translate-y-1/2
+                      rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1`}
+            >
+              About Vendor
+            </label>
+          </div>
+          <div className="relative w-full">
+            <textarea
+              name="instructions"
+              rows={2}
+              value={formData.instructions}
+              onChange={handleChange}
+              placeholder=" "
+              className={`block p-[14px] w-full text-sm bg-transparent rounded-md border appearance-none focus:outline-none peer transition
+                  border-lightGray dark:border-darkGray focus:border-black`}
+            />
+            <label
+              className={`absolute pointer-events-none font-medium text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-darkBg px-2
+                      peer-placeholder-shown:scale-100  peer-placeholder-shown:top-1/2
+                      peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4
+                      peer-focus:text-[#181c1f] dark:peer-focus:text-white peer-placeholder-shown:-translate-y-1/2
+                      rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1`}
+            >
+              Instructions
+            </label>
+          </div>
 
           <SelectField
             label="Status"
