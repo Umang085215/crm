@@ -262,7 +262,7 @@ const ProfileSubmission = () => {
       )}
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 border border-gray-300 dark:border-gray-600 p-6 rounded-lg bg-white dark:bg-gray-800 shadow-sm"
+        className="space-y-6 border border-gray-300 dark:border-gray-600 p-6 rounded-lg bg-white dark:bg-gray-800 "
       >
         {/* Resume Upload */}
         <div>
@@ -311,7 +311,7 @@ const ProfileSubmission = () => {
 
         {/*Personal Information */}
         <section>
-          <h3 className="text-lg font-semibold mb-3 border-b pb-2">
+          <h3 className="text-lg font-semibold mb-3 border-b border-gray-300 dark:border-gray-600 pb-2">
             Personal Information
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -362,7 +362,7 @@ const ProfileSubmission = () => {
 
         {/* Professional Information */}
         <section>
-          <h3 className="text-lg font-semibold mb-3 border-b pb-2">
+          <h3 className="text-lg font-semibold mb-3 border-b border-gray-300 dark:border-gray-600 pb-2">
             Professional Information
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -398,7 +398,7 @@ const ProfileSubmission = () => {
             />
             <Input
               name="expectedCTC"
-              labelName="Expected CTC (₹)"
+              labelName="Expected CTC"
               value={formData.expectedCTC}
               handleChange={handleChange}
               errors={errors}
@@ -454,8 +454,10 @@ const ProfileSubmission = () => {
             <div className="col-span-2">
               <label className="block font-medium mb-1">Skills *</label>
               <div
-                className={`flex flex-wrap gap-2 border rounded-md p-2 min-h-[48px] ${
-                  errors.skills ? "border-red-500" : "border-gray-300"
+                className={`flex flex-wrap gap-2 border rounded-md p-2 min-h-[48px]  ${
+                  errors.skills
+                    ? "border-red-500"
+                    : "border-gray-300 dark:border-gray-600 "
                 }`}
               >
                 {formData.skills.map((skill, i) => (
@@ -477,7 +479,7 @@ const ProfileSubmission = () => {
                   value={skillInput}
                   onChange={(e) => setSkillInput(e.target.value)}
                   onKeyDown={handleSkillKeyDown}
-                  className="flex-grow bg-transparent outline-none text-sm"
+                  className="flex-grow bg-transparent outline-none text-sm "
                 />
               </div>
               {errors.skills && (
@@ -489,7 +491,7 @@ const ProfileSubmission = () => {
 
         {/* Additional Information */}
         <section>
-          <h3 className="text-lg font-semibold mb-3 border-b pb-2">
+          <h3 className="text-lg font-semibold mb-3 border-b border-gray-300 dark:border-gray-600 pb-2">
             Additional Information
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

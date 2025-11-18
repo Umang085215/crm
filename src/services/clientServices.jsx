@@ -1,5 +1,9 @@
 import { fetchHandler } from "../fatchHandler/fetchHandler";
 
+export const getActiveClients = () => {
+  return fetchHandler(`/api/clients?status=active`);
+};
+
 export const getAllClients = (
   page = 1,
   limit = 5,
@@ -24,3 +28,6 @@ export const addClients = (clientData) =>
 
 export const updateClient = (id, clientData) =>
   fetchHandler(`/api/clients/${id}`, "PUT", clientData);
+
+export const addClientsRequirement = (clientData) =>
+  fetchHandler("/api/requirements", "POST", clientData);

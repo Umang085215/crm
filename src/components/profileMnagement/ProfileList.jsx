@@ -165,13 +165,23 @@ const ProfileList = () => {
     });
   }, [filteredData, order, orderBy]);
 
+  // const getStickyClass = (columnId) => {
+  //   if (columnId === "action") return "sticky right-0 z-30";
+  //   if (columnId === "status")
+  //     return `${
+  //       sortedData.length > 0 ? "right-[126px]" : "right-[77px]"
+  //     } sticky  z-20`;
+  //   return "";
+  // };
   const getStickyClass = (columnId) => {
-    if (columnId === "action") return "sticky right-0 z-30";
-    if (columnId === "status")
-      return `${
-        sortedData.length > 0 ? "right-[126px]" : "right-[77px]"
-      } sticky  z-20`;
-    return "";
+    switch (columnId) {
+      case "action":
+        return "sticky right-0 z-30";
+      case "status":
+        return "sticky right-[128px] z-20";
+      default:
+        return "";
+    }
   };
   const handleFavourite = (profileId) => {
     setFavourites((prev) =>
@@ -210,7 +220,7 @@ const ProfileList = () => {
         <div>
           {/* Tabs */}
           <div className="relative mb-4">
-            <div className="flex gap-4 border-b border-gray-200 mb-4">
+            <div className="flex gap-4 border-b border-gray-300 dark:border-gray-600 mb-4">
               {["All", "Active", "InActive", "Banned", "Defaulter"].map(
                 (tab) => (
                   <button
@@ -407,11 +417,20 @@ const ProfileList = () => {
                           <TableCell className="whitespace-nowrap  dark:text-gray-300">
                             {item.techStack}
                           </TableCell>
-                          <TableCell className="whitespace-nowrap  dark:text-gray-300">
-                            {item.skills.map((s) => (
-                              <p>{s}</p>
-                            ))}
+
+                          <TableCell className="whitespace-nowrap dark:text-gray-300">
+                            <div className="flex flex-wrap gap-2">
+                              {item.skills.map((skill, index) => (
+                                <span
+                                  key={index}
+                                  className="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-full"
+                                >
+                                  {skill.trim()}
+                                </span>
+                              ))}
+                            </div>
                           </TableCell>
+
                           <TableCell className="whitespace-nowrap  dark:text-gray-300">
                             {item.currentCompany}
                           </TableCell>
@@ -443,9 +462,14 @@ const ProfileList = () => {
                           <TableCell className="whitespace-nowrap  dark:text-gray-200">
                             <DateDisplay date={item.updatedAt} />
                           </TableCell>
-                          <TableCell className="sticky right-[126px] bg-[#f2f4f5] dark:bg-darkGray z-20 whitespace-nowrap">
+                          <TableCell
+                            className={`
+    whitespace-nowrap bg-[#f2f4f5] dark:bg-darkGray
+    ${getStickyClass("status")}
+  `}
+                          >
                             <div
-                              className={`w-max px-2 py-1 text-xs text-center font-[500] text-white rounded-md ${
+                              className={` px-2 py-1 text-xs text-center font-[500] text-white rounded-md ${
                                 item.status === "Active"
                                   ? "bg-[#1abe17]"
                                   : item.status === "Banned"
@@ -474,7 +498,7 @@ const ProfileList = () => {
                                 <Pencil size={18} />
                               </button>
                               <button
-                                className="text-white bg-green-500 px-1 py-1 rounded"
+                                className="text-white bg-[#1abe17] px-1 py-1 rounded"
                                 onClick={() =>
                                   navigate(
                                     `/admin/profilemanagement/view-profile/${item._id}`

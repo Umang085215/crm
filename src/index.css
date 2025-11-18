@@ -78,6 +78,8 @@ html.dark .css-h7cjts-MuiButtonBase-root-MuiIconButton-root.Mui-disabled {
 
 .MuiTableCell-root {
   font-family: "Golos Text", sans-serif !important;
+  letter-spacing: 0 !important;
+  padding:17px !important;
 }
 
 .tippy-box[data-theme~="custom"] {

@@ -131,7 +131,7 @@ const ViewClient = () => {
             {/* GRID LAYOUT */}
             <div className="grid md:grid-cols-3 gap-6 ">
               {/* LEFT COLUMN */}
-              <div className="md:col-span-1 border border-gray-300 dark:border-gray-600 rounded-lg space-y-6">
+              <div className="md:col-span-1 border border-gray-300 dark:border-gray-600 rounded-lg ">
                 {/* POC 1 */}
                 {client.poc1 && (
                   <ViewSection
@@ -206,7 +206,7 @@ const ViewClient = () => {
               </div>
 
               {/* RIGHT COLUMN */}
-              <div className="lg:col-span-2 border border-gray-300 dark:border-gray-600 rounded-lg space-y-6">
+              <div className="lg:col-span-2 border border-gray-300 dark:border-gray-600 rounded-lg ">
                 <ViewSection
                   title="Company Information"
                   icon={<Building size={18} />}

@@ -218,7 +218,7 @@ const AddClient = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 border border-gray-300 dark:border-gray-600 p-6 rounded-lg bg-white dark:bg-gray-800 shadow-sm"
+        className="space-y-6 border border-gray-300 dark:border-gray-600 p-6 rounded-lg bg-white dark:bg-gray-800 "
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <BasicDatePicker
@@ -338,7 +338,7 @@ const AddClient = () => {
 
         {/* POC 1 */}
         <div className="md:col-span-2 mt-6">
-          <div className="flex items-center gap-1 mb-3 border-b pb-2">
+          <div className="flex items-center gap-1 mb-3  pb-2">
             <h3 className="text-lg font-semibold ">POC-1</h3>
             <span className="text-sm text-gray-500 ">(Point of Contact-1)</span>
             <span className="text-red-700 text-xl"> *</span>
@@ -378,7 +378,7 @@ const AddClient = () => {
 
         {/* POC 2 */}
         <div className="md:col-span-2 mt-6">
-          <div className="flex items-center gap-1 mb-3 border-b pb-2">
+          <div className="flex items-center gap-1 mb-3  pb-2">
             <h3 className="text-lg font-semibold ">POC-2</h3>
             <span className="text-sm text-gray-500 ">(Point of Contact-2)</span>
           </div>

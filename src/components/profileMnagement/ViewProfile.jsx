@@ -152,7 +152,7 @@ const ViewProfile = () => {
               {/* Grid Layout */}
               <div className="grid md:grid-cols-3 gap-6">
                 {/* Left Column */}
-                <div className="md:col-span-1 border border-gray-300 dark:border-gray-600 rounded-lg space-y-6">
+                <div className="md:col-span-1 border border-gray-300 dark:border-gray-600 rounded-lg ">
                   {profile.resume && (
                     <ViewSection title="Resume" icon={<FileText size={18} />}>
                       <div className="flex items-center justify-between mt-4">
@@ -210,7 +210,7 @@ const ViewProfile = () => {
                 </div>
 
                 {/* Right Column */}
-                <div className="lg:col-span-2 border border-gray-300 dark:border-gray-600 rounded-lg space-y-6">
+                <div className="lg:col-span-2 border border-gray-300 dark:border-gray-600 rounded-lg ">
                   {/* Professional Information */}
                   <ViewSection
                     title="Professional Information"
@@ -267,7 +267,7 @@ const ViewProfile = () => {
                   >
                     {profile.skills?.length > 0 && (
                       <div className="mb-4">
-                        <h4 className="font-semibold mb-2 text-dark dark:text-white flex items-center gap-1">
+                        <h4 className="font-semibold mb-4 mt-4 text-dark dark:text-white flex items-center gap-1">
                           <Star size={16} /> Skills
                         </h4>
                         <div className="flex flex-wrap gap-2">

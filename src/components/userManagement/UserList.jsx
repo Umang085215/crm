@@ -166,7 +166,7 @@ const UserList = () => {
 
           {/* Tabs */}
           <div className="relative mb-4">
-            <div className="flex gap-4 border-b border-gray-200 mb-4">
+            <div className="flex gap-4 border-b border-gray-300 dark:border-gray-600 mb-4">
               {["All", "Active", "InActive"].map((tab) => (
                 <button
                   key={tab}

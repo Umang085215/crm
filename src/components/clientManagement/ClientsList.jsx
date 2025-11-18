@@ -40,6 +40,9 @@ const ClientList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [openStatusRow, setOpenStatusRow] = useState(null);
+  const statusOptions = ["active", "terminated", "on_hold", "rejected"];
+
   useEffect(() => {
     fetchClients();
   }, [pagination.page, pagination.limit, searchQuery]);
@@ -101,13 +104,24 @@ const ClientList = () => {
       page: 1,
     }));
   };
+  // const getStickyClass = (columnId) => {
+  //   if (columnId === "action") return "sticky right-0 z-30";
+  //   if (columnId === "status")
+  //     return `${
+  //       sortedData.length > 0 ? "right-[128px]" : "right-[76px]"
+  //     } sticky  z-20`;
+  //   return "";
+  // };
+
   const getStickyClass = (columnId) => {
-    if (columnId === "action") return "sticky right-0 z-30";
-    if (columnId === "status")
-      return `${
-        sortedData.length > 0 ? "right-[126px]" : "right-[77px]"
-      } sticky  z-20`;
-    return "";
+    switch (columnId) {
+      case "action":
+        return "sticky right-0 z-20";
+      case "status":
+        return "sticky right-[128px] z-20";
+      default:
+        return "";
+    }
   };
 
   const formatDate = (date) => {
@@ -165,7 +179,7 @@ const ClientList = () => {
       )}
       {/* Tabs */}
       <div className="relative mb-4">
-        <div className="flex gap-4 border-b border-gray-200 mb-4">
+        <div className="flex gap-4 border-b border-gray-300 dark:border-gray-600 mb-4">
           {["All", "Active", "InActive"].map((tab) => (
             <button
               key={tab}
@@ -344,9 +358,21 @@ const ClientList = () => {
                       <TableCell className="whitespace-nowrap  dark:text-gray-200">
                         <DateDisplay date={row.updatedAt} />
                       </TableCell>
-                      <TableCell className="sticky right-[126px] bg-[#f2f4f5] dark:bg-darkGray z-20 whitespace-nowrap">
+
+                      <TableCell
+                        className={`relative whitespace-nowrap bg-[#f2f4f5] dark:bg-darkGray ${getStickyClass(
+                          "status"
+                        )}`}
+                        style={{ overflow: "visible", zIndex: 20 }} // 1️⃣ allow dropdown to escape
+                      >
+                        {/* STATUS BADGE */}
                         <div
-                          className={`w-max px-2 py-1 text-xs text-center font-[500] text-white rounded-md ${
+                          onClick={() =>
+                            setOpenStatusRow(
+                              openStatusRow === row._id ? null : row._id
+                            )
+                          }
+                          className={`cursor-pointer px-2 py-1 text-xs text-center font-[500] text-white rounded-md ${
                             row.status === "active"
                               ? "bg-[#1abe17]"
                               : row.status === "terminated"
@@ -361,7 +387,43 @@ const ClientList = () => {
                               row.status.slice(1)
                             : "-"}
                         </div>
+
+                        {/* DROPDOWN PANEL */}
+                        {openStatusRow === row._id && (
+                          <div
+                            className="
+        absolute 
+        -left-20   /* 2️⃣ SHIFT LEFT SO IT SHOWS IN FRONT */
+        top-10
+        w-36 
+        rounded-md 
+        shadow-xl 
+        bg-white dark:bg-[#2f3236]
+        border border-gray-300 dark:border-gray-700
+        z-[9999]  /* 3️⃣ MOST IMPORTANT */
+      "
+                            style={{ overflow: "visible" }}
+                          >
+                            {statusOptions.map((status) => (
+                              <div
+                                key={status}
+                                onClick={() =>
+                                  handleStatusUpdate(row._id, status)
+                                }
+                                className="
+            px-3 py-2 text-sm cursor-pointer 
+            hover:bg-gray-100 dark:hover:bg-gray-700
+            transition
+          "
+                              >
+                                {status.charAt(0).toUpperCase() +
+                                  status.slice(1)}
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </TableCell>
+
                       {/* Action */}
                       <TableCell className="sticky right-0 bg-[#f2f4f5] dark:bg-darkGray z-30">
                         <div className="flex gap-2 items-center">

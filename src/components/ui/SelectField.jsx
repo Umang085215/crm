@@ -32,8 +32,8 @@ const SelectField = ({
             <option disabled>Loading...</option>
           ) : (
             <>
-              {options.map((opt) => (
-                <option key={opt} value={opt} className="text-darkBg">
+              {options.map((opt, i) => (
+                <option key={i} value={opt} className="text-darkBg">
                   {opt}
                 </option>
               ))}
