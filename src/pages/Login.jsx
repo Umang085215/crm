@@ -85,14 +85,14 @@ const Login = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-[45%_55%] min-h-screen bg-white dark:bg-gray-900 ">
       <div className="order-2 flex items-center justify-center">
-        <div className="  flex flex-col justify-center items-center px-6 sm:px-12">
+        <div className="w-[80%]  flex flex-col justify-center items-center px-6 sm:px-12">
           <div className="flex items-center gap-2 mb-6">
             <img src={logo} alt="Elevva CRM Logo" className="w-10 h-10" />
             <h1 className="text-3xl font-semibold ">Elevva CRM</h1>
           </div>
 
           {/* Login  */}
-          <div className="w-full rounded-xl p-3 sm:px-12 border border-gary-300 ">
+          <div className="w-full rounded-xl p-3 sm:p-12 border border-gary-300 ">
             {successMsg && (
               <p className="mb-3 p-3 rounded-md bg-green-100 text-green-700 border border-green-300 text-sm text-center">
                 {successMsg}
@@ -111,15 +111,6 @@ const Login = () => {
                 <p className="text-gray-500 text-md mt-2">
                   Login to access the Elevva CRM
                 </p>
-              </div>
-              <div>
-                Don’t have an account?{" "}
-                <Link
-                  to="/"
-                  className="text-[#3282ff] hover:underline text-md font-medium"
-                >
-                  Create account
-                </Link>
               </div>
             </div>
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -242,6 +233,11 @@ const Login = () => {
         </div>
       </div> */}
       <div className="relative order-1 hidden md:flex justify-center items-center w-full backdrop-blur-xl bg-gradient-to-b from-[#0a60ee] to-[#203455] py-10">
+        <img
+          src={login1}
+          alt="HR Illustration"
+          className="absolute bottom-1 left-2 w-16 object-contain drop-shadow-xl"
+        />
         <img
           src={login3}
           alt="HR Illustration"
