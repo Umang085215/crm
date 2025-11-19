@@ -30,6 +30,8 @@ export const updateClient = (id, clientData) =>
   fetchHandler(`/api/clients/${id}`, "PUT", clientData);
 
 // Requirements
+export const getRequirementById = (id) =>
+  fetchHandler(`/api/requirements/${id}`);
 
 export const getRequirementsOptions = () => {
   return fetchHandler("/api/requirements/options");

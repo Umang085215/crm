@@ -21,13 +21,9 @@ import { getAllRequirements } from "../../services/clientServices";
 const ClientsRequirementsList = () => {
   const navigate = useNavigate();
 
-  const [clients, setClients] = useState([]);
+  const [requirements, setRequirements] = useState([]);
   const [activeTab, setActiveTab] = useState("All");
-  const [counts, setCounts] = useState({
-    all: 0,
-    active: 0,
-    inactive: 0,
-  });
+  const [statusTabs, setStatusTabs] = useState([]);
 
   const [pagination, setPagination] = useState({
     total: 0,
@@ -35,12 +31,14 @@ const ClientsRequirementsList = () => {
     pages: 1,
     limit: 25,
   });
+
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("clientName");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [openStatusRow, setOpenStatusRow] = useState(null);
+
   const statusOptions = ["active", "terminated", "on_hold", "rejected"];
 
   useEffect(() => {
@@ -50,22 +48,28 @@ const ClientsRequirementsList = () => {
   const fetchRequirements = async () => {
     try {
       setLoading(true);
+
       const data = await getAllRequirements(
         pagination.page,
         pagination.limit,
         searchQuery
       );
 
-      const allClients = data.clients || [];
-      console.log(allClients);
+      const allRequirements = data.requirements || [];
+      setRequirements(allRequirements);
+      const uniqueStatuses = [
+        "All",
+        ...new Set(allRequirements.map((r) => r.positionStatus || "Unknown")),
+      ];
+      const tabsWithCounts = uniqueStatuses.map((status) => ({
+        name: status,
+        count:
+          status === "All"
+            ? allRequirements.length
+            : allRequirements.filter((r) => r.positionStatus === status).length,
+      }));
 
-      setClients(allClients);
-
-      setCounts({
-        all: allClients.length,
-        active: allClients.filter((c) => c.status === "active").length,
-        inactive: allClients.filter((c) => c.status === "inactive").length,
-      });
+      setStatusTabs(tabsWithCounts);
 
       setPagination((prev) => ({
         ...prev,
@@ -78,6 +82,7 @@ const ClientsRequirementsList = () => {
       setLoading(false);
     }
   };
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setPagination((prev) => ({ ...prev, page: 1 }));
@@ -110,53 +115,124 @@ const ClientsRequirementsList = () => {
     switch (columnId) {
       case "action":
         return "sticky right-0 z-20";
-      case "status":
+      case "requirementPriority":
         return "sticky right-[128px] z-20";
       default:
         return "";
     }
   };
 
-  const formatDate = (date) => {
-    if (!date) return "-";
-    return new Date(date).toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Open":
+        return "bg-green-600";
+      case "On Hold":
+        return "bg-amber-500";
+      case "In Progress":
+        return "bg-blue-600";
+      case "Filled":
+        return "bg-emerald-700";
+      case "Cancelled":
+        return "bg-red-700";
+      case "Closed":
+        return "bg-gray-600";
+      default:
+        return "bg-gray-500";
+    }
   };
+  const getTabsColor = (tabs) => {
+    switch (tabs) {
+      case "Open":
+        return "text-green-600";
+      case "On Hold":
+        return "text-amber-500";
+      case "In Progress":
+        return "text-blue-600";
+      case "Filled":
+        return "text-emerald-700";
+      case "Cancelled":
+        return "text-red-700";
+      case "Closed":
+        return "text-gray-600";
+      default:
+        return "text-gray-500";
+    }
+  };
+
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case "Open":
+        return "bg-green-600";
+      case "Critical":
+        return "bg-red-800";
+      case "On_hold":
+        return "bg-amber-500";
+      case "In_progress":
+        return "bg-blue-600";
+      case "Filled":
+        return "bg-emerald-700";
+      case "Closed":
+        return "bg-gray-600";
+      case "High":
+        return "bg-red-600";
+      default:
+        return "bg-gray-500";
+    }
+  };
+
   const filteredData = useMemo(() => {
-    let data = [...clients];
-    if (activeTab === "Active") {
-      data = data.filter((c) => c.status === "active");
-    } else if (activeTab === "InActive") {
-      data = data.filter((c) => c.status === "inactive");
+    let data = [...requirements];
+
+    if (activeTab !== "All") {
+      data = data.filter((c) => c.positionStatus === activeTab);
     }
 
-    // Apply Search Filter
     if (searchQuery.trim() !== "") {
       const q = searchQuery.toLowerCase();
-      data = data.filter((c) =>
-        Object.values(c).some((v) => v?.toString().toLowerCase().includes(q))
-      );
+
+      const deepSearch = (obj) => {
+        return Object.values(obj).some((val) => {
+          if (!val) return false;
+
+          if (typeof val === "string" || typeof val === "number") {
+            return val.toString().toLowerCase().includes(q);
+          }
+
+          if (Array.isArray(val)) {
+            return val.some((item) =>
+              item.toString().toLowerCase().includes(q)
+            );
+          }
+
+          if (typeof val === "object") return deepSearch(val);
+
+          return false;
+        });
+      };
+
+      data = data.filter((item) => deepSearch(item));
     }
 
     return data;
-  }, [clients, activeTab, searchQuery]);
+  }, [requirements, activeTab, searchQuery]);
+
   const sortedData = useMemo(() => {
     return [...filteredData].sort((a, b) => {
       const aVal = a[orderBy] ?? "";
       const bVal = b[orderBy] ?? "";
       return order === "asc"
-        ? aVal.localeCompare?.(bVal)
-        : bVal.localeCompare?.(aVal);
+        ? aVal?.toString().localeCompare(bVal)
+        : bVal?.toString().localeCompare(aVal);
     });
   }, [filteredData, order, orderBy]);
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">All Clients</h2>
-        <button className="flex items-center" onClick={() => fetchClients()}>
+        <h2 className="text-2xl font-semibold">All Requirements</h2>
+        <button
+          className="flex items-center"
+          onClick={() => fetchRequirements()}
+        >
           <ToolTip
             title="Refresh"
             placement="top"
@@ -171,22 +247,21 @@ const ClientsRequirementsList = () => {
         </div>
       )}
       {/* Tabs */}
-      <div className="relative mb-4">
-        <div className="flex gap-4 border-b border-gray-300 dark:border-gray-600 mb-4">
-          {["All", "Active", "InActive"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => handleTabChange(tab)}
-              className={`relative flex items-center gap-2 px-4 py-2 transition-all duration-300 ${
-                activeTab === tab
-                  ? "text-dark border-b-2 border-dark font-semibold"
-                  : "text-gray-500 hover:opacity-90"
-              }`}
-            >
-              {tab} ({counts[tab.toLowerCase()] || 0})
-            </button>
-          ))}
-        </div>
+      <div className="flex gap-4 border-b mb-4">
+        {statusTabs.map((tab) => (
+          <button
+            key={tab.name}
+            onClick={() => handleTabChange(tab.name)}
+            className={`relative flex items-center gap-2 px-4 py-2 ${
+              activeTab === tab.name
+                ? "text-dark border-b-2 border-dark font-semibold"
+                : `${getTabsColor(tab.name)}`
+            }`}
+          >
+            {tab.name}
+            <span>({tab.count})</span>
+          </button>
+        ))}
       </div>
 
       <div className="p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl">
@@ -207,7 +282,7 @@ const ClientsRequirementsList = () => {
               className="px-2 py-1.5 flex gap-1 items-center bg-dark text-white rounded-md"
             >
               <Plus size={18} />
-              <span>Add New Client</span>
+              <span>Add New Requirement</span>
             </Link>
           </div>
         </div>
@@ -223,7 +298,6 @@ const ClientsRequirementsList = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
           rowsPerPageOptions={[25, 50, 100]}
         />
-
         <TableContainer className="rounded-xl border border-gray-300 dark:border-gray-600 ">
           <div className="overflow-x-auto">
             <Table className="min-w-full">
@@ -231,22 +305,26 @@ const ClientsRequirementsList = () => {
                 <TableRow>
                   <TableCell
                     padding="checkbox"
-                    className="bg-[#f2f4f5] dark:bg-darkGray"
+                    className=" bg-[#f2f4f5] dark:bg-darkGray"
                   >
-                    <Checkbox color="primary" />
+                    <div className="flex items-center justify-center">
+                      <Checkbox color="primary" />
+                    </div>
                   </TableCell>
-
                   {[
                     { id: "clientName", label: "Client Name" },
-                    { id: "clientCategory", label: "Category" },
-                    { id: "clientSource", label: "Source" },
-                    { id: "companySize", label: "Company Size" },
-                    { id: "headquarterAddress", label: "Headquarter Address" },
-                    { id: "empanelmentDate", label: "Empanelment Date" },
+                    { id: "techStack", label: "Tech Stack" },
+                    { id: "positionStatus", label: "Status" },
+                    { id: "experience", label: "Experience" },
+                    { id: "budget", label: "Budget" },
                     { id: "addedBy", label: "Added By" },
                     { id: "createdAt", label: "Created Dtm" },
                     { id: "updatedAt", label: "Modified Dtm" },
-                    { id: "status", label: "Status", sticky: true },
+                    {
+                      id: "requirementPriority",
+                      label: "Priority",
+                      sticky: true,
+                    },
                     { id: "action", label: "Action", sticky: true },
                   ].map((col) => (
                     <TableCell
@@ -281,7 +359,7 @@ const ClientsRequirementsList = () => {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={12} className="text-center py-10">
+                    <TableCell colSpan={8} className="text-center py-10">
                       <Spinner size={45} text="Loading clients..." />
                     </TableCell>
                   </TableRow>
@@ -291,53 +369,69 @@ const ClientsRequirementsList = () => {
                       key={row._id}
                       className="hover:bg-lightGray dark:hover:bg-darkGray"
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox color="primary" />
+                      <TableCell
+                        className="whitespace-nowrap"
+                        padding="checkbox"
+                      >
+                        <div className="flex flex-col items-center justify-center ">
+                          <Checkbox color="primary" />
+                          {row.requirementCode && (
+                            <small className="text-dark bg-light  p-[1px]   border-b border-dark  rounded font-[500]">
+                              #{row.requirementCode}
+                            </small>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
                         <div className="flex items-center gap-3">
                           {row.profileImage ? (
                             <img
                               src={row.profileImage}
-                              alt={row.clientName}
+                              alt={row.client.clientName}
                               className="w-10 h-10 rounded-md object-cover border border-dark"
                             />
                           ) : (
                             <div className="w-10 h-10 rounded-md flex items-center justify-center bg-gray-200 text-dark font-semibold">
-                              {row.clientName?.slice(0, 2).toUpperCase()}
+                              {row.client.clientName?.slice(0, 2).toUpperCase()}
                             </div>
                           )}
                           <div>
-                            <p className="flex items-center gap-2  dark:text-gray-300 font-semibold">
+                            <p className="flex items-center gap-1  dark:text-gray-300 font-semibold">
                               <AtSign size={14} />
-                              {row.clientName.charAt(0).toUpperCase() +
-                                row.clientName.slice(1)}
+                              {row.client.clientName.charAt(0).toUpperCase() +
+                                row.client.clientName.slice(1)}
                             </p>
                           </div>
                         </div>
                       </TableCell>
-
-                      {/* <TableCell>{row.clientName}</TableCell> */}
                       <TableCell className="whitespace-nowrap dark:text-gray-300">
-                        {row.clientCategory}
+                        {row.techStack?.map((tech, i) => (
+                          <span key={i}>{tech}</span>
+                        ))}
                       </TableCell>
                       <TableCell className="whitespace-nowrap dark:text-gray-300">
-                        {row.clientSource}
+                        <span
+                          className={`w-max px-2 py-1 text-xs text-center font-[500] text-white rounded-md ${getStatusColor(
+                            row.positionStatus
+                          )}`}
+                        >
+                          {row.positionStatus}
+                        </span>
                       </TableCell>
                       <TableCell className="whitespace-nowrap dark:text-gray-300">
-                        {row.companySize}
+                        {row.experience}
                       </TableCell>
                       <TableCell className="whitespace-nowrap dark:text-gray-300">
-                        {row.headquarterAddress}
+                        <div className="flex flex-col justify-center items-center">
+                          <div className="flex items-center gap-2">
+                            <span>{row.currency}</span>
+                            <span>{row.budget}</span>
+                          </div>
+                        </div>
                       </TableCell>
                       <TableCell className="whitespace-nowrap dark:text-gray-300">
-                        {formatDate(row.empanelmentDate)}
+                        {row.createdBy?.fullName || "-"}
                       </TableCell>
-
-                      <TableCell className="whitespace-nowrap dark:text-gray-300">
-                        {row.addedBy?.fullName || "-"}
-                      </TableCell>
-
                       <TableCell className="whitespace-nowrap dark:text-gray-300">
                         {new Date(row.createdAt).toLocaleString("en-IN", {
                           day: "2-digit",
@@ -351,49 +445,40 @@ const ClientsRequirementsList = () => {
                       <TableCell className="whitespace-nowrap  dark:text-gray-200">
                         <DateDisplay date={row.updatedAt} />
                       </TableCell>
-
                       <TableCell
-                        className={`relative whitespace-nowrap bg-[#f2f4f5] dark:bg-darkGray ${getStickyClass(
-                          "status"
+                        className={`relative  whitespace-nowrap bg-[#f2f4f5] dark:bg-darkGray ${getStickyClass(
+                          "requirementPriority"
                         )}`}
-                        style={{ overflow: "visible", zIndex: 20 }} // 1️⃣ allow dropdown to escape
+                        style={{ overflow: "visible", zIndex: 20 }}
                       >
-                        {/* STATUS BADGE */}
                         <div
                           onClick={() =>
                             setOpenStatusRow(
                               openStatusRow === row._id ? null : row._id
                             )
                           }
-                          className={`cursor-pointer px-2 py-1 text-xs text-center font-[500] text-white rounded-md ${
-                            row.status === "active"
-                              ? "bg-[#1abe17]"
-                              : row.status === "terminated"
-                              ? "bg-red-800"
-                              : row.status === "on_hold"
-                              ? "bg-[#f9b801]"
-                              : "bg-red-500"
-                          }`}
+                          className={`w-max px-2 py-1 text-xs text-center font-[500] text-white rounded-md ${getPriorityColor(
+                            row.requirementPriority
+                          )}`}
                         >
-                          {row.status
-                            ? row.status.charAt(0).toUpperCase() +
-                              row.status.slice(1)
+                          {row.requirementPriority
+                            ? row.requirementPriority.charAt(0).toUpperCase() +
+                              row.requirementPriority.slice(1)
                             : "-"}
                         </div>
 
-                        {/* DROPDOWN PANEL */}
                         {openStatusRow === row._id && (
                           <div
                             className="
         absolute 
-        -left-20   /* 2️⃣ SHIFT LEFT SO IT SHOWS IN FRONT */
+        -left-20  
         top-10
         w-36 
         rounded-md 
         shadow-xl 
         bg-white dark:bg-[#2f3236]
         border border-gray-300 dark:border-gray-700
-        z-[9999]  /* 3️⃣ MOST IMPORTANT */
+        z-[9999] 
       "
                             style={{ overflow: "visible" }}
                           >
@@ -434,7 +519,7 @@ const ClientsRequirementsList = () => {
                             className="text-white bg-[#1abe17] px-1 py-1 rounded"
                             onClick={() =>
                               navigate(
-                                `/admin/clientmanagement/view-client/${row._id}`
+                                `/admin/clientmanagement/view-requirement/${row._id}`
                               )
                             }
                           >

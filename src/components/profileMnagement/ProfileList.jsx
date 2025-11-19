@@ -165,14 +165,6 @@ const ProfileList = () => {
     });
   }, [filteredData, order, orderBy]);
 
-  // const getStickyClass = (columnId) => {
-  //   if (columnId === "action") return "sticky right-0 z-30";
-  //   if (columnId === "status")
-  //     return `${
-  //       sortedData.length > 0 ? "right-[126px]" : "right-[77px]"
-  //     } sticky  z-20`;
-  //   return "";
-  // };
   const getStickyClass = (columnId) => {
     switch (columnId) {
       case "action":
@@ -183,6 +175,7 @@ const ProfileList = () => {
         return "";
     }
   };
+
   const handleFavourite = (profileId) => {
     setFavourites((prev) =>
       prev.includes(profileId)
@@ -361,13 +354,13 @@ const ProfileList = () => {
                             className="whitespace-nowrap"
                             padding="checkbox"
                           >
-                            <div className="flex flex-col items-start ">
+                            <div className="flex flex-col items-center justify-center  ">
                               <Checkbox color="primary" />
 
                               {item.profileCode && (
-                                <span className="text-dark bg-light text-[12px] p-[1px]   border-b border-dark  rounded font-[500]">
+                                <small className="text-dark bg-light  p-[1px]   border-b border-dark  rounded font-[500]">
                                   #{item.profileCode}
-                                </span>
+                                </small>
                               )}
                             </div>
                           </TableCell>

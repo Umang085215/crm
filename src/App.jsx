@@ -27,6 +27,7 @@ import EditClient from "./components/clientManagement/EditClient";
 import ViewClient from "./components/clientManagement/ViewClient";
 import ClientRequirement from "./components/clientManagement/ClientRequirement";
 import ClientsRequirementsList from "./components/clientManagement/ClientsRequirementList";
+import ViewRequirement from "./components/clientManagement/ViewRequirement";
 
 const App = () => {
   return (
@@ -246,6 +247,14 @@ const App = () => {
           element={
             <ProtectedRoute allowedModules={["users"]}>
               <ClientRequirement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/clientmanagement/view-requirement/:id"
+          element={
+            <ProtectedRoute allowedModules={["users"]}>
+              <ViewRequirement />
             </ProtectedRoute>
           }
         />
