@@ -234,14 +234,14 @@ const Login = () => {
       </div> */}
       <div className="relative order-1 hidden md:flex justify-center items-center w-full backdrop-blur-xl bg-gradient-to-b from-[#0a60ee] to-[#203455] py-10">
         <img
-          src={login1}
+          src={login3}
           alt="HR Illustration"
-          className="absolute bottom-1 left-2 w-16 object-contain drop-shadow-xl"
+          className="absolute bottom-6 right-3  object-contain drop-shadow-xl"
         />
         <img
           src={login3}
           alt="HR Illustration"
-          className="absolute bottom-6 right-3  object-contain drop-shadow-xl"
+          className="absolute top-[-64px] left-[-64px]  object-contain drop-shadow-xl"
         />
         <div className="relative w-[80%]  rounded-3xl p-10  bg-gradient-to-b from-[#1869e7cf] to-[#2c475aa6] border border-white/30">
           <h3 className="text-white font-bold text-4xl leading-snug mb-5 text-center">
