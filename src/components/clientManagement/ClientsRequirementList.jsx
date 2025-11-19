@@ -16,9 +16,9 @@ import Spinner from "../loaders/Spinner";
 import NoData from "../ui/NoData";
 import ToolTip from "../ui/ToolTip";
 import DateDisplay from "../ui/DateDisplay";
-import { getAllClients } from "../../services/clientServices";
+import { getAllRequirements } from "../../services/clientServices";
 
-const ClientList = () => {
+const ClientsRequirementsList = () => {
   const navigate = useNavigate();
 
   const [clients, setClients] = useState([]);
@@ -44,19 +44,20 @@ const ClientList = () => {
   const statusOptions = ["active", "terminated", "on_hold", "rejected"];
 
   useEffect(() => {
-    fetchClients();
+    fetchRequirements();
   }, [pagination.page, pagination.limit, searchQuery]);
 
-  const fetchClients = async () => {
+  const fetchRequirements = async () => {
     try {
       setLoading(true);
-      const data = await getAllClients(
+      const data = await getAllRequirements(
         pagination.page,
         pagination.limit,
         searchQuery
       );
 
       const allClients = data.clients || [];
+      console.log(allClients);
 
       setClients(allClients);
 
@@ -202,7 +203,7 @@ const ClientList = () => {
           </div>
           <div>
             <Link
-              to="/admin/clientmanagement/add-client"
+              to="/admin/clientmanagement/add-clientRequirement"
               className="px-2 py-1.5 flex gap-1 items-center bg-dark text-white rounded-md"
             >
               <Plus size={18} />
@@ -472,4 +473,4 @@ const ClientList = () => {
   );
 };
 
-export default ClientList;
+export default ClientsRequirementsList;

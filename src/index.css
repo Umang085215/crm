@@ -105,3 +105,10 @@ html.dark
   > .tippy-arrow::before {
   border-top-color: var(--tooltip-bg-dark);
 }
+
+
+/* React quill */
+
+.ql-container {
+  height:150px !important;
+}

@@ -54,7 +54,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         },
         {
           module: "users",
-          path: "/admin/clientmanagement/add-clientrequirement",
+          path: "/admin/clientmanagement/clientrequirements",
           label: "Clients Requirement",
           icon: <Users size={16} />,
         },

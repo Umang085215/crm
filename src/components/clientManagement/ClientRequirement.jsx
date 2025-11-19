@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Input from "../ui/Input";
 import SelectField from "../ui/SelectField";
 import Button from "../ui/Button";
@@ -9,6 +10,7 @@ import "react-quill-new/dist/quill.snow.css";
 import {
   addClientsRequirement,
   getActiveClients,
+  getRequirementsOptions,
 } from "../../services/clientServices";
 import BasicDatePicker from "../ui/BasicDatePicker";
 
@@ -42,6 +44,7 @@ const schema = yup.object().shape({
 const ClientRequirement = () => {
   const jobDescriptionRef = useRef("");
   const quillRef = useRef(null);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     client: "",
     requirementPriority: "",
@@ -59,13 +62,42 @@ const ClientRequirement = () => {
     expectedClosureDate: "",
   });
   const [activeClients, setActiveClients] = useState([]);
+  const [options, setOptions] = useState({
+    statuses: [],
+    experiences: [],
+    budgetTypes: [],
+    currencies: [],
+    workModes: [],
+    priorities: [],
+  });
+
   const [errors, setErrors] = useState({});
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
   useEffect(() => {
     fetchActiveClients();
+    fetchAllOptions();
   }, []);
+
+  const fetchAllOptions = async () => {
+    try {
+      const data = await getRequirementsOptions();
+      console.log("API Options Response:", data);
+      if (!data || typeof data !== "object") {
+        console.error("Invalid options response");
+        return;
+      }
+      // setOptions((prev) => ({
+      //   ...prev,
+      //   ...data,
+      // }));
+      setOptions(data.options);
+    } catch (error) {
+      console.error("Error fetching options:", error);
+      setErrorMsg("Failed to load dropdown options");
+    }
+  };
 
   const fetchActiveClients = async () => {
     try {
@@ -194,7 +226,10 @@ const ClientRequirement = () => {
     <>
       <div className="mb-4 flex justify-between items-center">
         <h2 className="text-2xl font-semibold">Clients Requirement</h2>
-        <button className="flex items-center gap-2 px-3 py-1.5 bg-gray-600 text-white text-sm rounded-md hover:opacity-90 transition">
+        <button
+          onClick={() => navigate("/admin/clientManagement/clientRequirements")}
+          className="flex items-center gap-2 px-3 py-1.5 bg-gray-600 text-white text-sm rounded-md hover:opacity-90 transition"
+        >
           <ArrowLeft size={16} /> Back
         </button>
       </div>
@@ -273,7 +308,7 @@ const ClientRequirement = () => {
               name="requirementPriority"
               label="Requirement Priority"
               value={formData.requirementPriority}
-              options={["High", "Medium", "Low"]}
+              options={options.priorities}
               handleChange={handleChange}
               error={errors.requirementPriority}
             />
@@ -281,7 +316,7 @@ const ClientRequirement = () => {
               name="positionStatus"
               label="Position Status"
               value={formData.positionStatus}
-              options={["Open", "Closed"]}
+              options={options.statuses}
               handleChange={handleChange}
               error={errors.positionStatus}
             />
@@ -289,7 +324,7 @@ const ClientRequirement = () => {
               name="experience"
               label="Experience"
               value={formData.experience}
-              options={["1-2 years", "3-5 years", "5-7 years", "7-10 years"]}
+              options={options.experiences}
               handleChange={handleChange}
               error={errors.experience}
             />
@@ -318,7 +353,7 @@ const ClientRequirement = () => {
               name="workMode"
               label="Work Mode"
               value={formData.workMode}
-              options={["Remote", "Hybrid", "Onsite"]}
+              options={options.workModes}
               handleChange={handleChange}
               error={errors.workMode}
             />
@@ -348,7 +383,7 @@ const ClientRequirement = () => {
               name="budgetType"
               label="Budget Type"
               value={formData.budgetType}
-              options={["Hourly", "Monthly", "Fixed"]}
+              options={options.budgetTypes}
               handleChange={handleChange}
               error={errors.budgetType}
             />
@@ -356,7 +391,7 @@ const ClientRequirement = () => {
               name="currency"
               label="Currency"
               value={formData.currency}
-              options={["INR", "USD", "EUR"]}
+              options={options.currencies}
               handleChange={handleChange}
               error={errors.currency}
             />
@@ -410,7 +445,7 @@ const ClientRequirement = () => {
               value={jobDescriptionRef.current}
               onChange={handleQuillChange}
               modules={modules}
-              className="bg-white dark:bg-darkBg dark:text-white border"
+              className=" bg-white dark:bg-darkBg dark:text-white border"
             />
             {errors.jobDescription && (
               <p className="text-red-500 text-sm mt-1">
