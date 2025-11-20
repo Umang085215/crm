@@ -243,7 +243,8 @@ const Login = () => {
           alt="HR Illustration"
           className="absolute top-[-64px] left-[-64px]  object-contain drop-shadow-xl"
         />
-        <div className="relative w-[80%]  rounded-3xl p-10  bg-gradient-to-b from-[#1869e7cf] to-[#2c475aa6] border border-white/30">
+        {/* <div className="relative w-[80%]  rounded-3xl p-10  bg-gradient-to-b from-[#1869e7cf] to-[#2c475aa6] border border-white/30 ">
+        
           <h3 className="text-white font-bold text-4xl leading-snug mb-5 text-center">
             Supercharge Your Customer Relations With Elevva CRM.
           </h3>
@@ -256,9 +257,29 @@ const Login = () => {
             />
           </div>
 
-          <h4 className="text-white text-2xl font-semibold text-center  px-6 py-3 rounded-md inline-block mx-auto">
+          <h4 className="w-full text-white text-2xl font-semibold text-center  px-6 py-3 rounded-md inline-block mx-auto">
             Everything You Need to Succeed.
           </h4>
+        </div> */}
+        <div className="relative w-[80%] rounded-3xl p-10 border border-white/30 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#1869e7cf] to-[#2c475aa6] backdrop-blur-md"></div>
+          <div className="relative z-10">
+            <h3 className="text-white font-bold text-4xl leading-snug mb-5 text-center">
+              Supercharge Your Customer Relations With Elevva CRM.
+            </h3>
+
+            <div className="flex justify-center mb-5">
+              <img
+                src={loginbg}
+                alt="HR Illustration"
+                className="object-contain drop-shadow-xl"
+              />
+            </div>
+
+            <h4 className="w-full text-white text-2xl font-semibold text-center px-6 py-3 rounded-md inline-block mx-auto">
+              Everything You Need to Succeed.
+            </h4>
+          </div>
         </div>
       </div>
     </div>

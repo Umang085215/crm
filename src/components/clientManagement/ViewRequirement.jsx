@@ -24,14 +24,6 @@ import ViewInfo from "../ui/ViewInfo";
 import ViewSection from "../ui/ViewSection";
 import ViewBlock from "../ui/ViewBlock";
 
-const IconButton = ({ title, icon }) => (
-  <Tippy content={title} placement="top" arrow={false} animation="fade">
-    <div className="px-2 py-1.5 bg-gray-600 text-white text-sm rounded-md cursor-pointer">
-      {icon}
-    </div>
-  </Tippy>
-);
-
 const ViewRequirement = () => {
   const { id } = useParams();
   const navigate = useNavigate();
