@@ -310,7 +310,7 @@ const ViewProfile = () => {
             </div>
           ) : (
             <div className="min-h-[70vh] flex justify-center items-center">
-              <NoData title="No Profile Data" />
+              <NoData title="No Data Found" />
             </div>
           )}
         </div>

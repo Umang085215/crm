@@ -16,23 +16,24 @@ import Spinner from "../loaders/Spinner";
 import NoData from "../ui/NoData";
 import ToolTip from "../ui/ToolTip";
 import DateDisplay from "../ui/DateDisplay";
-import { getAllRequirements } from "../../services/clientServices";
-import FilterDropdown from "../ui/FilterDropdown";
+import {
+  getAllClients,
+  getAllRequirements,
+} from "../../services/clientServices";
+import Filter from "../ui/Filter";
 
 const ClientsRequirementsList = () => {
   const navigate = useNavigate();
-
+  const [clients, setClients] = useState([]);
   const [requirements, setRequirements] = useState([]);
   const [activeTab, setActiveTab] = useState("All");
   const [statusTabs, setStatusTabs] = useState([]);
-
   const [pagination, setPagination] = useState({
     total: 0,
     page: 1,
     pages: 1,
     limit: 25,
   });
-
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("clientName");
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,18 +45,17 @@ const ClientsRequirementsList = () => {
 
   useEffect(() => {
     fetchRequirements();
+    fetchClients();
   }, [pagination.page, pagination.limit, searchQuery]);
 
   const fetchRequirements = async () => {
     try {
       setLoading(true);
-
       const data = await getAllRequirements(
         pagination.page,
         pagination.limit,
         searchQuery
       );
-
       const allRequirements = data.requirements || [];
       setRequirements(allRequirements);
       const uniqueStatuses = [
@@ -72,6 +72,32 @@ const ClientsRequirementsList = () => {
 
       setStatusTabs(tabsWithCounts);
 
+      setPagination((prev) => ({
+        ...prev,
+        total: data.pagination?.total || 0,
+        pages: data.pagination?.pages || 1,
+      }));
+    } catch (error) {
+      setErrorMsg(`Error fetching clients: ${error}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchClients = async () => {
+    try {
+      setLoading(true);
+      const data = await getAllClients(
+        pagination.page,
+        pagination.limit,
+        searchQuery
+      );
+      const allClients = data.clients || [];
+      const formattedClients = allClients.map((c) => ({
+        label: c.clientName,
+        value: c._id,
+      }));
+      setClients(formattedClients);
       setPagination((prev) => ({
         ...prev,
         total: data.pagination?.total || 0,
@@ -289,7 +315,7 @@ const ClientsRequirementsList = () => {
         </div>
         <div className="filter flex items-center justify-between">
           <div>
-            <FilterDropdown />
+            <Filter clients={clients} />
           </div>
           {/* Pagination */}
           <TablePagination
@@ -538,7 +564,7 @@ const ClientsRequirementsList = () => {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={12} className="py-10 text-center">
-                      <NoData title="No Clients Found" />
+                      <NoData title="No Data Found" />
                     </TableCell>
                   </TableRow>
                 )}

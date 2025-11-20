@@ -10,7 +10,18 @@ import {
   TablePagination,
   Checkbox,
 } from "@mui/material";
-import { Pencil, RefreshCcw, Plus, AtSign, Eye, Trash } from "lucide-react";
+import { FaLinkedinIn } from "react-icons/fa6";
+import {
+  Pencil,
+  RefreshCcw,
+  Plus,
+  AtSign,
+  Eye,
+  Trash,
+  Globe,
+  Mail,
+  Phone,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Spinner from "../loaders/Spinner";
 import NoData from "../ui/NoData";
@@ -240,7 +251,7 @@ const ClientList = () => {
                     { id: "clientCategory", label: "Category" },
                     { id: "clientSource", label: "Source" },
                     { id: "companySize", label: "Company Size" },
-                    { id: "headquarterAddress", label: "Headquarter Address" },
+                    { id: "poc1", label: "POC" },
                     { id: "empanelmentDate", label: "Empanelment Date" },
                     { id: "addedBy", label: "Added By" },
                     { id: "createdAt", label: "Created Dtm" },
@@ -307,16 +318,30 @@ const ClientList = () => {
                             </div>
                           )}
                           <div>
-                            <p className="flex items-center gap-2  dark:text-gray-300 font-semibold">
-                              <AtSign size={14} />
-                              {row.clientName.charAt(0).toUpperCase() +
-                                row.clientName.slice(1)}
-                            </p>
+                            <div className="flex flex-col items-start gap-2">
+                              <p className="flex items-center gap-1  dark:text-gray-300 font-semibold">
+                                <AtSign size={14} />
+                                {row.clientName.charAt(0).toUpperCase() +
+                                  row.clientName.slice(1)}
+                              </p>
+                              {row.website && (
+                                <div className="flex gap-1 items-center">
+                                  <FaLinkedinIn className="text-[#0077B5] text-[16px]" />
+                                  <a
+                                    href={row.website}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-black"
+                                  >
+                                    <Globe size={16} />
+                                  </a>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
 
-                      {/* <TableCell>{row.clientName}</TableCell> */}
                       <TableCell className="whitespace-nowrap dark:text-gray-300">
                         {row.clientCategory}
                       </TableCell>
@@ -327,7 +352,21 @@ const ClientList = () => {
                         {row.companySize}
                       </TableCell>
                       <TableCell className="whitespace-nowrap dark:text-gray-300">
-                        {row.headquarterAddress}
+                        <div>
+                          <p className="flex items-center gap-1  dark:text-gray-300 font-semibold">
+                            <AtSign size={14} />
+                            {row.poc1.name.charAt(0).toUpperCase() +
+                              row.poc1.name.slice(1)}
+                          </p>
+                          <p className="flex items-center gap-1 text-gray-600 dark:text-gray-300 text-sm">
+                            <Mail size={14} />
+                            {row.poc1.email}
+                          </p>
+                          <p className="flex items-center gap-1 text-gray-600 dark:text-gray-300 text-sm">
+                            <Phone size={14} />
+                            {row.poc1.phone}
+                          </p>
+                        </div>
                       </TableCell>
                       <TableCell className="whitespace-nowrap dark:text-gray-300">
                         {formatDate(row.empanelmentDate)}
@@ -384,12 +423,12 @@ const ClientList = () => {
                         {openStatusRow === row._id && (
                           <div
                             className="
-        absolute 
+        absolute
         -left-20   /* 2️⃣ SHIFT LEFT SO IT SHOWS IN FRONT */
         top-10
-        w-36 
-        rounded-md 
-        shadow-xl 
+        w-36
+        rounded-md
+        shadow-xl
         bg-white dark:bg-[#2f3236]
         border border-gray-300 dark:border-gray-700
         z-[9999]  /* 3️⃣ MOST IMPORTANT */
@@ -403,7 +442,7 @@ const ClientList = () => {
                                   handleStatusUpdate(row._id, status)
                                 }
                                 className="
-            px-3 py-2 text-sm cursor-pointer 
+            px-3 py-2 text-sm cursor-pointer
             hover:bg-gray-100 dark:hover:bg-gray-700
             transition
           "

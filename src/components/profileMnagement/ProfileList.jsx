@@ -390,7 +390,7 @@ const ProfileList = () => {
                                 </div>
                               )}
                               <div>
-                                <p className="flex items-center gap-2  dark:text-gray-300 font-semibold">
+                                <p className="flex items-center gap-1  dark:text-gray-300 font-semibold">
                                   <AtSign size={14} />
                                   {item.fullName.charAt(0).toUpperCase() +
                                     item.fullName.slice(1)}
@@ -514,7 +514,7 @@ const ProfileList = () => {
                           className="py-10 text-center bg-white dark:bg-darkBg"
                         >
                           <NoData
-                            title="No Profiles Found"
+                            title="No Data Found"
                             description="There are currently no profiles in the system."
                           />
                         </TableCell>

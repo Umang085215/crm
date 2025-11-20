@@ -7,7 +7,7 @@ const NoData = ({ title, description }) => {
       <div className="flex flex-col items-center justify-center h-[300px] text-center">
         <img
           src={NoFoundImg}
-          alt="No users"
+          alt="No Data"
           className="w-32 h-32 opacity-80 mb-4"
         />
         <h3 className="text-lg font-semibold text-dark dark:text-white">

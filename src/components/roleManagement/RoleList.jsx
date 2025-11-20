@@ -351,7 +351,7 @@ const RoleList = () => {
                     <TableRow>
                       <TableCell colSpan={12}>
                         <NoData
-                          title="No Roles Found"
+                          title="No Data Found"
                           description="There are currently no roles in the system."
                         />
                       </TableCell>

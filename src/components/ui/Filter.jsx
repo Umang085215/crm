@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, X, Funnel } from "lucide-react";
-const FilterDropdown = () => {
+const Filter = ({ clients }) => {
   const [open, setOpen] = useState(false);
 
   const [filters, setFilters] = useState({
@@ -12,17 +12,24 @@ const FilterDropdown = () => {
     customers: "",
     status: "",
   });
-
   const filterConfig = [
     {
       key: "customers",
       label: "Clients",
-      list: ["TCS", "Ecodedash", "Wipro", "Infosys"],
+      list: clients.map((c) => ({
+        label: c.label,
+        value: c.value,
+      })),
     },
     {
       key: "status",
       label: "Status",
-      list: ["Open", "On Hold", "Filled", "Closed"],
+      list: [
+        { label: "Open", value: "Open" },
+        { label: "On Hold", value: "On Hold" },
+        { label: "Filled", value: "Filled" },
+        { label: "Closed", value: "Closed" },
+      ],
     },
   ];
   const toggleFilter = (key, value) => {
@@ -99,7 +106,6 @@ const FilterDropdown = () => {
                     }
                   />
 
-                  {/* Dynamic filtered list */}
                   {filteredList.length > 0 ? (
                     filteredList.map((item, index) => (
                       <label
@@ -141,4 +147,4 @@ const FilterDropdown = () => {
   );
 };
 
-export default FilterDropdown;
+export default Filter;

@@ -262,7 +262,7 @@ const ViewClient = () => {
           </div>
         ) : (
           <div className="min-h-[60vh] flex justify-center items-center">
-            <NoData title="No Client Data" />
+            <NoData title="No Data Found" />
           </div>
         )}
       </div>

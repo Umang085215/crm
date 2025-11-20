@@ -310,7 +310,7 @@ const UserList = () => {
                                 </div>
                               )}
                               <div>
-                                <p className="flex items-center gap-2  dark:text-gray-300 font-semibold">
+                                <p className="flex items-center gap-1  dark:text-gray-300 font-semibold">
                                   <AtSign size={14} />
                                   {row.fullName.charAt(0).toUpperCase() +
                                     row.fullName.slice(1)}
@@ -388,7 +388,7 @@ const UserList = () => {
                           className="py-10 text-center bg-white dark:bg-darkBg"
                         >
                           <NoData
-                            title="No Users Found"
+                            title="No Data Found"
                             description="There are currently no users in the system."
                           />
                         </TableCell>
