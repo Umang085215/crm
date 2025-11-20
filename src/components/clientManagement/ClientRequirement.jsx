@@ -49,7 +49,7 @@ const ClientRequirement = () => {
     client: "",
     requirementPriority: "",
     positionStatus: "",
-    techStack: [],
+    techStack: "",
     experience: "",
     budgetType: "",
     currency: "",
@@ -88,10 +88,7 @@ const ClientRequirement = () => {
         console.error("Invalid options response");
         return;
       }
-      // setOptions((prev) => ({
-      //   ...prev,
-      //   ...data,
-      // }));
+
       setOptions(data.options);
     } catch (error) {
       console.error("Error fetching options:", error);
@@ -105,7 +102,7 @@ const ClientRequirement = () => {
       const activeList = res.clients.filter((c) => c.status === "active");
       const activeStatusList = activeList.map((client) => client._id);
       console.log("Filtered Active Clients:", activeList);
-      // console.log(" Active Clients:", activeStatusList);
+
       setActiveClients(activeList);
     } catch (error) {
       console.log(error);
@@ -144,7 +141,7 @@ const ClientRequirement = () => {
         ],
         handlers: { image: imageHandler },
       },
-      clipboard: { matchVisual: false },
+      clipboard: { matchVisual: true },
     }),
     []
   );
@@ -180,14 +177,14 @@ const ClientRequirement = () => {
     }));
   };
 
-  const toggleTechStack = (tech) => {
-    setFormData((prev) => ({
-      ...prev,
-      techStack: prev.techStack.includes(tech)
-        ? prev.techStack.filter((t) => t !== tech)
-        : [...prev.techStack, tech],
-    }));
-  };
+  // const toggleTechStack = (tech) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     techStack: prev.techStack.includes(tech)
+  //       ? prev.techStack.filter((t) => t !== tech)
+  //       : [...prev.techStack, tech],
+  //   }));
+  // };
 
   const handleQuillChange = (content, delta, source, editor) => {
     jobDescriptionRef.current = editor.getHTML();
@@ -411,16 +408,25 @@ const ClientRequirement = () => {
             />
           </div>
         </div>
+        <div className="col-span-2">
+          <Input
+            name="techStack"
+            value={formData.techStack}
+            handleChange={handleChange}
+            labelName="Tech Stack(Position)"
+            errors={errors}
+          />
+        </div>
 
         <div className="section">
-          <h3 className="text-lg font-semibold mb-3 border-b border-gray-300 dark:border-gray-600 pb-2">
+          {/* <h3 className="text-lg font-semibold mb-3 border-b border-gray-300 dark:border-gray-600 pb-2">
             Tech Stack & Job Description
-          </h3>
+          </h3> */}
           <div className="col-span-2">
-            <label className="font-medium block mb-2">
+            {/* <label className="font-medium block mb-2">
               Tech Stack (Choose one or more)
-            </label>
-            <div className="flex flex-wrap gap-2 mb-4">
+            </label> */}
+            {/* <div className="flex flex-wrap gap-2 mb-4">
               {techOptions.map((tech) => (
                 <button
                   key={tech}
@@ -435,7 +441,7 @@ const ClientRequirement = () => {
                   {tech}
                 </button>
               ))}
-            </div>
+            </div> */}
 
             <label className="font-medium block mb-1">Job Description</label>
 
@@ -445,7 +451,7 @@ const ClientRequirement = () => {
               value={jobDescriptionRef.current}
               onChange={handleQuillChange}
               modules={modules}
-              className=" bg-white dark:bg-darkBg dark:text-white border"
+              className=" bg-white dark:bg-darkBg dark:text-white "
             />
             {errors.jobDescription && (
               <p className="text-red-500 text-sm mt-1">

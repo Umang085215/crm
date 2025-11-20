@@ -111,4 +111,13 @@ html.dark
 
 .ql-container {
   height:150px !important;
+  border-radius: 0 0 10px 10px;
+}
+.quill{
+  border-radius:10px;
+  border:none;
+}
+.ql-toolbar{
+  border-radius:10px 10px 0 0;
+  background:#e7eeef;
 }

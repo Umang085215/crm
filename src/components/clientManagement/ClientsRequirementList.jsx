@@ -17,6 +17,7 @@ import NoData from "../ui/NoData";
 import ToolTip from "../ui/ToolTip";
 import DateDisplay from "../ui/DateDisplay";
 import { getAllRequirements } from "../../services/clientServices";
+import FilterDropdown from "../ui/FilterDropdown";
 
 const ClientsRequirementsList = () => {
   const navigate = useNavigate();
@@ -286,18 +287,22 @@ const ClientsRequirementsList = () => {
             </Link>
           </div>
         </div>
-
-        {/* Pagination */}
-        <TablePagination
-          component="div"
-          className="text-black dark:text-white"
-          count={pagination.total}
-          page={pagination.page - 1}
-          onPageChange={handleChangePage}
-          rowsPerPage={pagination.limit}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[25, 50, 100]}
-        />
+        <div className="filter flex items-center justify-between">
+          <div>
+            <FilterDropdown />
+          </div>
+          {/* Pagination */}
+          <TablePagination
+            component="div"
+            className="text-black dark:text-white"
+            count={pagination.total}
+            page={pagination.page - 1}
+            onPageChange={handleChangePage}
+            rowsPerPage={pagination.limit}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPageOptions={[25, 50, 100]}
+          />
+        </div>
         <TableContainer className="rounded-xl border border-gray-300 dark:border-gray-600 ">
           <div className="overflow-x-auto">
             <Table className="min-w-full">
@@ -405,9 +410,7 @@ const ClientsRequirementsList = () => {
                         </div>
                       </TableCell>
                       <TableCell className="whitespace-nowrap dark:text-gray-300">
-                        {row.techStack?.map((tech, i) => (
-                          <span key={i}>{tech}</span>
-                        ))}
+                        {row.techStack}
                       </TableCell>
                       <TableCell className="whitespace-nowrap dark:text-gray-300">
                         <span

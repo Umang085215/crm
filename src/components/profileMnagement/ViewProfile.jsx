@@ -74,7 +74,7 @@ const ViewProfile = () => {
           {!loading && profile.profileCode ? (
             <p className="text-dark bg-light dark:bg-white text-[12px] px-[2px] py-0 border-b border-dark  rounded font-[500]">
               {" "}
-              # {profile.profileCode}
+              #{profile.profileCode}
             </p>
           ) : (
             <Spinner size={20} color="#3b82f6" />
@@ -230,12 +230,12 @@ const ViewProfile = () => {
                       <ViewInfo
                         icon={<Wallet size={16} />}
                         label="Current CTC"
-                        value={`₹${profile.currentCTC}`}
+                        value={`₹ ${profile.currentCTC}`}
                       />
                       <ViewInfo
                         icon={<TrendingUp size={16} />}
                         label="Expected CTC"
-                        value={`₹${profile.expectedCTC}`}
+                        value={`₹ ${profile.expectedCTC}`}
                       />
                       <ViewInfo
                         icon={<Laptop size={16} />}

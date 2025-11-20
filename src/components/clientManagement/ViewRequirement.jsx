@@ -13,6 +13,7 @@ import {
   Users,
   Wallet,
   Landmark,
+  ChartBarStacked,
 } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import Spinner from "../loaders/Spinner";
@@ -51,13 +52,13 @@ const ViewRequirement = () => {
     }
   };
 
-  const stripHTML = (html) => {
-    if (!html) return "";
-    return html
-      .replace(/<[^>]+>/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
-  };
+  // const stripHTML = (html) => {
+  //   if (!html) return "";
+  //   return html
+  //     .replace(/<[^>]+>/g, "")
+  //     .replace(/\s+/g, " ")
+  //     .trim();
+  // };
 
   return (
     <>
@@ -67,7 +68,7 @@ const ViewRequirement = () => {
           <h2 className="text-2xl font-semibold">Requirement Info</h2>
           {!loading && requirement ? (
             <p className="text-dark bg-light dark:bg-white text-[12px] px-[2px] py-0 border-b border-dark rounded font-[500]">
-              # {requirement.requirementCode}
+              #{requirement.requirementCode}
             </p>
           ) : (
             <Spinner size={20} color="#3b82f6" />
@@ -131,8 +132,6 @@ const ViewRequirement = () => {
                 </button>
               </div>
             </div>
-
-            {/* GRID */}
             <div className="grid md:grid-cols-3 gap-6 ">
               {/* LEFT: CLIENT INFO */}
               <div className="md:col-span-1 border border-gray-300 dark:border-gray-600 rounded-lg ">
@@ -221,15 +220,15 @@ const ViewRequirement = () => {
                       icon={<Info size={16} />}
                     />
                   </div>
-
-                  <ViewBlock
-                    title="Tech Stack"
-                    value={requirement.techStack.join(", ")}
-                  />
+                </ViewSection>
+                <ViewSection
+                  title="Tech Stack"
+                  icon={<ChartBarStacked size={18} />}
+                >
+                  <ViewBlock value={requirement.techStack} />
                   <ViewBlock
                     title="Job Description"
-                    value={stripHTML(requirement.jobDescription)}
-                    isHTML
+                    value={requirement.jobDescription}
                   />
                   <ViewBlock
                     title="Other Info"
