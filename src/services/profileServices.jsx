@@ -22,3 +22,7 @@ export const addProfile = (profileData) =>
 
 export const updateProfile = (id, profileData) =>
   fetchHandler(`/api/profiles/${id}`, "PUT", profileData);
+
+export const updateProfileStatus = (id, status) => {
+  return fetchHandler(`/api/profiles/${id}`, "PUT", status);
+};

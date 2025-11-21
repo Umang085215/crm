@@ -2,7 +2,6 @@ import { useState } from "react";
 import { ChevronDown, X, Funnel } from "lucide-react";
 const Filter = ({ clients }) => {
   const [open, setOpen] = useState(false);
-
   const [filters, setFilters] = useState({
     customers: [],
     status: [],

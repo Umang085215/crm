@@ -11,13 +11,23 @@ import {
   TablePagination,
   Checkbox,
 } from "@mui/material";
-import { Pencil, Plus, RefreshCcw, Mail, AtSign } from "lucide-react";
+import {
+  Pencil,
+  Plus,
+  RefreshCcw,
+  Mail,
+  AtSign,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
 import { useAuth } from "../../auth/AuthContext";
 import DateDisplay from "../ui/DateDisplay";
 import Spinner from "../loaders/Spinner";
 import ToolTip from "../ui/ToolTip";
 import NoData from "../ui/NoData";
-import { getAllUsers } from "../../services/userServices";
+import { getAllUsers, updateUserStatus } from "../../services/userServices";
+import Search from "../sharedComponents/Search";
+import StatusDropDown from "../ui/StatusDropDown";
 
 const UserList = () => {
   const { token } = useAuth();
@@ -36,6 +46,8 @@ const UserList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [openStatusRow, setOpenStatusRow] = useState(null);
+  const statusOptions = ["active", "inactive"];
 
   useEffect(() => {
     fetchUsers();
@@ -141,6 +153,23 @@ const UserList = () => {
     });
   }, [filteredData, order, orderBy]);
 
+  const handleStatusUpdate = async (id, newStatus) => {
+    try {
+      const payload = {
+        status: newStatus,
+      };
+      const res = await updateUserStatus(id, payload);
+      console.log(res);
+      setAllUsers((prev) =>
+        prev.map((item) =>
+          item._id === id ? { ...item, status: newStatus } : item
+        )
+      );
+      setOpenStatusRow(null);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <div>
@@ -184,26 +213,13 @@ const UserList = () => {
           </div>
           <div className="p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl">
             {/* Search Box */}
-            <div className="py-4 border-b border-gray-300 dark:border-gray-600 flex justify-between items-center">
-              <div className="w-1/2">
-                <input
-                  type="text"
-                  placeholder="Search by name, email or phone..."
-                  className="w-full bg-white dark:bg-darkBg p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:border-gray-500 transition"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                />
-              </div>
-              <div>
-                <Link
-                  to="/admin/usermanagement/create-user"
-                  className="px-2 py-1.5 flex gap-1 items-center bg-dark text-white rounded-md"
-                >
-                  <Plus size={18} />
-                  <span>Add New User</span>
-                </Link>
-              </div>
-            </div>
+
+            <Search
+              searchQuery={searchQuery}
+              handleSearchChange={handleSearchChange}
+              addLink="/admin/usermanagement/create-user"
+              title="Add New User"
+            />
 
             {/* Pgination */}
             <TablePagination
@@ -297,7 +313,7 @@ const UserList = () => {
                             <Checkbox color="primary" />
                           </TableCell>
                           <TableCell className="whitespace-nowrap ">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2">
                               {row.profileImage ? (
                                 <img
                                   src={row.profileImage}
@@ -315,27 +331,22 @@ const UserList = () => {
                                   {row.fullName.charAt(0).toUpperCase() +
                                     row.fullName.slice(1)}
                                 </p>
-                                <p className="flex items-center gap-2 text-gray-600 dark:text-gray-300 text-sm">
+                                <p className="flex items-center gap-1 text-gray-600 dark:text-gray-300 text-sm">
                                   <Mail size={14} />
                                   {row.email}
                                 </p>
                               </div>
                             </div>
                           </TableCell>
-
-                          <TableCell className="whitespace-nowrap ">
-                            <div
-                              className={`w-max px-2 py-1 text-xs text-center font-[500] text-white rounded-md ${
-                                row.status === "active"
-                                  ? "bg-[#1abe17]"
-                                  : "bg-red-500"
-                              }`}
-                            >
-                              {row.status
-                                ? row.status.charAt(0).toUpperCase() +
-                                  row.status.slice(1)
-                                : "-"}
-                            </div>
+                          <TableCell className="relative whitespace-nowrap">
+                            <StatusDropDown
+                              rowId={row._id}
+                              status={row.status}
+                              openStatusRow={openStatusRow}
+                              setOpenStatusRow={setOpenStatusRow}
+                              statusOptions={statusOptions}
+                              handleStatusUpdate={handleStatusUpdate}
+                            />
                           </TableCell>
 
                           <TableCell className="whitespace-nowrap  dark:text-gray-300">

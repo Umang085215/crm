@@ -27,6 +27,7 @@ const schema = yup.object().shape({
   clientCategory: yup.string().required("Category is required"),
   clientSource: yup.string().required("Source is required"),
   website: yup.string().url("Enter valid URL"),
+  linkedin: yup.string().required("Linkedin is required"),
   headquarterAddress: yup.string().required("Headquarter address required"),
   branchAddress: yup.string().nullable(),
   companySize: yup.string().required("Company size is required"),
@@ -61,6 +62,7 @@ const AddClient = () => {
     clientCategory: "",
     clientSource: "",
     website: "",
+    linkedin: "",
     headquarterAddress: "",
     branchAddress: "",
     companySize: "",
@@ -160,6 +162,7 @@ const AddClient = () => {
         clientCategory: cleanedData.clientCategory,
         clientSource: cleanedData.clientSource,
         website: cleanedData.website,
+        linkedin: cleanedData.linkedin,
         headquarterAddress: cleanedData.headquarterAddress,
         branchAddress: cleanedData.branchAddress,
         companySize: cleanedData.companySize,
@@ -173,7 +176,7 @@ const AddClient = () => {
       const res = await addClients(payload);
       if (res?.success) {
         setSuccessMsg(res.message);
-        // setTimeout(() => navigate("/clients"), 1200);
+        navigate("/admin/clientmanagement/clients");
       } else {
         setErrorMsg(res?.message || "Failed to add client");
       }
@@ -258,6 +261,13 @@ const AddClient = () => {
             labelName="Website"
             name="website"
             value={formData.website}
+            handleChange={handleChange}
+            errors={errors}
+          />
+          <Input
+            labelName="LinkedIn"
+            name="linkedin"
+            value={formData.linkedin}
             handleChange={handleChange}
             errors={errors}
           />

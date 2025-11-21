@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Input from "../ui/Input";
 import SelectField from "../ui/SelectField";
 import Button from "../ui/Button";
@@ -7,22 +7,15 @@ import { Save, ArrowLeft } from "lucide-react";
 import * as yup from "yup";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+
 import {
   addClientsRequirement,
   getActiveClients,
   getRequirementsOptions,
+  getRequirementById,
 } from "../../services/clientServices";
-import BasicDatePicker from "../ui/BasicDatePicker";
 
-const techOptions = [
-  "React.js",
-  "Node.js",
-  "MongoDB",
-  "Express.js",
-  "Angular",
-  "Vue",
-  "Next.js",
-];
+import BasicDatePicker from "../ui/BasicDatePicker";
 
 const schema = yup.object().shape({
   client: yup.string().required("Client is required"),
@@ -41,10 +34,12 @@ const schema = yup.object().shape({
   jobDescription: yup.string().required("Job description is required"),
 });
 
-const ClientRequirement = () => {
+const EditClientRequirement = () => {
+  const { id } = useParams(); // requirement id
   const jobDescriptionRef = useRef("");
   const quillRef = useRef(null);
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     client: "",
     requirementPriority: "",
@@ -61,6 +56,7 @@ const ClientRequirement = () => {
     otherInformation: "",
     expectedClosureDate: "",
   });
+
   const [activeClients, setActiveClients] = useState([]);
   const [options, setOptions] = useState({
     statuses: [],
@@ -75,19 +71,58 @@ const ClientRequirement = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
+  // 🔹 Fetch Data on Load (Clients + Options + Existing Requirement)
   useEffect(() => {
     fetchActiveClients();
     fetchAllOptions();
+    fetchPrefill();
   }, []);
 
+  // ---------------------------
+  // Fetch Requirement for Prefill
+  // ---------------------------
+  const fetchPrefill = async () => {
+    if (!id) return;
+
+    try {
+      const res = await getRequirementById(id);
+
+      if (res?.success && res?.requirement) {
+        const r = res.requirement;
+
+        jobDescriptionRef.current = r.jobDescription;
+
+        setFormData({
+          client: r.client || "",
+          requirementPriority: r.requirementPriority || "",
+          positionStatus: r.positionStatus || "",
+          techStack: r.techStack || "",
+          experience: r.experience || "",
+          budgetType: r.budgetType || "",
+          currency: r.currency || "",
+          budget: r.budget || "",
+          totalPositions: r.totalPositions || "",
+          workRole: r.workRole || "",
+          workMode: r.workMode || "",
+          workLocation: r.workLocation || "",
+          otherInformation: r.otherInformation || "",
+          expectedClosureDate: r.expectedClosureDate?.split("T")[0] || "",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      setErrorMsg("Failed to load existing requirement");
+    }
+  };
+
+  // ---------------------------
+  // Fetch Dropdown Options
+  // ---------------------------
   const fetchAllOptions = async () => {
     try {
       const data = await getRequirementsOptions();
-      console.log("API Options Response:", data);
-      if (!data || typeof data !== "object") {
-        console.error("Invalid options response");
-        return;
-      }
+
+      if (!data?.options) return;
 
       setOptions(data.options);
     } catch (error) {
@@ -96,33 +131,36 @@ const ClientRequirement = () => {
     }
   };
 
+  // ---------------------------
+  // Fetch Clients
+  // ---------------------------
   const fetchActiveClients = async () => {
     try {
       const res = await getActiveClients();
-      const activeList = res.clients.filter((c) => c.status === "active");
-      const activeStatusList = activeList.map((client) => client._id);
-      console.log("Filtered Active Clients:", activeList);
-
+      const activeList =
+        res.clients?.filter((c) => c.status === "active") || [];
       setActiveClients(activeList);
     } catch (error) {
       console.log(error);
     }
   };
 
+  // ---------------------------
+  // Quill Image Handler
+  // ---------------------------
   const imageHandler = () => {
     const input = document.createElement("input");
-    input.setAttribute("type", "file");
-    input.setAttribute("accept", "image/*");
+    input.type = "file";
+    input.accept = "image/*";
     input.click();
 
     input.onchange = () => {
       const file = input.files[0];
       const reader = new FileReader();
       reader.onload = () => {
-        const base64 = reader.result;
         const quill = quillRef.current.getEditor();
         const range = quill.getSelection();
-        quill.insertEmbed(range.index, "image", base64);
+        quill.insertEmbed(range.index, "image", reader.result);
       };
       reader.readAsDataURL(file);
     };
@@ -133,89 +171,61 @@ const ClientRequirement = () => {
       toolbar: {
         container: [
           [{ header: [1, 2, 3, false] }],
-          ["bold", "italic", "underline", "strike"],
+          ["bold", "italic", "underline"],
           [{ list: "ordered" }, { list: "bullet" }],
-          ["blockquote", "code-block"],
           ["link", "image"],
-          ["clean"],
         ],
         handlers: { image: imageHandler },
       },
-      clipboard: { matchVisual: true },
     }),
     []
   );
 
+  // ---------------------------
+  // Handle Input Change
+  // ---------------------------
   const handleChange = (e) => {
     const { name, value } = e.target;
-    let newValue = value;
-    let errorMsg = "";
-    if (["budget", "totalPositions"].includes(name)) {
-      const cleanValue = ["budget"].includes(name)
-        ? value.replace(/,/g, "")
-        : value.replace(/\D/g, "");
-      if (["totalPositions"].includes(name) && value !== cleanValue) {
-        errorMsg = "Only numbers are allowed";
-      }
-      if (["budget"].includes(name)) {
-        if (cleanValue && !isNaN(cleanValue)) {
-          newValue = new Intl.NumberFormat("en-IN").format(Number(cleanValue));
-        } else {
-          newValue = "";
-        }
-      } else {
-        newValue = cleanValue;
-      }
-    }
+
     setFormData((prev) => ({
       ...prev,
-      [name]: newValue,
-    }));
-    setErrors((prev) => ({
-      ...prev,
-      [name]: errorMsg,
+      [name]: value,
     }));
   };
-
-  // const toggleTechStack = (tech) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     techStack: prev.techStack.includes(tech)
-  //       ? prev.techStack.filter((t) => t !== tech)
-  //       : [...prev.techStack, tech],
-  //   }));
-  // };
 
   const handleQuillChange = (content, delta, source, editor) => {
     jobDescriptionRef.current = editor.getHTML();
-    setErrors((prev) => ({ ...prev, jobDescription: "" }));
   };
 
+  // ---------------------------
+  // Submit
+  // ---------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors({});
     setErrorMsg("");
     setSuccessMsg("");
+
     const finalData = {
       ...formData,
       jobDescription: jobDescriptionRef.current,
     };
+
     try {
       await schema.validate(finalData, { abortEarly: false });
+
       const res = await addClientsRequirement(finalData);
-      if (res?.success) setSuccessMsg(res.message);
-      else setErrorMsg(res?.message || "Failed to add client requirements");
-    } catch (err) {
-      if (err?.inner && Array.isArray(err.inner)) {
-        const newErrors = {};
-        err.inner.forEach((e) => {
-          const path = (e.path || "").replace(/\[(\w+)\]/g, ".$1");
-          newErrors[path] = e.message;
-        });
-        setErrors(newErrors);
+
+      if (res?.success) {
+        setSuccessMsg("Requirement updated successfully!");
       } else {
-        setErrorMsg("Validation error");
+        setErrorMsg(res?.message || "Failed to update requirement");
       }
+    } catch (err) {
+      const validationErrors = {};
+      err.inner?.forEach((e) => {
+        validationErrors[e.path] = e.message;
+      });
+      setErrors(validationErrors);
     }
   };
 
@@ -224,7 +234,7 @@ const ClientRequirement = () => {
       <div className="mb-4 flex justify-between items-center">
         <h2 className="text-2xl font-semibold">Clients Requirement</h2>
         <button
-          onClick={() => navigate("/admin/clientManagement/clientRequirements")}
+          onClick={() => navigate("/admin/clientManagement/ClientRequirements")}
           className="flex items-center gap-2 px-3 py-1.5 bg-gray-600 text-white text-sm rounded-md hover:opacity-90 transition"
         >
           <ArrowLeft size={16} /> Back
@@ -478,4 +488,4 @@ const ClientRequirement = () => {
   );
 };
 
-export default ClientRequirement;
+export default EditClientRequirement;

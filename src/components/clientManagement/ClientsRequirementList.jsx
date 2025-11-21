@@ -10,7 +10,16 @@ import {
   TablePagination,
   Checkbox,
 } from "@mui/material";
-import { Pencil, RefreshCcw, Plus, AtSign, Eye, Trash } from "lucide-react";
+import {
+  Pencil,
+  RefreshCcw,
+  Plus,
+  AtSign,
+  Eye,
+  Trash,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Spinner from "../loaders/Spinner";
 import NoData from "../ui/NoData";
@@ -19,8 +28,10 @@ import DateDisplay from "../ui/DateDisplay";
 import {
   getAllClients,
   getAllRequirements,
+  updateRequirementStatus,
 } from "../../services/clientServices";
 import Filter from "../ui/Filter";
+import StatusDropDown from "../ui/StatusDropDown";
 
 const ClientsRequirementsList = () => {
   const navigate = useNavigate();
@@ -40,8 +51,14 @@ const ClientsRequirementsList = () => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [openStatusRow, setOpenStatusRow] = useState(null);
-
-  const statusOptions = ["active", "terminated", "on_hold", "rejected"];
+  const statusOptions = [
+    "Open",
+    "On Hold",
+    "In Progress",
+    "Filled",
+    "Cancelled",
+    "Closed",
+  ];
 
   useEffect(() => {
     fetchRequirements();
@@ -92,7 +109,9 @@ const ClientsRequirementsList = () => {
         pagination.limit,
         searchQuery
       );
+
       const allClients = data.clients || [];
+      console.log(allClients);
       const formattedClients = allClients.map((c) => ({
         label: c.clientName,
         value: c._id,
@@ -252,6 +271,24 @@ const ClientsRequirementsList = () => {
         : bVal?.toString().localeCompare(aVal);
     });
   }, [filteredData, order, orderBy]);
+
+  const handleStatusUpdate = async (id, newStatus) => {
+    try {
+      const payload = {
+        positionStatus: newStatus,
+      };
+      const res = await updateRequirementStatus(id, payload);
+      console.log(res);
+      setRequirements((prev) =>
+        prev.map((item) =>
+          item._id === id ? { ...item, positionStatus: newStatus } : item
+        )
+      );
+      setOpenStatusRow(null);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <div className="flex justify-between items-center mb-6">
@@ -414,7 +451,7 @@ const ClientsRequirementsList = () => {
                         </div>
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                           {row.profileImage ? (
                             <img
                               src={row.profileImage}
@@ -438,15 +475,17 @@ const ClientsRequirementsList = () => {
                       <TableCell className="whitespace-nowrap dark:text-gray-300">
                         {row.techStack}
                       </TableCell>
-                      <TableCell className="whitespace-nowrap dark:text-gray-300">
-                        <span
-                          className={`w-max px-2 py-1 text-xs text-center font-[500] text-white rounded-md ${getStatusColor(
-                            row.positionStatus
-                          )}`}
-                        >
-                          {row.positionStatus}
-                        </span>
+                      <TableCell className="relative whitespace-nowrap dark:bg-darkGray">
+                        <StatusDropDown
+                          rowId={row._id}
+                          status={row.positionStatus}
+                          openStatusRow={openStatusRow}
+                          setOpenStatusRow={setOpenStatusRow}
+                          statusOptions={statusOptions}
+                          handleStatusUpdate={handleStatusUpdate}
+                        />
                       </TableCell>
+
                       <TableCell className="whitespace-nowrap dark:text-gray-300">
                         {row.experience}
                       </TableCell>
@@ -475,17 +514,12 @@ const ClientsRequirementsList = () => {
                         <DateDisplay date={row.updatedAt} />
                       </TableCell>
                       <TableCell
-                        className={`relative  whitespace-nowrap bg-[#f2f4f5] dark:bg-darkGray ${getStickyClass(
+                        className={`whitespace-nowrap bg-[#f2f4f5] dark:bg-darkGray ${getStickyClass(
                           "requirementPriority"
                         )}`}
                         style={{ overflow: "visible", zIndex: 20 }}
                       >
                         <div
-                          onClick={() =>
-                            setOpenStatusRow(
-                              openStatusRow === row._id ? null : row._id
-                            )
-                          }
                           className={`w-max px-2 py-1 text-xs text-center font-[500] text-white rounded-md ${getPriorityColor(
                             row.requirementPriority
                           )}`}
@@ -495,40 +529,6 @@ const ClientsRequirementsList = () => {
                               row.requirementPriority.slice(1)
                             : "-"}
                         </div>
-
-                        {openStatusRow === row._id && (
-                          <div
-                            className="
-        absolute 
-        -left-20  
-        top-10
-        w-36 
-        rounded-md 
-        shadow-xl 
-        bg-white dark:bg-[#2f3236]
-        border border-gray-300 dark:border-gray-700
-        z-[9999] 
-      "
-                            style={{ overflow: "visible" }}
-                          >
-                            {statusOptions.map((status) => (
-                              <div
-                                key={status}
-                                onClick={() =>
-                                  handleStatusUpdate(row._id, status)
-                                }
-                                className="
-            px-3 py-2 text-sm cursor-pointer 
-            hover:bg-gray-100 dark:hover:bg-gray-700
-            transition
-          "
-                              >
-                                {status.charAt(0).toUpperCase() +
-                                  status.slice(1)}
-                              </div>
-                            ))}
-                          </div>
-                        )}
                       </TableCell>
 
                       {/* Action */}
@@ -538,7 +538,7 @@ const ClientsRequirementsList = () => {
                             className="text-white bg-dark px-1 py-1 rounded"
                             onClick={() =>
                               navigate(
-                                `/admin/clientmanagement/edit-client/${row._id}`
+                                `/admin/clientmanagement/edit-requirement/${row._id}`
                               )
                             }
                           >

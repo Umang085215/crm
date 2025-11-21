@@ -21,13 +21,19 @@ import {
   Phone,
   RefreshCcw,
   Trash,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import { useAuth } from "../../auth/AuthContext";
 import DateDisplay from "../ui/DateDisplay";
 import Spinner from "../loaders/Spinner";
 import ToolTip from "../ui/ToolTip";
 import NoData from "../ui/NoData";
-import { getAllProfiles } from "../../services/profileServices";
+import {
+  getAllProfiles,
+  updateProfileStatus,
+} from "../../services/profileServices";
+import StatusDropDown from "../ui/StatusDropDown";
 
 const ProfileList = () => {
   const { token } = useAuth();
@@ -55,7 +61,8 @@ const ProfileList = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [favourites, setFavourites] = useState([]);
-
+  const [openStatusRow, setOpenStatusRow] = useState(null);
+  const statusOptions = ["Active", "In-active", "Banned", "Defaulter"];
   useEffect(() => {
     if (location.state?.successMsg) {
       setSuccessMsg(location.state.successMsg);
@@ -184,6 +191,24 @@ const ProfileList = () => {
     );
   };
 
+  const handleStatusUpdate = async (id, newStatus) => {
+    try {
+      const payload = {
+        status: newStatus,
+      };
+      const res = await updateProfileStatus(id, payload);
+      console.log(res);
+      setAllProfiles((prev) =>
+        prev.map((item) =>
+          item._id === id ? { ...item, status: newStatus } : item
+        )
+      );
+      setOpenStatusRow(null);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div>
@@ -288,6 +313,7 @@ const ProfileList = () => {
                         { id: "favourite", label: "" },
                         { id: "fullName", label: "Name" },
                         { id: "techStack", label: "Tech Stack" },
+                        { id: "status", label: "Status" },
                         { id: "skills", label: "Skills" },
                         { id: "currentCompany", label: "Current Company" },
                         { id: "totalExp", label: "Total Exp" },
@@ -297,7 +323,7 @@ const ProfileList = () => {
                         { id: "submittedBy", label: "SubmittedBy" },
                         { id: "createdAt", label: "Created Dtm" },
                         { id: "updatedAt", label: "Modified Dtm" },
-                        { id: "status", label: "Status", sticky: true },
+
                         { id: "action", label: "Action", sticky: true },
                       ].map((column) => (
                         <TableCell
@@ -377,7 +403,7 @@ const ProfileList = () => {
                             </button>
                           </TableCell>
                           <TableCell className="whitespace-nowrap ">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2">
                               {item.profileImage ? (
                                 <img
                                   src={item.profileImage}
@@ -395,11 +421,11 @@ const ProfileList = () => {
                                   {item.fullName.charAt(0).toUpperCase() +
                                     item.fullName.slice(1)}
                                 </p>
-                                <p className="flex items-center gap-2 text-gray-600 dark:text-gray-300 text-sm">
+                                <p className="flex items-center gap-1 text-gray-600 dark:text-gray-300 text-sm">
                                   <Mail size={14} />
                                   {item.email}
                                 </p>
-                                <p className="flex items-center gap-2 text-gray-600 dark:text-gray-300 text-sm">
+                                <p className="flex items-center gap-1 text-gray-600 dark:text-gray-300 text-sm">
                                   <Phone size={14} />
                                   {item.phone}
                                 </p>
@@ -410,7 +436,18 @@ const ProfileList = () => {
                           <TableCell className="whitespace-nowrap  dark:text-gray-300">
                             {item.techStack}
                           </TableCell>
-
+                          <TableCell
+                            className={`relative whitespace-nowrap  dark:bg-darkGray`}
+                          >
+                            <StatusDropDown
+                              rowId={item._id}
+                              status={item.status}
+                              openStatusRow={openStatusRow}
+                              setOpenStatusRow={setOpenStatusRow}
+                              statusOptions={statusOptions}
+                              handleStatusUpdate={handleStatusUpdate}
+                            />
+                          </TableCell>
                           <TableCell className="whitespace-nowrap dark:text-gray-300">
                             <div className="flex flex-wrap gap-2">
                               {item.skills.map((skill, index) => (
@@ -423,7 +460,6 @@ const ProfileList = () => {
                               ))}
                             </div>
                           </TableCell>
-
                           <TableCell className="whitespace-nowrap  dark:text-gray-300">
                             {item.currentCompany}
                           </TableCell>
@@ -455,29 +491,7 @@ const ProfileList = () => {
                           <TableCell className="whitespace-nowrap  dark:text-gray-200">
                             <DateDisplay date={item.updatedAt} />
                           </TableCell>
-                          <TableCell
-                            className={`
-    whitespace-nowrap bg-[#f2f4f5] dark:bg-darkGray
-    ${getStickyClass("status")}
-  `}
-                          >
-                            <div
-                              className={` px-2 py-1 text-xs text-center font-[500] text-white rounded-md ${
-                                item.status === "Active"
-                                  ? "bg-[#1abe17]"
-                                  : item.status === "Banned"
-                                  ? "bg-red-800"
-                                  : item.status === "Defaulter"
-                                  ? "bg-[#f9b801]"
-                                  : "bg-red-500"
-                              }`}
-                            >
-                              {item.status
-                                ? item.status.charAt(0).toUpperCase() +
-                                  item.status.slice(1)
-                                : "-"}
-                            </div>
-                          </TableCell>
+
                           <TableCell className="sticky right-0 bg-[#f2f4f5] dark:bg-darkGray z-30">
                             <div className="flex gap-2 items-center">
                               <button

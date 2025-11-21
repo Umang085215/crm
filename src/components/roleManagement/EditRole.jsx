@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Save, ArrowLeft } from "lucide-react";
-import img1 from "../../assets/logo/loginBg.jpg";
+import roleBg from "../../assets/images/role.png";
 import * as yup from "yup";
 import Button from "../ui/Button";
 
@@ -292,7 +292,11 @@ const EditRole = () => {
           </div>
 
           <div className="p-2 bg-white dark:bg-darkBg border border-gray-300 dark:border-gray-600 rounded-lg">
-            <img src={img1} alt="image" className="object-contain rounded-lg" />
+            <img
+              src={roleBg}
+              alt="image"
+              className="object-contain rounded-lg"
+            />
           </div>
         </div>
 

@@ -10,7 +10,8 @@ import {
   TablePagination,
   Checkbox,
 } from "@mui/material";
-import { FaLinkedinIn } from "react-icons/fa6";
+import { FaExternalLinkSquareAlt } from "react-icons/fa";
+import { FaLinkedin } from "react-icons/fa6";
 import {
   Pencil,
   RefreshCcw,
@@ -18,7 +19,8 @@ import {
   AtSign,
   Eye,
   Trash,
-  Globe,
+  ChevronUp,
+  ChevronDown,
   Mail,
   Phone,
 } from "lucide-react";
@@ -27,7 +29,13 @@ import Spinner from "../loaders/Spinner";
 import NoData from "../ui/NoData";
 import ToolTip from "../ui/ToolTip";
 import DateDisplay from "../ui/DateDisplay";
-import { getAllClients } from "../../services/clientServices";
+import {
+  getAllClients,
+  updateClientStatus,
+} from "../../services/clientServices";
+import StatusDropDown from "../ui/StatusDropDown";
+import TableHeader from "../ui/tableComponents/TableHeader";
+import CommonPagination from "../ui/tableComponents/CommonPagination";
 
 const ClientList = () => {
   const navigate = useNavigate();
@@ -52,7 +60,7 @@ const ClientList = () => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [openStatusRow, setOpenStatusRow] = useState(null);
-  const statusOptions = ["active", "terminated", "on_hold", "rejected"];
+  const statusOptions = ["active", "inactive", "on_hold", "terminated"];
 
   useEffect(() => {
     fetchClients();
@@ -120,8 +128,8 @@ const ClientList = () => {
     switch (columnId) {
       case "action":
         return "sticky right-0 z-20";
-      case "status":
-        return "sticky right-[128px] z-20";
+      case "status1":
+        return "sticky right-[128px] ";
       default:
         return "";
     }
@@ -150,7 +158,6 @@ const ClientList = () => {
         Object.values(c).some((v) => v?.toString().toLowerCase().includes(q))
       );
     }
-
     return data;
   }, [clients, activeTab, searchQuery]);
   const sortedData = useMemo(() => {
@@ -162,6 +169,25 @@ const ClientList = () => {
         : bVal.localeCompare?.(aVal);
     });
   }, [filteredData, order, orderBy]);
+
+  const handleStatusUpdate = async (id, newStatus) => {
+    try {
+      const payload = {
+        status: newStatus,
+      };
+      const res = await updateClientStatus(id, payload);
+      console.log(res);
+      setClients((prev) =>
+        prev.map((item) =>
+          item._id === id ? { ...item, status: newStatus } : item
+        )
+      );
+      setOpenStatusRow(null);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className="flex justify-between items-center mb-6">
@@ -200,38 +226,19 @@ const ClientList = () => {
       </div>
 
       <div className="p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl">
-        {/* Search */}
-        <div className="py-4 border-b border-gray-300 dark:border-gray-600 flex justify-between items-center">
-          <div className="w-1/2">
-            <input
-              type="text"
-              placeholder="Search by name, email or phone..."
-              className="w-full bg-white dark:bg-darkBg p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:border-gray-500 transition"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-          </div>
-          <div>
-            <Link
-              to="/admin/clientmanagement/add-client"
-              className="px-2 py-1.5 flex gap-1 items-center bg-dark text-white rounded-md"
-            >
-              <Plus size={18} />
-              <span>Add New Client</span>
-            </Link>
-          </div>
-        </div>
+        <TableHeader
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          addLink="/admin/clientmanagement/add-client"
+        />
 
         {/* Pagination */}
-        <TablePagination
-          component="div"
-          className="text-black dark:text-white"
-          count={pagination.total}
-          page={pagination.page - 1}
+        <CommonPagination
+          total={pagination.total}
+          page={pagination.page}
+          limit={pagination.limit}
           onPageChange={handleChangePage}
-          rowsPerPage={pagination.limit}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[25, 50, 100]}
+          onLimitChange={handleChangeRowsPerPage}
         />
 
         <TableContainer className="rounded-xl border border-gray-300 dark:border-gray-600 ">
@@ -249,6 +256,7 @@ const ClientList = () => {
                   {[
                     { id: "clientName", label: "Client Name" },
                     { id: "clientCategory", label: "Category" },
+                    { id: "status", label: "Status" },
                     { id: "clientSource", label: "Source" },
                     { id: "companySize", label: "Company Size" },
                     { id: "poc1", label: "POC" },
@@ -256,7 +264,7 @@ const ClientList = () => {
                     { id: "addedBy", label: "Added By" },
                     { id: "createdAt", label: "Created Dtm" },
                     { id: "updatedAt", label: "Modified Dtm" },
-                    { id: "status", label: "Status", sticky: true },
+
                     { id: "action", label: "Action", sticky: true },
                   ].map((col) => (
                     <TableCell
@@ -305,7 +313,7 @@ const ClientList = () => {
                         <Checkbox color="primary" />
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                           {row.profileImage ? (
                             <img
                               src={row.profileImage}
@@ -318,25 +326,33 @@ const ClientList = () => {
                             </div>
                           )}
                           <div>
-                            <div className="flex flex-col items-start gap-2">
+                            <div className="flex flex-col items-start gap-1">
                               <p className="flex items-center gap-1  dark:text-gray-300 font-semibold">
                                 <AtSign size={14} />
                                 {row.clientName.charAt(0).toUpperCase() +
                                   row.clientName.slice(1)}
                               </p>
-                              {row.website && (
-                                <div className="flex gap-1 items-center">
-                                  <FaLinkedinIn className="text-[#0077B5] text-[16px]" />
+
+                              <div className="flex gap-2 items-center">
+                                {row.website && (
                                   <a
                                     href={row.website}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-black"
                                   >
-                                    <Globe size={16} />
+                                    <FaExternalLinkSquareAlt size={18} />
                                   </a>
-                                </div>
-                              )}
+                                )}
+                                {row.linkedin && (
+                                  <a
+                                    href={row.linkedin}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    <FaLinkedin className="text-[#0077B5] text-[18px]" />
+                                  </a>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -345,6 +361,21 @@ const ClientList = () => {
                       <TableCell className="whitespace-nowrap dark:text-gray-300">
                         {row.clientCategory}
                       </TableCell>
+                      <TableCell
+                        className={`relative whitespace-nowrap ${getStickyClass(
+                          "status"
+                        )}`}
+                      >
+                        <StatusDropDown
+                          rowId={row._id}
+                          status={row.status}
+                          openStatusRow={openStatusRow}
+                          setOpenStatusRow={setOpenStatusRow}
+                          statusOptions={statusOptions}
+                          handleStatusUpdate={handleStatusUpdate}
+                        />
+                      </TableCell>
+
                       <TableCell className="whitespace-nowrap dark:text-gray-300">
                         {row.clientSource}
                       </TableCell>
@@ -390,71 +421,6 @@ const ClientList = () => {
                         <DateDisplay date={row.updatedAt} />
                       </TableCell>
 
-                      <TableCell
-                        className={`relative whitespace-nowrap bg-[#f2f4f5] dark:bg-darkGray ${getStickyClass(
-                          "status"
-                        )}`}
-                        style={{ overflow: "visible", zIndex: 20 }} // 1️⃣ allow dropdown to escape
-                      >
-                        {/* STATUS BADGE */}
-                        <div
-                          onClick={() =>
-                            setOpenStatusRow(
-                              openStatusRow === row._id ? null : row._id
-                            )
-                          }
-                          className={`cursor-pointer px-2 py-1 text-xs text-center font-[500] text-white rounded-md ${
-                            row.status === "active"
-                              ? "bg-[#1abe17]"
-                              : row.status === "terminated"
-                              ? "bg-red-800"
-                              : row.status === "on_hold"
-                              ? "bg-[#f9b801]"
-                              : "bg-red-500"
-                          }`}
-                        >
-                          {row.status
-                            ? row.status.charAt(0).toUpperCase() +
-                              row.status.slice(1)
-                            : "-"}
-                        </div>
-
-                        {/* DROPDOWN PANEL */}
-                        {openStatusRow === row._id && (
-                          <div
-                            className="
-        absolute
-        -left-20   /* 2️⃣ SHIFT LEFT SO IT SHOWS IN FRONT */
-        top-10
-        w-36
-        rounded-md
-        shadow-xl
-        bg-white dark:bg-[#2f3236]
-        border border-gray-300 dark:border-gray-700
-        z-[9999]  /* 3️⃣ MOST IMPORTANT */
-      "
-                            style={{ overflow: "visible" }}
-                          >
-                            {statusOptions.map((status) => (
-                              <div
-                                key={status}
-                                onClick={() =>
-                                  handleStatusUpdate(row._id, status)
-                                }
-                                className="
-            px-3 py-2 text-sm cursor-pointer
-            hover:bg-gray-100 dark:hover:bg-gray-700
-            transition
-          "
-                              >
-                                {status.charAt(0).toUpperCase() +
-                                  status.slice(1)}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </TableCell>
-
                       {/* Action */}
                       <TableCell className="sticky right-0 bg-[#f2f4f5] dark:bg-darkGray z-30">
                         <div className="flex gap-2 items-center">
@@ -496,15 +462,12 @@ const ClientList = () => {
             </Table>
           </div>
         </TableContainer>
-        <TablePagination
-          component="div"
-          className="text-black dark:text-white"
-          count={pagination.total}
-          page={pagination.page - 1}
+        <CommonPagination
+          total={pagination.total}
+          page={pagination.page}
+          limit={pagination.limit}
           onPageChange={handleChangePage}
-          rowsPerPage={pagination.limit}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[25, 50, 100]}
+          onLimitChange={handleChangeRowsPerPage}
         />
       </div>
     </>

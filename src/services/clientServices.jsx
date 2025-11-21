@@ -3,6 +3,9 @@ import { fetchHandler } from "../fatchHandler/fetchHandler";
 export const getActiveClients = () => {
   return fetchHandler(`/api/clients?status=active`);
 };
+export const updateClientStatus = (id, status) => {
+  return fetchHandler(`/api/clients/${id}`, "PUT", status);
+};
 
 export const getAllClients = (
   page = 1,
@@ -39,6 +42,10 @@ export const getRequirementsOptions = () => {
 
 export const addClientsRequirement = (clientData) =>
   fetchHandler("/api/requirements", "POST", clientData);
+
+export const updateRequirementStatus = (id, status) => {
+  return fetchHandler(`/api/requirements/${id}`, "PUT", status);
+};
 
 export const getAllRequirements = (
   page = 1,

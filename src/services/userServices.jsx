@@ -15,3 +15,7 @@ export const createUser = (userData) =>
 
 export const updateUser = (id, userData) =>
   fetchHandler(`/api/users/${id}`, "PUT", userData);
+
+export const updateUserStatus = (id, status) => {
+  return fetchHandler(`/api/users/${id}`, "PUT", status);
+};
